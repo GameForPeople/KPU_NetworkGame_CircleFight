@@ -19,44 +19,48 @@ public:
 
 	enum class InputKey : short
 	{
-		  KeyUp
-		, MoveLeft
-		, MoveRight
-		, Jump
+		  Jump
+		, Boost
+		, Item1
+		, Item2
+		, Item3
 	};
 
 protected:
 
+	//프레임 워크 제공 변수
 	CAnimationSprite	m_sprite;
 
-	POINT				m_ptCurrent;
-	float				m_fSpeed = 0;
-	float				m_fCurrentJump = 0;
-	bool				m_bJump = false;
-	bool				m_bPushShift;
+	//POINT				m_ptCurrent;
+	float				m_Speed = 0;
+	float				m_CurrentJump = 0;
+	int					m_isJump = 0;
+	int					m_isPushShift = false;
 
 	// 유닛 갱신 단위(millisec)
-	float				m_fFrequency = 1.0f / 60.0f;
+	//float				m_fFrequency = 1.0f / 60.0f;
 	float				m_fTick = 0.f;
-public:
 
-	CUnit(LPCTSTR path, int w, int h, POINT pt, float fFrequency = 0.1f / 60.0f);
+	// 게임 추가 변수
+	int					m_comboCount = 0;
+	int					m_item[3]{ 0 };
+
+public:
+	//프레임 워크 제공 함수
+	CUnit(LPCTSTR path, int w, int h);
 	virtual ~CUnit();
 
 	virtual void Input(InputKey input, bool bPushLShift = false);
 	virtual void OnDraw(HDC hDC);
 	virtual void OnUpdate(float fTimeElapsed);
 
-	void SetState(CAnimationSprite::SpriteState state, int val) { m_sprite.SetState(state, val); }
-	void SetState(CAnimationSprite::SpriteState state, int val, int excute_start, int excute_end, int exit_start, int exit_end) { m_sprite.SetState(state, val, excute_start, excute_end, exit_start, exit_end); }
-	void SetStateDelay(CAnimationSprite::SpriteState state, int excute, int action, int exit) { m_sprite.SetStateDelay(state, excute, action, exit); }
-	void SetStateDelay(CAnimationSprite::SpriteState state, int action) { m_sprite.SetStateDelay(state, 0, action, 0); }
-
-protected:
-
 	virtual void Move(POINT dir);
 	// 초기값은 기본 점프 높이
 	virtual void Jump(float maxJump = 50.f);
+
+	// 게임 추가 함수
+
+	//virtual void UseItem();
 };
 
 

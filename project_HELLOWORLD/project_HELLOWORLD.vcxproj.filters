@@ -42,6 +42,15 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>미리 컴파일된 파일</Filter>
     </ClCompile>
+    <ClCompile Include="BaseCharacter.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CArcher.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ReplayFunction.h">
@@ -61,6 +70,15 @@
     </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>미리 컴파일된 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseCharacter.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CArcher.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

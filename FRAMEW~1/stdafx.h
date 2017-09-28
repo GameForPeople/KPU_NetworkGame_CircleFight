@@ -21,6 +21,9 @@
 #include <iostream>
 #include <chrono>
 
+// CImage 를 위한 헤더 파일입니다.
+#include <atlimage.h>
+
 #define CLIENT_WIDTH 1280
 #define CLIENT_HEIGHT 720
 

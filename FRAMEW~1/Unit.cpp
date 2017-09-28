@@ -2,7 +2,7 @@
 #include "Unit.h"
 #include "SpriteImage.h"
 
-CUnit::CUnit(LPCTSTR path, int w, int h, POINT pt, float fFrequency)
+CUnit::CUnit(LPCTSTR path, int w, int h, float fFrequency)
 	: m_sprite(path, w, h)
 {
 	// 초기 위치
@@ -10,7 +10,6 @@ CUnit::CUnit(LPCTSTR path, int w, int h, POINT pt, float fFrequency)
 	// 1회 호출 당 나가는 속력
 	m_fSpeed = 4.f;
 
-	fFrequency = m_fFrequency;
 	m_fTick = 0.f;
 }
 

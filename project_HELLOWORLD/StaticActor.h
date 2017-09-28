@@ -6,7 +6,7 @@
 class StaticActor :
 	public BaseObject
 {
-private:
+protected:
 	//pos, alpha
 	CImage* m_staticImg;
 public:
@@ -18,5 +18,6 @@ public:
 	virtual void Draw(HDC hdc, bool isFullScreen);
 	virtual void Draw(HDC hdc, bool isFullScreen, bool isDraw);
 
-};
+	virtual void Update(float speed);
 
+};

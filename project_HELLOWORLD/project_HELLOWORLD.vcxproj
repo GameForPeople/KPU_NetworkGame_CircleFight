@@ -142,6 +142,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BaseCharacter.cpp" />
+    <ClCompile Include="CArcher.cpp" />
+    <ClCompile Include="Map.cpp" />
     <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="StaticActor.cpp" />
     <ClCompile Include="BaseObject.cpp" />
@@ -161,6 +164,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseCharacter.h" />
+    <ClInclude Include="CArcher.h" />
+    <ClInclude Include="Map.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="StaticActor.h" />
     <ClInclude Include="BaseObject.h" />

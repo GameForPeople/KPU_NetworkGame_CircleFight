@@ -9,6 +9,8 @@
 #include "ReplayFunction.h"
 
 #include "StaticActor.h"
+#include "Pawn.h"
+#include "Map.h"
 
 #pragma region [SoundManger]
 System*			pSystem;
@@ -89,15 +91,17 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT
 
 	static RECT rect;
 
-	static StaticActor map(0, 0, "Resource/Image/backImg.png");
+	static Map map(0, 0, "Resource/Image/Background/Background.png");
 	static StaticActor grid(0, 0, "Resource/Image/grid.png");
 	static bool isDrawGrid = true;
+
+	static Pawn myPawn(CharacterName::Archer);
 
 	switch (iMessage) {
 	case WM_CREATE:
 	{
 		GetClientRect(hwnd, &rect);
-		SetTimer(hwnd, 1, 40, NULL);
+		SetTimer(hwnd, 1, 1, NULL);
 
 		break;
 	}
@@ -113,8 +117,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT
 		SetStretchBltMode(mainHDC, COLORONCOLOR);
 		SetStretchBltMode(hdc, COLORONCOLOR);
 
-		map.Draw(hdc, TRUE);
+		map.Draw(hdc);
 		grid.Draw(hdc, TRUE, isDrawGrid);
+
+		myPawn.Draw(hdc);
 
 		SetStretchBltMode(mainHDC, COLORONCOLOR);
 		SetStretchBltMode(hdc, COLORONCOLOR);
@@ -130,11 +136,15 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT
 	}
 	case WM_TIMER:
 	{
+		myPawn.Update(myPawn.GetState());
+		map.Update(myPawn.GetSpeed());
 		InvalidateRgn(hwnd, NULL, false);
 		break;
 	}
 	case WM_KEYDOWN:
 	{
+		myPawn.InsertKey(wParam);
+
 		if (wParam == 'g' || wParam == 'G') {
 			if (isDrawGrid) isDrawGrid = false;
 			else isDrawGrid = true;

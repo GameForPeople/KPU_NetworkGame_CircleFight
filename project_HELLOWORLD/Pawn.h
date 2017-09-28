@@ -1,9 +1,8 @@
 #pragma once
 #include "BaseObject.h"
 #include "stdafx.h"
-
-#define FULL_IMG_COUNT 7
-#define RUN_IMG 7
+#include "BaseCharacter.h"
+#include "CArcher.h"
 
 struct BoundingBox {
 	
@@ -12,42 +11,44 @@ struct BoundingBox {
 class Pawn :
 	public BaseObject
 {
-	enum class State {
-			Run
-		,	Stun
-		,	Sleep
-		,	Slow
-		,	Boost
-		,	Jump
-		,	DoupleJump
-		,	TripleJump
-		,	Fall
-		,	Collide
-	};
-
-	enum class Role {
-			Runner
-		,	Attacker
-		,	Supporter
-	};
-
 private:
-	CImage m_imgArr[FULL_IMG_COUNT];
 	int m_combo = 0;
-	
-	State m_state;
-	Role m_role;
+	float m_speed = 0;
+	float m_baseSpeed = 0;
 
+	BaseCharacter* m_unit;
+	State m_state;
 	BoundingBox m_bb;
+
+	bool m_isFalling = false;
+	float m_fallSpeed = 0;
+
+	bool m_isJump = false;
+	float m_jumpSpeed = 0;
 
 public:
 	Pawn();
+	Pawn(CharacterName inputCharacterName);
 	~Pawn();
-	Pawn(float x, float y, Role );
+	Pawn(float x, float y );
 
-	virtual void Update();
-	virtual void Draw();
+	virtual void Update(State state);
+	virtual void Draw(HDC hdc);
+	virtual void Draw(HDC hdc, float x, float y, float sizeX, float sizeY);
 
-	void InsertKey();
+	void InsertKey(WPARAM wParam);
+
+	State GetState() {
+		return m_state;
+	}
+
+	BaseCharacter& GetUnit() {
+		return *m_unit;
+	}
+
+	float GetSpeed() {
+		return m_speed;
+	}
+
 };
 
