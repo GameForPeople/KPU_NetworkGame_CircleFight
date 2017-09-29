@@ -144,8 +144,13 @@
   <ItemGroup>
     <ClCompile Include="BaseCharacter.cpp" />
     <ClCompile Include="CArcher.cpp" />
+    <ClCompile Include="Framework.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="NewMain_Backup.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Pawn.cpp" />
+    <ClCompile Include="Scene.cpp" />
     <ClCompile Include="StaticActor.cpp" />
     <ClCompile Include="BaseObject.cpp" />
     <ClCompile Include="Main.cpp">
@@ -166,12 +171,14 @@
   <ItemGroup>
     <ClInclude Include="BaseCharacter.h" />
     <ClInclude Include="CArcher.h" />
+    <ClInclude Include="Framework.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Pawn.h" />
+    <ClInclude Include="Scene.h" />
     <ClInclude Include="StaticActor.h" />
     <ClInclude Include="BaseObject.h" />
     <ClInclude Include="NewMain.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="ReplayFunction.h" />
     <ClInclude Include="stdafx.h" />

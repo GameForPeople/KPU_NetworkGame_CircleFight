@@ -4,13 +4,16 @@
 // 2017-09-27
 //----------------------
 
+#ifdef UNICODE
+#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console") 
+#else
+#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console") 
+#endif
 
 #include "stdafx.h"
 #include "ReplayFunction.h"
 
-#include "StaticActor.h"
-#include "Pawn.h"
-#include "Map.h"
+#include "Framework.h"
 
 #pragma region [SoundManger]
 System*			pSystem;
@@ -28,12 +31,14 @@ HINSTANCE hInst;
 HWND	  Hwnd;
 LPCTSTR lpszClass = "Network Game - project [ 2013192027 : 원성연 ]";
 
-static int GAME_MODE;					//게임의 모드 설정!!  0 -> 1 -> 2 -> 3
+//LRESULT CALLBACK WndProc(HWND hwnd, UINT
+//	iMessage, WPARAM wParam, LPARAM lParam);
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT
-	iMessage, WPARAM wParam, LPARAM lParam);
+Framework myFramework;
 
 bool KeyBuffer[256];
+
+static void gotoMessageProc(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
 #pragma endregion
 
@@ -42,13 +47,41 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE
 	hPrevInstance, LPSTR lpszCmdParam, int nCmdShow)
 {
 	HWND hwnd;
-	MSG Message;
-	WNDCLASSEX WndClass;
+
 	hInst = hInstance;
 
+	DWORD dwStyle =
+		WS_OVERLAPPED 	// 디폴트 윈도우. 타이틀 바와 크기 조절이 안되는 경계선을 가진다. 아무런 스타일도 주지 않으면 이 스타일이 적용된다.
+		| WS_CAPTION 		// 타이틀 바를 가진 윈도우를 만들며 WS_BORDER 스타일을 포함한다.
+		| WS_SYSMENU		// 시스템 메뉴를 가진 윈도우를 만든다.
+		| WS_MINIMIZEBOX	// 최소화 버튼을 만든다.
+		| WS_BORDER			// 단선으로 된 경계선을 만들며 크기 조정은 할 수 없다.
+							//		| WS_THICKFRAME		// 크기 조정이 가능한 두꺼운 경계선을 가진다. WS_BORDER와 같이 사용할 수 없다.
+		;					// 추가로 필요한 윈도우 스타일은 http://www.soen.kr/lecture/win32api/reference/Function/CreateWindow.htm 참고.
+
+	RECT getWinSize;	// 윈도위의 크기를 받아옴!
+	GetWindowRect(GetDesktopWindow(), &getWinSize);
+
+	RECT rc;
+	rc.left = rc.top = 0;
+	rc.right = SCREEN_WIDTH;
+	rc.bottom = SCREEN_HEIGHT;
+
+	AdjustWindowRect(&rc, dwStyle, FALSE);	//윈도우의 보정되는 것을 조절
+
+											//	클라이언트 절대좌표(left, top)
+											//	데스크톱의 중앙에 클라이언트가 위치하도록 설정
+	POINT ptClientWorld;
+	ptClientWorld.x = (getWinSize.right - SCREEN_WIDTH) / 2;
+	ptClientWorld.y = (getWinSize.bottom - SCREEN_HEIGHT) / 2;
+
+	MSG Message;
+	WNDCLASSEX WndClass;
+
+#pragma region [Hello! My Name is Dirty Code!]
 	WndClass.cbSize = sizeof(WndClass);
 	WndClass.style = CS_HREDRAW | CS_VREDRAW;
-	WndClass.lpfnWndProc = (WNDPROC)WndProc;
+	WndClass.lpfnWndProc = (WNDPROC)gotoMessageProc;
 	WndClass.cbClsExtra = 0;
 	WndClass.cbWndExtra = 0;
 	WndClass.hInstance = hInstance;
@@ -60,114 +93,66 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE
 	WndClass.lpszClassName = lpszClass;
 	WndClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 	RegisterClassEx(&WndClass);
-	hwnd = CreateWindow(lpszClass, lpszClass,
-		WS_OVERLAPPEDWINDOW || WS_BORDER,
-		100, 30,
-		SCREEN_WIDTH, SCREEN_HEIGHT,
-		NULL, (HMENU)NULL,
-		hInstance, NULL);
+	
+	hwnd = CreateWindow(
+		lpszClass
+		, lpszClass
+		, dwStyle
+		, ptClientWorld.x		
+		, ptClientWorld.y		
+		, SCREEN_WIDTH
+		, SCREEN_HEIGHT
+		, NULL
+		, (HMENU)NULL
+		, hInstance
+		, NULL
+	);
+
+#pragma endregion
+	memset(&Message, 0, sizeof(Message));
+
+	myFramework.Create(hwnd, rc);
 	ShowWindow(hwnd, nCmdShow);
 	UpdateWindow(hwnd);
-	while (GetMessage(&Message, 0, 0, 0))
-	{
-		TranslateMessage(&Message);
-		DispatchMessage(&Message);
+
+	while (true)
+	{	
+		if (PeekMessage(&Message, nullptr, 0, 0, PM_REMOVE)) 
+		{
+			if (Message.message == WM_QUIT)	break;
+
+			TranslateMessage(&Message);
+			DispatchMessage(&Message);
+		}
+		else myFramework.Timer();	
 	}
+
 	return Message.wParam;
 }
 #pragma endregion
 
-LRESULT CALLBACK WndProc(HWND hwnd, UINT
-	iMessage, WPARAM wParam, LPARAM lParam)
-{
-	srand((unsigned)time(NULL));
-
-	HDC hdc, Memdc;
-	PAINTSTRUCT ps;
-	//HBITMAP hBitmap, OldBitmap;
-	//HFONT hFont, saveFont;
-	//HBRUSH Brush, oldBrush;
-	//HPEN MyPen, OldPen, RedPen;
-
-	static RECT rect;
-
-	static Map map(0, 0, "Resource/Image/Background/Background.png");
-	static StaticActor grid(0, 0, "Resource/Image/grid.png");
-	static bool isDrawGrid = true;
-
-	static Pawn myPawn(CharacterName::Archer);
-
-	switch (iMessage) {
-	case WM_CREATE:
-	{
-		GetClientRect(hwnd, &rect);
-		SetTimer(hwnd, 1, 1, NULL);
-
-		break;
-	}
-	case WM_PAINT:
-	{
-		HDC mainHDC = BeginPaint(hwnd, &ps);
-#pragma region [Doubble buffer]
-		HBITMAP GLay = CreateCompatibleBitmap(mainHDC, SCREEN_WIDTH, SCREEN_HEIGHT);
-		HDC hdc = CreateCompatibleDC(mainHDC);
-		SelectObject(hdc, GLay);
-		Rectangle(hdc, -10, -10, SCREEN_WIDTH + 20, SCREEN_HEIGHT + 20);
-#pragma endregion
-		SetStretchBltMode(mainHDC, COLORONCOLOR);
-		SetStretchBltMode(hdc, COLORONCOLOR);
-
-		map.Draw(hdc);
-		grid.Draw(hdc, TRUE, isDrawGrid);
-
-		myPawn.Draw(hdc);
-
-		SetStretchBltMode(mainHDC, COLORONCOLOR);
-		SetStretchBltMode(hdc, COLORONCOLOR);
-#pragma region [Doubble buffer]
-		BitBlt(mainHDC, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, hdc, 0, 0, SRCCOPY);
-
-		//DeleteDC(Memdc);
-		DeleteDC(hdc);
-		DeleteObject(GLay);
-		EndPaint(hwnd, &ps);
-#pragma endregion
-		break;
-	}
-	case WM_TIMER:
-	{
-		myPawn.Update(myPawn.GetState());
-		map.Update(myPawn.GetSpeed());
-		InvalidateRgn(hwnd, NULL, false);
-		break;
-	}
-	case WM_KEYDOWN:
-	{
-		myPawn.InsertKey(wParam);
-
-		if (wParam == 'g' || wParam == 'G') {
-			if (isDrawGrid) isDrawGrid = false;
-			else isDrawGrid = true;
-		}
-		break;
-	}
-	case WM_KEYUP:
-	{
-		break;
-	}
-	case WM_LBUTTONDOWN:
-	{
-		break;
-	}
-	case WM_RBUTTONDOWN:
-	{
-		break;
-	}
-	case WM_DESTROY:
-	{
-		PostQuitMessage(0);
-		return 0;
-	}
-	}
-	return(DefWindowProc(hwnd, iMessage, wParam, lParam));
+static void gotoMessageProc(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) {
+	myFramework.MessageProc(hWnd, nMessageID, wParam, lParam);
 }
+
+//LRESULT CALLBACK WndProc(HWND hwnd, UINT
+//	iMessage, WPARAM wParam, LPARAM lParam)
+//{
+//
+//	HDC hdc, Memdc;
+//	PAINTSTRUCT ps;
+//	//HBITMAP hBitmap, OldBitmap;
+//	//HFONT hFont, saveFont;
+//	//HBRUSH Brush, oldBrush;
+//	//HPEN MyPen, OldPen, RedPen;
+//
+//	static RECT rect;
+//
+//	static Map map(0, 0, "Resource/Image/Background/Background.png");
+//	static StaticActor grid(0, 0, "Resource/Image/grid.png");
+//	static bool isDrawGrid = true;
+//
+//	static Pawn myPawn(CharacterName::Archer);
+//
+//	return(DefWindowProc(hwnd, iMessage, wParam, lParam));
+//}

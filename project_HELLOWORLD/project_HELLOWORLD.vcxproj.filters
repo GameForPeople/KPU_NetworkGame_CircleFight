@@ -16,69 +16,105 @@
     <Filter Include="미리 컴파일된 파일">
       <UniqueIdentifier>{4d9af1af-893e-4c54-abcf-ca29d785589f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\CharacterClass">
+      <UniqueIdentifier>{16110952-c7d6-45bd-aa4a-95cf1747e4b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Framework">
+      <UniqueIdentifier>{c00a27b5-0bb6-405f-8b51-c391ff304de3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Scene">
+      <UniqueIdentifier>{ee90b031-87ae-4f83-966a-cc054b18621d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\ObjectClass">
+      <UniqueIdentifier>{2e605943-fdce-4156-a785-395fad110d16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\SaveCode">
+      <UniqueIdentifier>{0eaafc2f-85fa-4d86-a7f9-69c6444ccebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Map">
+      <UniqueIdentifier>{a34b53fe-0eaf-477c-a969-c098870753ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Function">
+      <UniqueIdentifier>{b50f3b50-ad13-4f72-b870-af2896436148}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ReplayFunction.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="NoEdit.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Main.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="NewMain.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="BaseObject.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="StaticActor.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Pawn.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>미리 컴파일된 파일</Filter>
     </ClCompile>
-    <ClCompile Include="BaseCharacter.cpp">
-      <Filter>소스 파일</Filter>
+    <ClCompile Include="BaseObject.cpp">
+      <Filter>소스 파일\ObjectClass</Filter>
     </ClCompile>
     <ClCompile Include="CArcher.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\CharacterClass</Filter>
+    </ClCompile>
+    <ClCompile Include="Pawn.cpp">
+      <Filter>소스 파일\CharacterClass</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework.cpp">
+      <Filter>소스 파일\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>소스 파일\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseCharacter.cpp">
+      <Filter>소스 파일\CharacterClass</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticActor.cpp">
+      <Filter>소스 파일\ObjectClass</Filter>
+    </ClCompile>
+    <ClCompile Include="NoEdit.cpp">
+      <Filter>소스 파일\SaveCode</Filter>
+    </ClCompile>
+    <ClCompile Include="NewMain_Backup.cpp">
+      <Filter>소스 파일\SaveCode</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>소스 파일\SaveCode</Filter>
     </ClCompile>
     <ClCompile Include="Map.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="ReplayFunction.cpp">
+      <Filter>소스 파일\Function</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ReplayFunction.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="NewMain.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="BaseObject.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="StaticActor.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Pawn.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>미리 컴파일된 파일</Filter>
     </ClInclude>
-    <ClInclude Include="BaseCharacter.h">
-      <Filter>헤더 파일</Filter>
+    <ClInclude Include="BaseObject.h">
+      <Filter>소스 파일\ObjectClass</Filter>
     </ClInclude>
     <ClInclude Include="CArcher.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>소스 파일\CharacterClass</Filter>
+    </ClInclude>
+    <ClInclude Include="Pawn.h">
+      <Filter>소스 파일\CharacterClass</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework.h">
+      <Filter>소스 파일\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>소스 파일\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseCharacter.h">
+      <Filter>소스 파일\CharacterClass</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticActor.h">
+      <Filter>소스 파일\ObjectClass</Filter>
     </ClInclude>
     <ClInclude Include="Map.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>소스 파일\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="ReplayFunction.h">
+      <Filter>소스 파일\Function</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
