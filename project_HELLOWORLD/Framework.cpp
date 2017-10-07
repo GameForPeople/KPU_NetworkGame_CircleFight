@@ -1,5 +1,5 @@
 #include "Framework.h"
-
+#include <string>
 
 template <typename T>
 T GetUserDataPtr(HWND hWnd)
@@ -40,6 +40,10 @@ bool Framework::Create(HWND hwnd, RECT rect) {
 	m_LastUpdate_time = chrono::system_clock::now();
 	m_current_time = chrono::system_clock::now();
 	m_fps = 0;
+
+
+	m_Scene[0] = new InGameScene(m_hwnd);
+	m_nowScene = 0;
 
 	return (m_hwnd != NULL);
 }
@@ -122,7 +126,7 @@ LRESULT Framework::MessageProc(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM l
 }
 
 void Framework::Draw(HDC hdc) {
-	m_Scene[m_nowScene]->Draw();
+	m_Scene[m_nowScene]->Draw(hdc);
 }
 
 void Framework::Timer() {
@@ -139,7 +143,6 @@ void Framework::Timer() {
 		Update(m_timeElapsed.count());
 		//PreproccessingForDraw();
 
-		std::cout << m_fps << std::endl;
 
 		InvalidateRect(m_hwnd, NULL, FALSE);
 
@@ -149,24 +152,25 @@ void Framework::Timer() {
 				m_LastUpdate_time = chrono::system_clock::now();
 			else return;
 
-			_itow_s(m_fps + 0.1f, m_CaptionTitle + m_TitleLength, TITLE_MX_LENGTH - m_TitleLength, 10);
+			_itow_s((int)(m_fps + 0.1f), m_CaptionTitle + m_TitleLength, (size_t)(TITLE_MX_LENGTH - m_TitleLength), 10);
 			wcscat_s(m_CaptionTitle + m_TitleLength, TITLE_MX_LENGTH - m_TitleLength, TEXT(" FPS)"));
-			SetWindowText(m_hWnd, m_CaptionTitle);
+			SetWindowText(m_hwnd, m_CaptionTitle);
 #endif
 }
 
 void Framework::Update(double val) {
-	m_Scene[m_nowScene]->Timer();
+	m_Scene[m_nowScene]->Timer(val);
 }
+
 bool Framework::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
 	
-	//if (m_Scene[m_nowScene]->KeyProcess()) return false;
+	if (m_Scene[m_nowScene]->KeyProcess(hwnd, iMessage, wParam, lParam)) return false;
 	switch (iMessage)
 	{
 	case WM_KEYDOWN:
 	{
 		switch (wParam) {
-		case VK_SPACE:
+		case 'g':
 			if (m_isGrid)
 				m_isGrid = false;
 			else m_isGrid = true;
@@ -190,7 +194,7 @@ bool Framework::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 }
 
 bool Framework::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
-	m_Scene[m_nowScene]->MouseProcess();
+	m_Scene[m_nowScene]->MouseProcess(hwnd, iMessage, wParam, lParam);
 
 	return true;
 }

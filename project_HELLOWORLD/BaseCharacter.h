@@ -21,14 +21,16 @@ public:
 	~BaseCharacter();
 
 	virtual void Update(State state);
-	virtual void Draw(HDC hdc, float x, float y, float sizeX, float sizeY);
+	virtual void Draw(HDC hdc, float x, float y, float sizeX, float sizeY, State state);
 
-	float GetBaseSpeed() {
+	virtual float GetBaseSpeed() {
 		return m_baseSpeed;
 	}
 
 	void SetImageCount(int input) {
 		m_imageCount = input;
 	}
+
+	virtual void LoadCharacterImage() = 0;
 };
 

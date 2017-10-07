@@ -38,7 +38,7 @@ Framework myFramework;
 
 bool KeyBuffer[256];
 
-static void gotoMessageProc(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
+void gotoMessageProc(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam);
 
 #pragma endregion
 
@@ -119,6 +119,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE
 	{	
 		if (PeekMessage(&Message, nullptr, 0, 0, PM_REMOVE)) 
 		{
+			//std::cout << "Hello!" << std::endl;
+
 			if (Message.message == WM_QUIT)	break;
 
 			TranslateMessage(&Message);
@@ -131,7 +133,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE
 }
 #pragma endregion
 
-static void gotoMessageProc(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) {
+void gotoMessageProc(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) {
 	myFramework.MessageProc(hWnd, nMessageID, wParam, lParam);
 }
 

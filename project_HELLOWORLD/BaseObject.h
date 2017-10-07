@@ -21,7 +21,11 @@ public:
 
 	void SetPos(float x, float y);
 
-	virtual void Update();
+	virtual void Update(float speed);
 	virtual void Draw(HDC);
+
+	Pos2d GetPos() {
+		return m_pos;
+	}
 };
 

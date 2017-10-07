@@ -14,8 +14,12 @@ public:
 
 	virtual void ChangeImage(State state);
 	virtual void Update(State state);
-	virtual void Draw(HDC hdc, float x, float y, float sizeX, float sizeY);
+	virtual void Draw(HDC hdc, float x, float y, float sizeX, float sizeY, State state);
 
+	virtual void LoadCharacterImage();
 
+	virtual float GetBaseSpeed() {
+		return m_baseSpeed;
+	}
 };
 

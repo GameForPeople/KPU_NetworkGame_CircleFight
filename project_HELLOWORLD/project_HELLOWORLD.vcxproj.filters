@@ -81,6 +81,9 @@
     <ClCompile Include="ReplayFunction.cpp">
       <Filter>소스 파일\Function</Filter>
     </ClCompile>
+    <ClCompile Include="InGameScene.cpp">
+      <Filter>소스 파일\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NewMain.h">
@@ -116,10 +119,18 @@
     <ClInclude Include="ReplayFunction.h">
       <Filter>소스 파일\Function</Filter>
     </ClInclude>
+    <ClInclude Include="InGameScene.h">
+      <Filter>소스 파일\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="PlayerData.replay">
       <Filter>리소스 파일</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resource\Data\platData.txt">
+      <Filter>리소스 파일</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -145,6 +145,7 @@
     <ClCompile Include="BaseCharacter.cpp" />
     <ClCompile Include="CArcher.cpp" />
     <ClCompile Include="Framework.cpp" />
+    <ClCompile Include="InGameScene.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="NewMain_Backup.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -172,6 +173,7 @@
     <ClInclude Include="BaseCharacter.h" />
     <ClInclude Include="CArcher.h" />
     <ClInclude Include="Framework.h" />
+    <ClInclude Include="InGameScene.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="Scene.h" />
@@ -185,6 +187,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="PlayerData.replay" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Resource\Data\platData.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

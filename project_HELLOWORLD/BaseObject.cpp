@@ -29,8 +29,8 @@ void BaseObject::SetPos(float x, float y) {
 }
 
 
-void BaseObject::Update() {
-
+void BaseObject::Update(float speed) {
+	m_pos.x -= speed;
 }
 
 void BaseObject::Draw(HDC hdc) {

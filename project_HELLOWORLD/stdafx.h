@@ -47,6 +47,7 @@ enum class State {
 	, TripleJump
 	, Fall
 	, Collide
+	, Death
 };
 
 
