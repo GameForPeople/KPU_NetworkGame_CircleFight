@@ -133,10 +133,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE
 }
 #pragma endregion
 
+#pragma region [Bind Framework Proc]
 void gotoMessageProc(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) {
 	myFramework.MessageProc(hWnd, nMessageID, wParam, lParam);
 }
+#pragma endregion
 
+#pragma region [Old Code]
 //LRESULT CALLBACK WndProc(HWND hwnd, UINT
 //	iMessage, WPARAM wParam, LPARAM lParam)
 //{
@@ -158,3 +161,4 @@ void gotoMessageProc(HWND hWnd, UINT nMessageID, WPARAM wParam, LPARAM lParam) {
 //
 //	return(DefWindowProc(hwnd, iMessage, wParam, lParam));
 //}
+#pragma endregion

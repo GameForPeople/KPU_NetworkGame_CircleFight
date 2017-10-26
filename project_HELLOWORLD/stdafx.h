@@ -37,19 +37,23 @@ using namespace FMOD;
 #define SCREEN_HEIGHT 720
 
 enum class State {
-	Run
-	, Stun
-	, Sleep
-	, Slow
-	, Boost
-	, Jump
-	, DoupleJump
-	, TripleJump
-	, Fall
-	, Collide
-	, Death
+		Run
+	,	Stun
+	,	Sleep
+	,	Slow
+	,	Boost
+	,	JumpStart
+	,	JumpLoop
+	,	JumpEnd
+	,	DoubleJumpStart
+	,	DoubleJumpLoop
+	,	DoubleJumpEnd
+	,	TripleJump
+	,	Fall
+	,	Collide
+	,	Death
+	,	Revival
 };
-
 
 enum class CharacterName {
 	Archer

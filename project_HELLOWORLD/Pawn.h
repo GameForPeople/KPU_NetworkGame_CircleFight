@@ -76,5 +76,9 @@ public:
 	void ProcessCombo();
 	void ProcessGravity();
 	void ProcessJump();
+
+	void ResetFallSpeed();
+	void ResetJumpSpeed();
+	void ResetBaseSpeed();
 };
 

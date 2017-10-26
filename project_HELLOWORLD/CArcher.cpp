@@ -6,7 +6,7 @@ CArcher::CArcher()
 
 	m_imageCount = 0;
 	m_imageTimer = 0;
-	m_baseSpeed = 2.0f;
+	m_baseSpeed = 6.0f;
 	
 }
 
@@ -29,15 +29,21 @@ void CArcher::ChangeImage(State state) {
 				m_imageCount = 0;
 		}
 	}
-	else if (state == State::Jump) {
+	else if (state == State::JumpLoop || state == State::JumpEnd 
+			|| state == State::DoubleJumpLoop || state == State::DoubleJumpEnd) {
 		if (m_imageTimer % 2 == 0) {
 			m_imageTimer = 0;
 
 			m_imageCount++;
 
-			if (m_imageCount >= ARCHER_MAX_IMAGE_NUM)
-				m_imageCount = ARCHER_RUN_IMAGE_NUM;
+			if (m_imageCount >= 49)
+				m_imageCount = 49;
+			else if (m_imageCount >= ARCHER_MAX_IMAGE_NUM)
+				m_imageCount = ARCHER_MAX_IMAGE_NUM - 1;
 		}
+	}
+	else if (state == State::Fall) {
+		m_imageCount = 0;
 	}
 	else {
 		if (m_imageCount >= ARCHER_RUN_IMAGE_NUM)
