@@ -1,16 +1,16 @@
 #pragma once
 #include "BaseCharacter.h"
 
-#define ARCHER_MAX_IMAGE_NUM 51
-#define ARCHER_RUN_IMAGE_NUM 21
-#define ARCHER_JUMP_IMAGE_NUM 30
+#define ZOMBIE_MAX_IMAGE_NUM 59
+#define ZOMBIE_RUN_IMAGE_NUM 32
+#define ZOMBIE_JUMP_IMAGE_NUM 27
 
-class CArcher :
+class CZombie :
 	public BaseCharacter
 {
 public:
-	CArcher();
-	~CArcher();
+	CZombie();
+	~CZombie();
 
 	virtual void ChangeImage(State state);
 	virtual void Update(State state);
@@ -23,7 +23,8 @@ public:
 	}
 
 	virtual int GetJumpImageCount() {
-		return ARCHER_RUN_IMAGE_NUM;
+		return ZOMBIE_RUN_IMAGE_NUM;
 	}
+
 };
 

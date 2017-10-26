@@ -3,7 +3,7 @@
 
 InGameScene::InGameScene(HWND hwnd) : Scene(hwnd)
 {
-	m_characterArr = new Pawn(CharacterName::Archer);
+	m_characterArr = new Pawn(CharacterName::Zombie);
 	m_characterArr->SetState(State::Fall);
 
 	m_map = new Map(0, 0, "Resource/Image/Background/Background.png");

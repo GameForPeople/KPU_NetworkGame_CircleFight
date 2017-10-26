@@ -27,6 +27,10 @@ public:
 		return m_baseSpeed;
 	}
 
+	virtual int GetJumpImageCount() {
+		return 0;
+	}
+
 	void SetImageCount(int input) {
 		m_imageCount = input;
 	}

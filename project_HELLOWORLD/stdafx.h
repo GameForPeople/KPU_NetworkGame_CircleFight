@@ -56,5 +56,6 @@ enum class State {
 };
 
 enum class CharacterName {
-	Archer
+		Archer
+	,	Zombie
 };

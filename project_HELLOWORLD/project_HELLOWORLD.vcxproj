@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClCompile Include="BaseCharacter.cpp" />
     <ClCompile Include="CArcher.cpp" />
+    <ClCompile Include="CZombie.cpp" />
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="InGameScene.cpp" />
     <ClCompile Include="Map.cpp" />
@@ -172,6 +173,7 @@
   <ItemGroup>
     <ClInclude Include="BaseCharacter.h" />
     <ClInclude Include="CArcher.h" />
+    <ClInclude Include="CZombie.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="InGameScene.h" />
     <ClInclude Include="Map.h" />

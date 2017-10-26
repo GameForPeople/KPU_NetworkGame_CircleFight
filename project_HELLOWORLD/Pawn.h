@@ -3,6 +3,8 @@
 #include "stdafx.h"
 #include "BaseCharacter.h"
 #include "CArcher.h"
+#include "CZombie.h"
+
 
 struct BoundingBox {
 	

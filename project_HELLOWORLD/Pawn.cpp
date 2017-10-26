@@ -8,6 +8,8 @@ Pawn::Pawn(CharacterName inputCharacterName)
 {
 	if (inputCharacterName == CharacterName::Archer)
 		m_unit = new CArcher;
+	else if (inputCharacterName == CharacterName::Zombie)
+		m_unit = new CZombie;
 
 	ResetBaseSpeed();
 	ResetFallSpeed();
@@ -62,7 +64,7 @@ bool Pawn::InsertKey(WPARAM Key) {
 		if (m_state == State::Run) {
 			m_state = State::JumpStart;
 			ResetJumpSpeed();
-			m_unit->SetImageCount(21);
+			m_unit->SetImageCount(m_unit->GetJumpImageCount());
 			m_state = State::JumpLoop;
 			return true;
 		}	
@@ -70,7 +72,7 @@ bool Pawn::InsertKey(WPARAM Key) {
 			ResetJumpSpeed();
 			m_state = State::DoubleJumpStart;
 			ResetFallSpeed();
-			m_unit->SetImageCount(21);
+			m_unit->SetImageCount(m_unit->GetJumpImageCount());
 			m_state = State::DoubleJumpLoop;
 			return true;
 		}		
@@ -83,7 +85,6 @@ void Pawn::ProcessGravity() {
 		m_pos.y += m_fallSpeed;
 		m_fallSpeed *= 1.05;
 	}
-
 }
 
 void Pawn::ProcessJump() {
