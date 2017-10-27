@@ -35,6 +35,9 @@ void InGameScene::Draw(HDC hdc) {
 
 	m_characterArr->Draw(hdc, m_characterArr->GetState());
 	m_inGameUI->DrawComboUI(hdc, m_characterArr->GetCombo());
+	m_inGameUI->DrawBarUI(hdc, m_characterArr->GetTotalDistance()/100);
+	m_inGameUI->DrawInventoryUI(hdc, 0, 0);
+	m_inGameUI->DrawHeadUpUI(hdc, m_characterArr->GetPos().y);
 }
 
 void InGameScene::Timer(double count){
