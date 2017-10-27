@@ -42,7 +42,7 @@ void InGameScene::Timer(double count){
 		m_platArr[i].Update(m_characterArr->GetSpeed());
 
 	ComputePawn();
-	ShowPawnState();	//Debug
+	//ShowPawnState();	//Debug
 }
 
 bool InGameScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
@@ -122,8 +122,8 @@ void InGameScene::ComputePawn() {
 	//std::cout << m_characterArr->GetTotalDistance() / 100 + 2 << std::endl;
 #pragma region [캐릭터의 Y값을 계산합니다.]
 
-	int leftPlat = (int)(m_characterArr->GetTotalDistance() / 100 + 2);
-	int rightPlat = (int)(m_characterArr->GetTotalDistance() / 100 + 3);
+	int leftPlat = (int)(m_characterArr->GetTotalDistance() / PLAT_WIDTH + 2);
+	int rightPlat = (int)(m_characterArr->GetTotalDistance() / PLAT_WIDTH + 3);
 
 	float pawnPosY = m_characterArr->GetPos().y + 185;
 
@@ -131,7 +131,6 @@ void InGameScene::ComputePawn() {
 		|| m_characterArr->GetState() == State::JumpEnd
 		|| m_characterArr->GetState() == State::DoubleJumpEnd
 		) {
-
 		//if (m_platArr[leftPlat].GetPos().y - 5<= pawnPosY
 		//	&& m_platArr[leftPlat].GetPos().y + 5 > pawnPosY) {
 		//
@@ -140,8 +139,8 @@ void InGameScene::ComputePawn() {
 		//	m_characterArr->GetUnit().SetImageCount(0);
 		//}
 		//else 
-
-			if (m_platArr[rightPlat].GetPos().y - 10 <= pawnPosY
+			
+		if (m_platArr[rightPlat].GetPos().y - 10 <= pawnPosY
 			&& m_platArr[rightPlat].GetPos().y + 30 > pawnPosY) {
 
 			m_characterArr->SetPos(200, m_platArr[rightPlat].GetPos().y - 185);
@@ -149,14 +148,15 @@ void InGameScene::ComputePawn() {
 			m_characterArr->GetUnit().SetImageCount(0);
 			m_characterArr->ResetFallSpeed();
 		}
-		else {
-			//Dead 처리
+		else if (pawnPosY > SCREEN_HEIGHT + 50 ){
+			m_characterArr->ResetCombo();
+			m_characterArr->SetPos(200, 0);
+			m_characterArr->SetState(State::JumpEnd);
 		}
 	}
 	else if (m_characterArr->GetState() == State::Run) {
 		
 		bool isValue = false;
-
 		//if (m_platArr[leftPlat].GetPos().y - 5 <= pawnPosY
 		//	&& m_platArr[leftPlat].GetPos().y + 5 > pawnPosY) {
 		//}

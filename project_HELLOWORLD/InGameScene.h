@@ -26,7 +26,11 @@ public:
 	virtual void LoadPlat();
 	virtual void ComputePawn();
 
-	void ShowPawnState();	//for debug
+	//for network
+	//virtual void NetworkFunction();
+
+	//for debug
+	void ShowPawnState();	
 private:
 	Pawn*						m_characterArr;
 	Map*						m_map;

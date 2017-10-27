@@ -36,6 +36,9 @@ using namespace FMOD;
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
 
+#define ARCHER_BASE_SPEED 6.0f
+#define ZOMBIE_BASE_SPEED 5.95f
+
 enum class State {
 		Run
 	,	Stun
@@ -59,3 +62,5 @@ enum class CharacterName {
 		Archer
 	,	Zombie
 };
+
+

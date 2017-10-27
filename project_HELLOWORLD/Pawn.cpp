@@ -11,14 +11,14 @@ Pawn::Pawn(CharacterName inputCharacterName)
 	else if (inputCharacterName == CharacterName::Zombie)
 		m_unit = new CZombie;
 
+	m_baseSpeed = m_unit->GetBaseSpeed();
+	m_state = State::Fall;
+	
 	ResetBaseSpeed();
 	ResetFallSpeed();
 	ResetJumpSpeed();
-
-	m_speed = m_unit->GetBaseSpeed();
-	m_state = State::Fall;
 	
-	m_pos.x = 200;
+	m_pos.x = INIT_PAWN_POS_X;
 }
 
 Pawn::Pawn(float x, float y) : BaseObject(x, y)
@@ -29,7 +29,6 @@ Pawn::Pawn(float x, float y) : BaseObject(x, y)
 Pawn::~Pawn()
 {
 }
-
 
 void Pawn::Update(State state) {
 
@@ -54,8 +53,20 @@ void Pawn::ComputeTotalDistance() {
 
 void Pawn::ProcessCombo() {
 	//if (m_state != State::Stun && m_state != State::Collide && m_state != State::Death) {
-	if ((int)m_totalDistance % 100 == 1) {	//이러면 안됨... 1뛰어넘을떄가 많음.
-		m_combo++;
+	//if ((int)m_totalDistance % 100 == 1) {	//이러면 안됨... 1뛰어넘을떄가 많음.
+	//m_combo = curFlatNum - m_comboStandard;	//굳이??
+	m_combo = (m_totalDistance - m_comboStandard) / 100;
+
+	std::cout << m_combo << "   " << m_speed << "   " << m_baseSpeed << std::endl;
+
+	if (m_combo % 50 == 1)
+		m_comboEffect = true;
+
+	if (m_comboEffect) {
+		if (m_combo != 0 && m_combo % 50 == 0) {
+			m_speed = m_speed + m_baseSpeed / 5;
+			m_comboEffect = false;
+		}
 	}
 }
 
@@ -83,17 +94,18 @@ bool Pawn::InsertKey(WPARAM Key) {
 void Pawn::ProcessGravity() {
 	if (m_state == State::Fall || m_state == State::JumpEnd || m_state == State::DoubleJumpEnd) {
 		m_pos.y += m_fallSpeed;
-		m_fallSpeed *= 1.05;
+		//m_fallSpeed *= 1.05;
+		m_fallSpeed *= 1.1;
 	}
 }
 
 void Pawn::ProcessJump() {
 	if (m_state == State::JumpLoop || m_state == State::DoubleJumpLoop) {
 		m_pos.y -= m_jumpSpeed;
-		m_jumpSpeed -= 0.11f;
-		std::cout << m_jumpSpeed << "   ";
+		//m_jumpSpeed -= 0.11f;
+		m_jumpSpeed *= 0.9f;
 
-		if (m_jumpSpeed <= 0 ) {
+		if (m_jumpSpeed <= 1 ) {
 			if (m_state == State::JumpLoop) {
 				m_state = State::JumpEnd;
 			}
@@ -112,9 +124,38 @@ void Pawn::ResetFallSpeed() {
 }
 
 void Pawn::ResetJumpSpeed() {
-	m_jumpSpeed = 6.0;
+	//m_jumpSpeed = 6.0;
+	m_jumpSpeed = 11.0;
+
 }
 
 void Pawn::ResetBaseSpeed() {
-	m_speed = m_unit->GetBaseSpeed();
+	m_speed = m_baseSpeed;
+}
+
+void Pawn::ResetCombo() {
+	m_combo = 0;
+	m_comboStandard = m_totalDistance;
+
+	ResetBaseSpeed();
+	ResetJumpSpeed();
+	ResetFallSpeed();
+}
+
+void Pawn::NetworkDrawCharacter(HDC hdc, float playerDisX, float thisDisX, float thisY, int cImageIndex, int combo, State state) {
+
+	if (thisDisX - playerDisX > 1100)
+		return;
+	else if (playerDisX - thisDisX > 300)
+		return;
+
+	float newPosX = playerDisX - thisDisX;
+
+	if (newPosX < 0) {
+		m_pos.x = INIT_PAWN_POS_X - newPosX;
+		m_pos.y = thisY;
+		m_unit->SetImageCount(cImageIndex);
+
+		Draw(hdc, state);
+	}
 }

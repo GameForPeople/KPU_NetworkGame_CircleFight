@@ -5,6 +5,7 @@
 #include "CArcher.h"
 #include "CZombie.h"
 
+#define			INIT_PAWN_POS_X			200
 
 struct BoundingBox {
 	
@@ -15,13 +16,16 @@ class Pawn :
 {
 private:
 	int m_combo = 0;
+	int m_comboStandard = 0;
+	bool m_comboEffect = true;
+
 	float m_speed = 0;
 	float m_baseSpeed = 0;
 	float m_totalDistance = 0;
-
+	
 	BaseCharacter* m_unit;
 	State m_state;
-	BoundingBox m_bb;
+	//BoundingBox m_bb;
 
 	float m_fallSpeed = 0;
 	float m_jumpSpeed = 0;
@@ -82,5 +86,9 @@ public:
 	void ResetFallSpeed();
 	void ResetJumpSpeed();
 	void ResetBaseSpeed();
+	void ResetCombo();
+
+	//for network
+	void NetworkDrawCharacter(HDC hdc, float playerDisX, float thisDisX, float thisY, int cImageIndex, int combo, State state);
 };
 

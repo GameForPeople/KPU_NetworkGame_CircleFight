@@ -6,7 +6,7 @@ CArcher::CArcher()
 
 	m_imageCount = 0;
 	m_imageTimer = 0;
-	m_baseSpeed = 6.0f;
+	m_baseSpeed = ARCHER_BASE_SPEED;
 	
 }
 
