@@ -14,6 +14,8 @@ InGameScene::InGameScene(HWND hwnd) : Scene(hwnd)
 	m_numPlat = PLAT_MAX_NUMBER;
 	m_platArr = new BaseObject[m_numPlat];
 	LoadPlat();
+
+	m_inGameUI = new InGameSceneUI;
 }
 
 InGameScene::InGameScene() 
@@ -32,6 +34,7 @@ void InGameScene::Draw(HDC hdc) {
 	}
 
 	m_characterArr->Draw(hdc, m_characterArr->GetState());
+	m_inGameUI->DrawComboUI(hdc, m_characterArr->GetCombo());
 }
 
 void InGameScene::Timer(double count){

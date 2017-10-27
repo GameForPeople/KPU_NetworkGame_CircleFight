@@ -5,6 +5,7 @@
 #include "Pawn.h"
 #include "Map.h"
 #include "StaticActor.h"
+#include "BaseUI.h"
 
 class Scene
 {

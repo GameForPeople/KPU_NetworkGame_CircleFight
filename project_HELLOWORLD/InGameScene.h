@@ -1,5 +1,7 @@
 #pragma once
+
 #include "Scene.h"
+#include "InGameSceneUI.h"
 
 #include <vector>
 
@@ -34,13 +36,14 @@ public:
 private:
 	Pawn*						m_characterArr;
 	Map*						m_map;
-
+						
 	//std::vector<BaseObject>*	m_platArr;
 	BaseObject*					m_platArr;
 
 	CImage*						m_platImg;
 
+	InGameSceneUI*				m_inGameUI;
+		
 	int							m_numPlat;
-
 };
 

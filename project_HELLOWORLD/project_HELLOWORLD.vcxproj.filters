@@ -37,6 +37,9 @@
     <Filter Include="소스 파일\Function">
       <UniqueIdentifier>{b50f3b50-ad13-4f72-b870-af2896436148}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\UI">
+      <UniqueIdentifier>{08d31b9e-f18a-40b7-a903-11eab6346247}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NewMain.cpp">
@@ -87,6 +90,12 @@
     <ClCompile Include="CZombie.cpp">
       <Filter>소스 파일\CharacterClass</Filter>
     </ClCompile>
+    <ClCompile Include="InGameSceneUI.cpp">
+      <Filter>소스 파일\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseUI.cpp">
+      <Filter>소스 파일\ObjectClass</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NewMain.h">
@@ -127,6 +136,12 @@
     </ClInclude>
     <ClInclude Include="CZombie.h">
       <Filter>소스 파일\CharacterClass</Filter>
+    </ClInclude>
+    <ClInclude Include="InGameSceneUI.h">
+      <Filter>소스 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseUI.h">
+      <Filter>소스 파일\ObjectClass</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

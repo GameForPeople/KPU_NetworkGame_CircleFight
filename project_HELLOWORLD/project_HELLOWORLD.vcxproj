@@ -143,10 +143,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="BaseCharacter.cpp" />
+    <ClCompile Include="BaseUI.cpp" />
     <ClCompile Include="CArcher.cpp" />
     <ClCompile Include="CZombie.cpp" />
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="InGameScene.cpp" />
+    <ClCompile Include="InGameSceneUI.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="NewMain_Backup.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
@@ -172,10 +174,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseCharacter.h" />
+    <ClInclude Include="BaseUI.h" />
     <ClInclude Include="CArcher.h" />
     <ClInclude Include="CZombie.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="InGameScene.h" />
+    <ClInclude Include="InGameSceneUI.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="Scene.h" />
