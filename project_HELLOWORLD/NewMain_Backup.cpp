@@ -106,6 +106,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE
 					m_fps = 1.0 / m_timeElapsed.count();
 
 				InvalidateRect(hwnd, NULL, FALSE);
+
 #if defined(SHOW_CAPTIONFPS)
 
 				m_UpdateElapsed = chrono::system_clock::now() - m_LastUpdate_time;
@@ -115,7 +116,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE
 
 				_itow_s(m_fps + 0.1f, m_CaptionTitle + m_TitleLength, TITLE_MX_LENGTH - m_TitleLength, 10);
 				wcscat_s(m_CaptionTitle + m_TitleLength, TITLE_MX_LENGTH - m_TitleLength, TEXT(" FPS)"));
-				SetWindowText(m_hWnd, m_CaptionTitle);
+				SetWindowText(hwnd, m_CaptionTitle);
 #endif
 			}
 			// 최대 FPS 미만의 시간이 경과하면 진행 생략

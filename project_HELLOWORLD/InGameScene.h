@@ -13,31 +13,11 @@
 class InGameScene :
 	public Scene
 {
-public:
-	InGameScene();
-	InGameScene(HWND);
-
-	virtual ~InGameScene();
-
-	virtual void Draw(HDC hdc);
-	virtual void Timer(double count) ;
-	virtual bool KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
-	virtual bool MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) ;
-	virtual void Destory();
-
-	virtual void LoadPlat();
-	virtual void ComputePawn();
-
-	//for network
-	//virtual void NetworkFunction();
-
-	//for debug
-	void ShowPawnState();	
 private:
 	Pawn*						m_characterArr;
 	Map*						m_map;
 						
-	//std::vector<BaseObject>*	m_platArr;
+	//std::vector<BaseObject>	m_platArr;
 	BaseObject*					m_platArr;
 
 	CImage*						m_platImg;
@@ -45,5 +25,30 @@ private:
 	InGameSceneUI*				m_inGameUI;
 		
 	int							m_numPlat;
+
+public:
+	InGameScene();
+	InGameScene(HWND);
+
+	virtual ~InGameScene();
+
+public:
+	virtual void Draw(HDC hdc);
+	virtual void Timer(const double time) ;
+	virtual bool KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+	virtual bool MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) ;
+	virtual void Destory();
+
+public:
+	virtual void LoadPlat();
+	virtual void ComputePawn();
+
+public:
+	//for network
+	//virtual void NetworkFunction();
+
+public:
+	//for debug
+	void ShowPawnState() const;	
 };
 

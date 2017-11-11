@@ -15,12 +15,18 @@ public:
 	virtual ~Scene();
 
 	virtual void Draw(HDC hdc) = 0;
-	virtual void Timer(double count) = 0;
-	virtual bool KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) = 0;
-	virtual bool MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) = 0;
-	virtual void Destory() = 0;
+	virtual void Timer(const double count) = 0;
+	virtual bool KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+	virtual bool MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+	
+	virtual void Destory();
 
 protected:
 	HWND			m_hWnd;
+
+public:
+	SceneName		m_nextScene;
+	bool			m_isDestory{ false };
+	bool			GetIsDestory() { return m_isDestory; }
 };
 

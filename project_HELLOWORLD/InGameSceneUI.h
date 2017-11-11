@@ -24,9 +24,11 @@ private:
 
 public:
 	void LoadUI();
-	void DrawComboUI(HDC hdc, int combo);
+
+public:
+	void DrawComboUI(HDC hdc, const int combo);
 	void DrawBarUI(HDC hdc, float mark1PosX);
-	void DrawInventoryUI(HDC hdc, int item1Num, int item2Num);
-	void DrawHeadUpUI(HDC, float posY);
+	void DrawInventoryUI(HDC hdc, const int item1Num, const int item2Num);
+	void DrawHeadUpUI(HDC, const float posY);
 };
 

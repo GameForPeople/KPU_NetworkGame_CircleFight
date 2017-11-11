@@ -7,7 +7,6 @@ CArcher::CArcher()
 	m_imageCount = 0;
 	m_imageTimer = 0;
 	m_baseSpeed = ARCHER_BASE_SPEED;
-	
 }
 
 CArcher::~CArcher()
@@ -15,6 +14,25 @@ CArcher::~CArcher()
 	for (int i = 0; i < ARCHER_MAX_IMAGE_NUM; i++)
 		m_imgArr[i].Destroy();
 }
+
+
+
+
+void CArcher::Update(State state) {
+	ChangeImage(state);
+}
+
+void CArcher::Draw(HDC hdc, float x, float y, float sizeX, float sizeY, State state) {
+	
+	if(m_imageCount < ARCHER_RUN_IMAGE_NUM)
+		m_imgArr[m_imageCount].TransparentBlt(hdc, x, y, 250, 200, RGB(255, 255, 255));
+	else if(m_imageCount < ARCHER_MAX_IMAGE_NUM)
+		m_imgArr[m_imageCount].TransparentBlt(hdc, x, y, 270, 226, RGB(255, 255, 255));
+
+}
+
+
+
 
 void CArcher::ChangeImage(State state) {
 	m_imageTimer++;
@@ -49,19 +67,6 @@ void CArcher::ChangeImage(State state) {
 		if (m_imageCount >= ARCHER_RUN_IMAGE_NUM)
 			m_imageCount = 1;
 	}
-}
-
-void CArcher::Update(State state) {
-	ChangeImage(state);
-}
-
-void CArcher::Draw(HDC hdc, float x, float y, float sizeX, float sizeY, State state) {
-	
-	if(m_imageCount < ARCHER_RUN_IMAGE_NUM)
-		m_imgArr[m_imageCount].TransparentBlt(hdc, x, y, 250, 200, RGB(255, 255, 255));
-	else if(m_imageCount < ARCHER_MAX_IMAGE_NUM)
-		m_imgArr[m_imageCount].TransparentBlt(hdc, x, y, 270, 206, RGB(255, 255, 255));
-
 }
 
 void CArcher::LoadCharacterImage() {

@@ -15,6 +15,25 @@ CZombie::~CZombie()
 		m_imgArr[i].Destroy();
 }
 
+
+
+
+void CZombie::Update(State state) {
+	ChangeImage(state);
+}
+
+void CZombie::Draw(HDC hdc, float x, float y, float sizeX, float sizeY, State state) {
+
+	if (m_imageCount < ZOMBIE_RUN_IMAGE_NUM)
+		m_imgArr[m_imageCount].TransparentBlt(hdc, x, y, 250, 208, RGB(255, 255, 255));
+	else if (m_imageCount < ZOMBIE_MAX_IMAGE_NUM)
+		m_imgArr[m_imageCount].TransparentBlt(hdc, x, y, 270, 236, RGB(255, 255, 255));
+
+}
+
+
+
+
 void CZombie::ChangeImage(State state) {
 	m_imageTimer++;
 
@@ -55,19 +74,6 @@ void CZombie::ChangeImage(State state) {
 		if (m_imageCount >= ZOMBIE_RUN_IMAGE_NUM)
 			m_imageCount = 1;
 	}
-}
-
-void CZombie::Update(State state) {
-	ChangeImage(state);
-}
-
-void CZombie::Draw(HDC hdc, float x, float y, float sizeX, float sizeY, State state) {
-
-	if (m_imageCount < ZOMBIE_RUN_IMAGE_NUM)
-		m_imgArr[m_imageCount].TransparentBlt(hdc, x, y, 250, 208, RGB(255, 255, 255));
-	else if (m_imageCount < ZOMBIE_MAX_IMAGE_NUM)
-		m_imgArr[m_imageCount].TransparentBlt(hdc, x, y, 270, 236, RGB(255, 255, 255));
-
 }
 
 void CZombie::LoadCharacterImage() {

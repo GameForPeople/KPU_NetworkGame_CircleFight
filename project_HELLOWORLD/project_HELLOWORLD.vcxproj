@@ -149,9 +149,11 @@
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="InGameScene.cpp" />
     <ClCompile Include="InGameSceneUI.cpp" />
+    <ClCompile Include="LogInScene.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="NewMain_Backup.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -159,6 +161,7 @@
     <ClCompile Include="BaseObject.cpp" />
     <ClCompile Include="Main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="NewMain.cpp" />
     <ClCompile Include="NoEdit.cpp">
@@ -167,10 +170,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="ReplayFunction.cpp" />
+    <ClCompile Include="ReplayFunction.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <DebugInformationFormat Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">ProgramDatabase</DebugInformationFormat>
     </ClCompile>
+    <ClCompile Include="TitleScene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BaseCharacter.h" />
@@ -180,6 +186,7 @@
     <ClInclude Include="Framework.h" />
     <ClInclude Include="InGameScene.h" />
     <ClInclude Include="InGameSceneUI.h" />
+    <ClInclude Include="LogInScene.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="Scene.h" />
@@ -188,8 +195,11 @@
     <ClInclude Include="NewMain.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="ReplayFunction.h" />
+    <ClInclude Include="ReplayFunction.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="TitleScene.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="PlayerData.replay" />

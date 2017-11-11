@@ -29,7 +29,7 @@ Channel*		pChannel[1];
 #pragma region [CreateStatic]
 HINSTANCE hInst;
 HWND	  Hwnd;
-LPCTSTR lpszClass = "Network Game - project [ 2013192027 : ¿ø¼º¿¬ ]";
+LPCTSTR lpszClass = "Network Game - project [League of Legend]";
 
 //LRESULT CALLBACK WndProc(HWND hwnd, UINT
 //	iMessage, WPARAM wParam, LPARAM lParam);

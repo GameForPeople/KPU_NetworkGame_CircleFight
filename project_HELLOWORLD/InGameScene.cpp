@@ -3,14 +3,14 @@
 
 InGameScene::InGameScene(HWND hwnd) : Scene(hwnd)
 {
-	m_characterArr = new Pawn(CharacterName::Zombie);
+	m_characterArr = new Pawn(CharacterName::Archer);
 	m_characterArr->SetState(State::Fall);
 
 	m_map = new Map(0, 0, "Resource/Image/Background/Background.png");
 	
 	m_platImg = new CImage;
 	m_platImg->Load("Resource/Image/Plat/brickPlat_Green.png");
-
+	
 	m_numPlat = PLAT_MAX_NUMBER;
 	m_platArr = new BaseObject[m_numPlat];
 	LoadPlat();
@@ -26,6 +26,8 @@ InGameScene::~InGameScene()
 {
 }
 
+
+
 void InGameScene::Draw(HDC hdc) {
 	m_map->Draw(hdc);
 
@@ -40,12 +42,14 @@ void InGameScene::Draw(HDC hdc) {
 	m_inGameUI->DrawHeadUpUI(hdc, m_characterArr->GetPos().y);
 }
 
-void InGameScene::Timer(double count){
-	m_map->Update(m_characterArr->GetSpeed());
-	m_characterArr->Update(m_characterArr->GetState());
-	
+void InGameScene::Timer(const double time){
+
+	m_map->Update(m_characterArr->GetSpeed(), time);
+	m_characterArr->Update(m_characterArr->GetState(), time);
+
+
 	for( int i = 0 ; i < PLAT_MAX_NUMBER; i++)
-		m_platArr[i].Update(m_characterArr->GetSpeed());
+		m_platArr[i].Update(m_characterArr->GetSpeed(), time);
 
 	ComputePawn();
 	//ShowPawnState();	//Debug
@@ -86,6 +90,8 @@ bool InGameScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM l
 void InGameScene::Destory() {
 
 }
+
+
 
 void InGameScene::LoadPlat() {
 	//ifstream inFile("Resource/Data/platData.txt", ios::in);
@@ -180,7 +186,7 @@ void InGameScene::ComputePawn() {
 
 }
 
-void InGameScene::ShowPawnState() {
+void InGameScene::ShowPawnState() const {
 
 	if (m_characterArr->GetState() == State::Run) {
 		std::cout << "Run" << std::endl;

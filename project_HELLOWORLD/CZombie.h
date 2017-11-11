@@ -12,17 +12,19 @@ public:
 	CZombie();
 	~CZombie();
 
-	virtual void ChangeImage(State state);
 	virtual void Update(State state);
 	virtual void Draw(HDC hdc, float x, float y, float sizeX, float sizeY, State state);
-
+	
+public:
+	virtual void ChangeImage(State state);
 	virtual void LoadCharacterImage();
 
-	virtual float GetBaseSpeed() {
+
+public:
+	virtual float GetBaseSpeed() const {
 		return m_baseSpeed;
 	}
-
-	virtual int GetJumpImageCount() {
+	virtual int GetJumpImageCount() const {
 		return ZOMBIE_RUN_IMAGE_NUM;
 	}
 

@@ -16,24 +16,19 @@ protected:
 	int m_imageTimer = 0;
 
 	float m_baseSpeed;
+
 public:
 	BaseCharacter();
 	~BaseCharacter();
 
-	virtual void Update(State state);
+	virtual void Update(State state, double time);
 	virtual void Draw(HDC hdc, float x, float y, float sizeX, float sizeY, State state);
 
-	virtual float GetBaseSpeed() {
-		return m_baseSpeed;
-	}
 
-	virtual int GetJumpImageCount() {
-		return 0;
-	}
-
-	void SetImageCount(int input) {
-		m_imageCount = input;
-	}
+public:
+	virtual float GetBaseSpeed() const;
+	virtual int GetJumpImageCount() const;
+	void SetImageCount(const int input);
 
 	virtual void LoadCharacterImage() = 0;
 };

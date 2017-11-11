@@ -63,4 +63,11 @@ enum class CharacterName {
 	,	Zombie
 };
 
+enum class SceneName {
+		Title
+	,	Login
+	,	Lobby
+	,	Room
+	,	InGame
+};
 

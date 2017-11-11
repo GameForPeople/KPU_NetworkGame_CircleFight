@@ -42,7 +42,17 @@ bool Framework::Create(HWND hwnd, RECT rect) {
 	m_fps = 0;
 
 
-	m_Scene[0] = new InGameScene(m_hwnd);
+	//m_Scene[0] = new InGameScene(m_hwnd);
+	m_Scene[0] = new TitleScene(m_hwnd);
+	m_Scene[1] = nullptr;	//LoginScene
+	m_Scene[2] = nullptr;	//Lobby
+	m_Scene[3] = nullptr;	//Room
+	m_Scene[4] = nullptr;	//inGame
+
+	//m_Scene->emplace_back(new LoginScene(m_hwnd));
+
+	//m_Scene[0] = new LoginScene(m_hwnd);
+
 	m_nowScene = 0;
 
 	return (m_hwnd != NULL);
@@ -139,27 +149,57 @@ void Framework::Timer() {
 				m_fps = 1.0 / m_timeElapsed.count();
 		}			// 최대 FPS 미만의 시간이 경과하면 진행 생략
 		else return;
-
 		Update(m_timeElapsed.count());
 		//PreproccessingForDraw();
 
-
 		InvalidateRect(m_hwnd, NULL, FALSE);
 
-#if defined(SHOW_CAPTIONFPS)
-			m_UpdateElapsed = chrono::system_clock::now() - m_LastUpdate_time;
-			if (m_UpdateElapsed.count() > MAX_UPDATE_FPS)
-				m_LastUpdate_time = chrono::system_clock::now();
-			else return;
-
-			_itow_s((int)(m_fps + 0.1f), m_CaptionTitle + m_TitleLength, (size_t)(TITLE_MX_LENGTH - m_TitleLength), 10);
-			wcscat_s(m_CaptionTitle + m_TitleLength, TITLE_MX_LENGTH - m_TitleLength, TEXT(" FPS)"));
-			SetWindowText(m_hwnd, m_CaptionTitle);
-#endif
+//#if defined(SHOW_CAPTIONFPS)
+		// ErrorCode
+		//	m_UpdateElapsed = chrono::system_clock::now() - m_LastUpdate_time;
+		//	if (m_UpdateElapsed.count() > MAX_UPDATE_FPS)
+		//		m_LastUpdate_time = chrono::system_clock::now();
+		//	else return;
+		//
+		//	//_itow_s((int)(m_fps + 0.1f), m_CaptionTitle + m_TitleLength, (size_t)(TITLE_MX_LENGTH - m_TitleLength), 10);
+		//	
+		//	_itow((int)(m_fps + 0.1f), (wchar_t*)(TITLE_MX_LENGTH - m_TitleLength), 10);
+		//
+		//	//wcscat_s(m_CaptionTitle + m_TitleLength, TITLE_MX_LENGTH - m_TitleLength, TEXT(" FPS)"));
+		//	wcscat((wchar_t*)(m_CaptionTitle + m_TitleLength) , (wchar_t*)TEXT(" FPS)"));
+		//	SetWindowText(m_hwnd, m_CaptionTitle);
+//#endif
 }
 
 void Framework::Update(double val) {
 	m_Scene[m_nowScene]->Timer(val);
+		
+	ChangeScene();
+}
+
+void Framework::ChangeScene() {
+	if (m_Scene[m_nowScene]->GetIsDestory()) {
+		if (SceneName::Login == m_Scene[m_nowScene]->m_nextScene) {
+			m_Scene[1] = new LoginScene(m_hwnd);
+			m_Scene[m_nowScene]->~Scene();
+			m_nowScene = 1;
+		}
+		else if (SceneName::Lobby == m_Scene[m_nowScene]->m_nextScene) {
+			m_Scene[2] = new LoginScene(m_hwnd);
+			m_Scene[m_nowScene]->~Scene();
+			m_nowScene = 2;
+		}
+		else if (SceneName::Room == m_Scene[m_nowScene]->m_nextScene) {
+			m_Scene[3] = new LoginScene(m_hwnd);
+			m_Scene[m_nowScene]->~Scene();
+			m_nowScene = 3;
+		}
+		else if (SceneName::InGame == m_Scene[m_nowScene]->m_nextScene) {
+			m_Scene[4] = new LoginScene(m_hwnd);
+			m_Scene[m_nowScene]->~Scene();
+			m_nowScene = 4;
+		}
+	}
 }
 
 bool Framework::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {

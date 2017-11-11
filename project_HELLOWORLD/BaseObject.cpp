@@ -18,22 +18,29 @@ BaseObject::BaseObject(float x, float y, float sizeX, float sizeY)
 	m_size = { sizeX, sizeY };
 }
 
-
 BaseObject::~BaseObject()
 {
 }
 
-void BaseObject::SetPos(float x, float y) {
-	m_pos.x = x;
-	m_pos.y = y;
-}
 
 
-void BaseObject::Update(float speed) {
-	m_pos.x -= speed;
+
+void BaseObject::Update(float speed, double time) {
+	m_pos.x -= speed * time;
 }
 
 void BaseObject::Draw(HDC hdc) {
 	
 }
 
+
+
+
+void BaseObject::SetPos(float x, float y) {
+	m_pos.x = x;
+	m_pos.y = y;
+}
+
+Pos2d BaseObject::GetPos() const {
+	return m_pos;
+}

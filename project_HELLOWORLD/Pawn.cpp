@@ -30,14 +30,14 @@ Pawn::~Pawn()
 {
 }
 
-void Pawn::Update(State state) {
+void Pawn::Update(State state, double time) {
 
 	ComputeTotalDistance();
 	ProcessCombo();
 	ProcessGravity();
 	ProcessJump();
 
-	m_unit->Update(state);
+	m_unit->Update(state, time);
 }
 //void Pawn::Draw(HDC hdc, float x, float y, float sizeX, float sizeY) {
 //	m_unit->Draw(hdc, m_pos.x, m_pos.y, m_size.x, m_size.y, );

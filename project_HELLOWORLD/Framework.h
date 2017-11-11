@@ -4,10 +4,13 @@
 #include "StaticActor.h"
 #include "Scene.h"
 #include "InGameScene.h"
+#include "TitleScene.h"
+#include "LoginScene.h"
+
 
 #define MAX_FPS  1.0 / 60.0
 #define MAX_UPDATE_FPS  1.0 / 3.0
-#define SCENE_NUM 1
+#define SCENE_NUM 5
 #define TITLE_MX_LENGTH 64
 
 class Framework
@@ -38,6 +41,8 @@ private:
 	int m_TitleLength;
 
 	Scene*			m_Scene[SCENE_NUM];
+	//std::vector<Scene>	*m_Scene;
+
 	int				m_nowScene = 0;
 
 	//debug option
@@ -60,6 +65,8 @@ public:
 	bool KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 	bool MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 	void Destory();
+
+	void ChangeScene();
 
 
 	void CreatebackBuffer();

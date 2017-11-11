@@ -12,20 +12,16 @@ class BaseObject
 protected:
 	Pos2d m_pos;
 	Pos2d m_size;
-	//float m_alphaValue;
+
 public:
 	BaseObject();
 	~BaseObject();
-	BaseObject(float x, float y);
-	BaseObject::BaseObject(float x, float y, float sizeX, float sizeY);
+	BaseObject(const float x, const float y);
+	BaseObject::BaseObject(const float x, const float y, const float sizeX, const float sizeY);
 
-	void SetPos(float x, float y);
-
-	virtual void Update(float speed);
+	virtual void Update(const float speed, const double time);
 	virtual void Draw(HDC);
 
-	Pos2d GetPos() {
-		return m_pos;
-	}
+	void SetPos(const float x, const float y);
+	Pos2d GetPos() const;
 };
-

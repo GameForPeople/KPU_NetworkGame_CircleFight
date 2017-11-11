@@ -5,10 +5,12 @@ InGameSceneUI::InGameSceneUI()
 	LoadUI();
 }
 
-
 InGameSceneUI::~InGameSceneUI()
 {
 }
+
+
+
 
 void InGameSceneUI::LoadUI() {
 	ComboNumUI[0].Load("Resource/Image/Number/ComboNumber/Combo_Orange_Yellow_0.png");
@@ -35,6 +37,9 @@ void InGameSceneUI::LoadUI() {
 
 	HeadUpUI[0].Load("Resource/Image/UI/SpeedUpUI.png");
 }
+
+
+
 
 void InGameSceneUI::DrawComboUI(HDC hdc, int combo) {	
 	
