@@ -18,7 +18,7 @@ CZombie::~CZombie()
 
 
 
-void CZombie::Update(State state) {
+void CZombie::Update(State state, double time) {
 	ChangeImage(state);
 }
 

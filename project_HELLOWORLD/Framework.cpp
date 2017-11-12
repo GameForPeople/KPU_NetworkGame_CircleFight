@@ -1,6 +1,14 @@
 #include "Framework.h"
 #include <string>
 
+
+//#define TO_DEBUG_TITLE_SCENE
+//#define TO_DEBUG_LOGIN_SCENE
+//#define TO_DEBUG_LOBBY_SCENE
+//#define TO_DEBUG_ROOM_SCENE
+#define TO_DEBUG_INGAME_SCENE
+
+
 template <typename T>
 T GetUserDataPtr(HWND hWnd)
 {
@@ -42,16 +50,34 @@ bool Framework::Create(HWND hwnd, RECT rect) {
 	m_fps = 0;
 
 
-	//m_Scene[0] = new InGameScene(m_hwnd);
+	//m_Scene[0] = new TitleScene(m_hwnd);
+	
+#ifdef TO_DEBUG_TITLE_SCENE
 	m_Scene[0] = new TitleScene(m_hwnd);
+#endif
+
+#ifdef TO_DEBUG_LOGIN_SCENE
+	m_Scene[0] = new LoginScene(m_hwnd);
+#endif
+
+#ifdef TO_DEBUG_LOBBY_SCENE
+	m_Scene[0] = new LobbyScene(m_hwnd);
+#endif
+
+#ifdef TO_DEBUG_ROOM_SCENE
+	m_Scene[0] = new RoomScene(m_hwnd);
+#endif
+
+#ifdef TO_DEBUG_INGAME_SCENE
+	m_Scene[0] = new InGameScene(m_hwnd);
+#endif
+
 	m_Scene[1] = nullptr;	//LoginScene
 	m_Scene[2] = nullptr;	//Lobby
 	m_Scene[3] = nullptr;	//Room
 	m_Scene[4] = nullptr;	//inGame
 
-	//m_Scene->emplace_back(new LoginScene(m_hwnd));
 
-	//m_Scene[0] = new LoginScene(m_hwnd);
 
 	m_nowScene = 0;
 

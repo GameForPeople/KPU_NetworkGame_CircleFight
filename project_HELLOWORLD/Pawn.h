@@ -4,6 +4,9 @@
 #include "BaseCharacter.h"
 #include "CArcher.h"
 #include "CZombie.h"
+#include "CKnight.h"
+#include "CWicher.h"
+
 
 #define			INIT_PAWN_POS_X			200
 

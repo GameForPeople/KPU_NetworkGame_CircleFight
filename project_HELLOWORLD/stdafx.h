@@ -37,7 +37,10 @@ using namespace FMOD;
 #define SCREEN_HEIGHT 720
 
 #define ARCHER_BASE_SPEED 6.0f
-#define ZOMBIE_BASE_SPEED 5.95f
+#define ZOMBIE_BASE_SPEED 5.98f
+#define KNIGHT_BASE_SPEED 5.96f
+#define WICHER_BASE_SPEED 5.96f
+
 
 enum class State {
 		Run
@@ -61,6 +64,8 @@ enum class State {
 enum class CharacterName {
 		Archer
 	,	Zombie
+	,	Knight
+	,	Wicher
 };
 
 enum class SceneName {

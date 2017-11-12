@@ -10,6 +10,10 @@ Pawn::Pawn(CharacterName inputCharacterName)
 		m_unit = new CArcher;
 	else if (inputCharacterName == CharacterName::Zombie)
 		m_unit = new CZombie;
+	else if (inputCharacterName == CharacterName::Knight)
+		m_unit = new CKnight;
+	else if (inputCharacterName == CharacterName::Wicher)
+		m_unit = new CWicher;
 
 	m_baseSpeed = m_unit->GetBaseSpeed();
 	m_state = State::Fall;

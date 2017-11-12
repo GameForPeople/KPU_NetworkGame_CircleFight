@@ -18,16 +18,16 @@ CArcher::~CArcher()
 
 
 
-void CArcher::Update(State state) {
+void CArcher::Update(State state, double time) {
 	ChangeImage(state);
 }
 
 void CArcher::Draw(HDC hdc, float x, float y, float sizeX, float sizeY, State state) {
 	
 	if(m_imageCount < ARCHER_RUN_IMAGE_NUM)
-		m_imgArr[m_imageCount].TransparentBlt(hdc, x, y, 250, 200, RGB(255, 255, 255));
+		m_imgArr[m_imageCount].TransparentBlt(hdc, x, y + 30, 250, 170, RGB(255, 255, 255));
 	else if(m_imageCount < ARCHER_MAX_IMAGE_NUM)
-		m_imgArr[m_imageCount].TransparentBlt(hdc, x, y, 270, 226, RGB(255, 255, 255));
+		m_imgArr[m_imageCount].TransparentBlt(hdc, x, y + 10, 270, 215, RGB(255, 255, 255));
 
 }
 

@@ -26,7 +26,7 @@ BaseObject::~BaseObject()
 
 
 void BaseObject::Update(float speed, double time) {
-	m_pos.x -= speed * time;
+	m_pos.x -= speed;
 }
 
 void BaseObject::Draw(HDC hdc) {

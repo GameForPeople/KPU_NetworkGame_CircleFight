@@ -145,6 +145,8 @@
     <ClCompile Include="BaseCharacter.cpp" />
     <ClCompile Include="BaseUI.cpp" />
     <ClCompile Include="CArcher.cpp" />
+    <ClCompile Include="CKnight.cpp" />
+    <ClCompile Include="CWicher.cpp" />
     <ClCompile Include="CZombie.cpp" />
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="InGameScene.cpp" />
@@ -182,6 +184,8 @@
     <ClInclude Include="BaseCharacter.h" />
     <ClInclude Include="BaseUI.h" />
     <ClInclude Include="CArcher.h" />
+    <ClInclude Include="CKnight.h" />
+    <ClInclude Include="CWicher.h" />
     <ClInclude Include="CZombie.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="InGameScene.h" />

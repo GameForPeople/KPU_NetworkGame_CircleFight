@@ -1,9 +1,30 @@
 #include "InGameScene.h"
 #include <fstream>
 
+//#define TO_DEBUG_ARCHER
+//#define TO_DEBUG_ZOMBIE
+//#define TO_DEBUG_KNIGHT
+#define TO_DEBUG_WICHER
+
+
 InGameScene::InGameScene(HWND hwnd) : Scene(hwnd)
 {
+#ifdef TO_DEBUG_ARCHER
 	m_characterArr = new Pawn(CharacterName::Archer);
+#endif
+
+#ifdef TO_DEBUG_ZOMBIE
+	m_characterArr = new Pawn(CharacterName::Zombie);
+#endif
+
+#ifdef TO_DEBUG_KNIGHT
+	m_characterArr = new Pawn(CharacterName::Knight);
+#endif
+
+#ifdef TO_DEBUG_WICHER
+	m_characterArr = new Pawn(CharacterName::Wicher);
+#endif
+
 	m_characterArr->SetState(State::Fall);
 
 	m_map = new Map(0, 0, "Resource/Image/Background/Background.png");
@@ -52,7 +73,7 @@ void InGameScene::Timer(const double time){
 		m_platArr[i].Update(m_characterArr->GetSpeed(), time);
 
 	ComputePawn();
-	//ShowPawnState();	//Debug
+	ShowPawnState();	//Debug
 }
 
 bool InGameScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
@@ -109,7 +130,7 @@ void InGameScene::LoadPlat() {
 		m_platArr[i].SetPos(posX * i *  PLAT_WIDTH, (posY * (-100)) + PLAT_LOW_HEIGHT);
 	
 		//to debug
-		std::cout << i << "번째  " << posY << "   " << m_platArr[i].GetPos().x << "   " << m_platArr[i].GetPos().y << std::endl;
+		//std::cout << i << "번째  " << posY << "   " << m_platArr[i].GetPos().x << "   " << m_platArr[i].GetPos().y << std::endl;
 	}
 	inFile.close();
 	/*

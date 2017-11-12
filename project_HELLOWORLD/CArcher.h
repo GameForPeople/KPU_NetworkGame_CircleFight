@@ -12,7 +12,7 @@ public:
 	CArcher();
 	~CArcher();
 
-	virtual void Update(State state);
+	virtual void Update(State state, double time);
 	virtual void Draw(HDC hdc, float x, float y, float sizeX, float sizeY, State state);
 
 public:	
