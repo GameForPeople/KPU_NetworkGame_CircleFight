@@ -16,8 +16,6 @@ LoginScene::~LoginScene()
 }
 
 
-
-
 void LoginScene::Draw(HDC hdc) {
 	m_backImg.BitBlt(hdc, 0, 0, SRCCOPY);
 	
@@ -51,10 +49,10 @@ void LoginScene::Timer(const double count) {
 		m_uiTimer++;
 		
 		if (m_uiTimer < 50) {
-			if (m_uiTimer % 10 < 5) {
+			if (m_uiTimer % 15 < 8) {
 				m_isDrawUI = true;
 			}
-			else if (m_uiTimer % 10 >= 5) {
+			else if (m_uiTimer % 15 >= 8) {
 				m_isDrawUI = false;
 			}
 		}

@@ -2,9 +2,9 @@
 #include <fstream>
 
 //#define TO_DEBUG_ARCHER
-//#define TO_DEBUG_ZOMBIE
+#define TO_DEBUG_ZOMBIE
 //#define TO_DEBUG_KNIGHT
-#define TO_DEBUG_WICHER
+//#define TO_DEBUG_WICHER
 
 
 InGameScene::InGameScene(HWND hwnd) : Scene(hwnd)
