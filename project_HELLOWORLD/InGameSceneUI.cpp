@@ -36,6 +36,8 @@ void InGameSceneUI::LoadUI() {
 	InventoryUI.Load("Resource/Image/UI/InventoryUI_type_4.png");
 
 	HeadUpUI[0].Load("Resource/Image/UI/SpeedUpUI.png");
+
+	EmotionUI.Load("Resource/Image/UI/EmotionUI.png");
 }
 
 
@@ -83,4 +85,20 @@ void InGameSceneUI::DrawHeadUpUI(HDC hdc, float posY) {
 			m_headUpUIIndex = 0;
 		}
 	}
+}
+
+void InGameSceneUI::DrawEmotionUI(HDC hdc, const int keyNumber, float posX, float posY) {
+		EmotionUI.TransparentBlt(
+			hdc, 
+			posX + 120,
+			posY - 90, 
+			EmotionUI.GetWidth() / 6,
+			EmotionUI.GetHeight(),
+
+			(EmotionUI.GetWidth()* (keyNumber - 1)) / 6 ,
+			0, 
+			EmotionUI.GetWidth() / 6 , 
+			EmotionUI.GetHeight(), 
+			RGB(255, 255, 255)
+		);
 }

@@ -3,10 +3,10 @@
 
 
 //#define TO_DEBUG_TITLE_SCENE
-//#define TO_DEBUG_LOGIN_SCENE
+#define TO_DEBUG_LOGIN_SCENE
 //#define TO_DEBUG_LOBBY_SCENE
 //#define TO_DEBUG_ROOM_SCENE
-#define TO_DEBUG_INGAME_SCENE
+//#define TO_DEBUG_INGAME_SCENE
 
 
 template <typename T>
@@ -51,35 +51,40 @@ bool Framework::Create(HWND hwnd, RECT rect) {
 
 
 	//m_Scene[0] = new TitleScene(m_hwnd);
-	
-#ifdef TO_DEBUG_TITLE_SCENE
-	m_Scene[0] = new TitleScene(m_hwnd);
-#endif
-
-#ifdef TO_DEBUG_LOGIN_SCENE
-	m_Scene[0] = new LoginScene(m_hwnd);
-#endif
-
-#ifdef TO_DEBUG_LOBBY_SCENE
-	m_Scene[0] = new LobbyScene(m_hwnd);
-#endif
-
-#ifdef TO_DEBUG_ROOM_SCENE
-	m_Scene[0] = new RoomScene(m_hwnd);
-#endif
-
-#ifdef TO_DEBUG_INGAME_SCENE
-	m_Scene[0] = new InGameScene(m_hwnd);
-#endif
-
+	m_Scene[0] = nullptr;	//LoginScene
 	m_Scene[1] = nullptr;	//LoginScene
 	m_Scene[2] = nullptr;	//Lobby
 	m_Scene[3] = nullptr;	//Room
 	m_Scene[4] = nullptr;	//inGame
 
-
-
+#ifdef TO_DEBUG_TITLE_SCENE
+	m_Scene[0] = new TitleScene(m_hwnd);
 	m_nowScene = 0;
+
+#endif
+
+#ifdef TO_DEBUG_LOGIN_SCENE
+
+	m_Scene[1] = new LoginScene(m_hwnd);
+	m_nowScene = 1;
+
+#endif
+
+#ifdef TO_DEBUG_LOBBY_SCENE
+	m_Scene[2] = new LobbyScene(m_hwnd);
+	m_nowScene = 2;
+
+#endif
+
+#ifdef TO_DEBUG_ROOM_SCENE
+	m_Scene[3] = new RoomScene(m_hwnd);
+	m_nowScene = 3;
+#endif
+
+#ifdef TO_DEBUG_INGAME_SCENE
+	m_Scene[4] = new InGameScene(m_hwnd);
+	m_nowScene = 4;
+#endif
 
 	return (m_hwnd != NULL);
 }
@@ -166,19 +171,23 @@ void Framework::Draw(HDC hdc) {
 }
 
 void Framework::Timer() {
+
 		m_timeElapsed = chrono::system_clock::now() - m_current_time;
 		if (m_timeElapsed.count() > MAX_FPS)
 		{
 			m_current_time = chrono::system_clock::now();
-
 			if (m_timeElapsed.count() > 0.0)
 				m_fps = 1.0 / m_timeElapsed.count();
 		}			// 최대 FPS 미만의 시간이 경과하면 진행 생략
 		else return;
 		Update(m_timeElapsed.count());
+
 		//PreproccessingForDraw();
 
 		InvalidateRect(m_hwnd, NULL, FALSE);
+
+		//print FPS
+		//std::cout << m_fps << std::endl;
 
 //#if defined(SHOW_CAPTIONFPS)
 		// ErrorCode
@@ -211,12 +220,12 @@ void Framework::ChangeScene() {
 			m_nowScene = 1;
 		}
 		else if (SceneName::Lobby == m_Scene[m_nowScene]->m_nextScene) {
-			m_Scene[2] = new LoginScene(m_hwnd);
+			m_Scene[2] = new LobbyScene(m_hwnd);
 			m_Scene[m_nowScene]->~Scene();
 			m_nowScene = 2;
 		}
 		else if (SceneName::Room == m_Scene[m_nowScene]->m_nextScene) {
-			m_Scene[3] = new LoginScene(m_hwnd);
+			m_Scene[3] = new RoomScene(m_hwnd);
 			m_Scene[m_nowScene]->~Scene();
 			m_nowScene = 3;
 		}
@@ -260,6 +269,7 @@ bool Framework::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 }
 
 bool Framework::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
+	
 	m_Scene[m_nowScene]->MouseProcess(hwnd, iMessage, wParam, lParam);
 
 	return true;

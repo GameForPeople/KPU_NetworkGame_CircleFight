@@ -61,7 +61,7 @@ void Pawn::ProcessCombo() {
 	//m_combo = curFlatNum - m_comboStandard;	//±ª¿Ã??
 	m_combo = (m_totalDistance - m_comboStandard) / 100;
 
-	std::cout << m_combo << "   " << m_speed << "   " << m_baseSpeed << std::endl;
+	//std::cout << m_combo << "   " << m_speed << "   " << m_baseSpeed << std::endl;
 
 	if (m_combo % 50 == 1)
 		m_comboEffect = true;

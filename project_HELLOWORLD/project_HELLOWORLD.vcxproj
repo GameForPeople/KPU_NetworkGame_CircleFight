@@ -151,6 +151,7 @@
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="InGameScene.cpp" />
     <ClCompile Include="InGameSceneUI.cpp" />
+    <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="LogInScene.cpp" />
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="NewMain_Backup.cpp">
@@ -158,6 +159,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Pawn.cpp" />
+    <ClCompile Include="RoomScene.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="StaticActor.cpp" />
     <ClCompile Include="BaseObject.cpp" />
@@ -190,9 +192,11 @@
     <ClInclude Include="Framework.h" />
     <ClInclude Include="InGameScene.h" />
     <ClInclude Include="InGameSceneUI.h" />
+    <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="LogInScene.h" />
     <ClInclude Include="Map.h" />
     <ClInclude Include="Pawn.h" />
+    <ClInclude Include="RoomScene.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="StaticActor.h" />
     <ClInclude Include="BaseObject.h" />

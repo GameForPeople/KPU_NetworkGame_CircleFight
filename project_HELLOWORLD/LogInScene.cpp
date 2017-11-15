@@ -60,6 +60,30 @@ void LoginScene::Timer(const double count) {
 	}
 }
 
+bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
+	float mouseX, mouseY;
+	
+	if (iMessage == WM_LBUTTONDOWN) {
+		mouseY = HIWORD(lParam);
+		mouseX = LOWORD(lParam);
+
+		if (mouseY < 100 && mouseX > 1130) {
+			// Sign In
+			std::cout << "회원가입합니다!! " << std::endl;
+			m_isDestory = true;
+			m_nextScene = SceneName::Lobby;
+		}
+		else if (mouseY > 600 && mouseX > 550 && mouseX < 750 ) {
+			//550 750 630
+			std::cout << "로그인입니다!! " << std::endl;
+			m_isDestory = true;
+			m_nextScene = SceneName::Lobby;
+
+		}
+			return true;
+	}
+}
+
 
 
 

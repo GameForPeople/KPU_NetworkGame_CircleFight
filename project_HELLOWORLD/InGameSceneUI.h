@@ -22,6 +22,8 @@ private:
 	int			m_headUpUICount{ 0 };
 	int			m_headUpUIIndex{ 0 };
 
+	CImage		EmotionUI;
+
 public:
 	void LoadUI();
 
@@ -30,5 +32,6 @@ public:
 	void DrawBarUI(HDC hdc, float mark1PosX);
 	void DrawInventoryUI(HDC hdc, const int item1Num, const int item2Num);
 	void DrawHeadUpUI(HDC, const float posY);
+	void DrawEmotionUI(HDC hdc, const int KeyNumber, float PosX, float PosY);
 };
 

@@ -12,10 +12,14 @@ public:
 	virtual void Draw(HDC hdc);
 	virtual void Timer(const double count);
 
+	//virtual bool KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+	virtual bool MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+
 public:
 	void LoadCImage();
 
 private:
+
 	CImage m_backImg;
 	CImage m_logoImg;
 	CImage m_pawnImg;

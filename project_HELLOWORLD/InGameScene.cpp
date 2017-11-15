@@ -1,10 +1,13 @@
 #include "InGameScene.h"
 #include <fstream>
 
-//#define TO_DEBUG_ARCHER
-#define TO_DEBUG_ZOMBIE
+#define TO_DEBUG_ARCHER
+//#define TO_DEBUG_ZOMBIE
 //#define TO_DEBUG_KNIGHT
 //#define TO_DEBUG_WICHER
+
+//#define TO_DEBUG_MAP_SEA
+#define TO_DEBUG_MAP_FOREST
 
 
 InGameScene::InGameScene(HWND hwnd) : Scene(hwnd)
@@ -27,11 +30,19 @@ InGameScene::InGameScene(HWND hwnd) : Scene(hwnd)
 
 	m_characterArr->SetState(State::Fall);
 
+#ifdef TO_DEBUG_MAP_SEA
 	m_map = new Map(0, 0, "Resource/Image/Background/Background.png");
-	
-	m_platImg = new CImage;
-	m_platImg->Load("Resource/Image/Plat/brickPlat_Green.png");
-	
+#endif 
+
+#ifdef TO_DEBUG_MAP_FOREST
+	m_map = new Map(0, 0, "Resource/Image/Background/Background_2.png");
+#endif 
+	m_platImg[0] = new CImage;
+	m_platImg[1] = new CImage;
+
+	m_platImg[0]->Load("Resource/Image/Plat/Plat_2.png");
+	m_platImg[1]->Load("Resource/Image/Plat/Plat_1.png");
+
 	m_numPlat = PLAT_MAX_NUMBER;
 	m_platArr = new BaseObject[m_numPlat];
 	LoadPlat();
@@ -53,14 +64,22 @@ void InGameScene::Draw(HDC hdc) {
 	m_map->Draw(hdc);
 
 	for (int i = 0; i < m_numPlat; i++) {
-		m_platImg->TransparentBlt(hdc, m_platArr[i].GetPos().x, m_platArr[i].GetPos().y, PLAT_WIDTH, PLAT_HEIGHT, RGB(255,255,255));
+		if(m_platArr[i].GetPos().y != PLAT_LOW_HEIGHT)
+			m_platImg[0]->TransparentBlt(hdc, m_platArr[i].GetPos().x, m_platArr[i].GetPos().y, PLAT_WIDTH, PLAT_HEIGHT, RGB(255, 255, 255));
+		else
+			m_platImg[1]->TransparentBlt(hdc, m_platArr[i].GetPos().x, m_platArr[i].GetPos().y, PLAT_WIDTH, m_platImg[1]->GetHeight() , RGB(255,255,255));
 	}
 
 	m_characterArr->Draw(hdc, m_characterArr->GetState());
 	m_inGameUI->DrawComboUI(hdc, m_characterArr->GetCombo());
 	m_inGameUI->DrawBarUI(hdc, m_characterArr->GetTotalDistance()/100);
 	m_inGameUI->DrawInventoryUI(hdc, 0, 0);
-	m_inGameUI->DrawHeadUpUI(hdc, m_characterArr->GetPos().y);
+
+	if (m_emotionNumber)
+		m_inGameUI->DrawEmotionUI(hdc, m_emotionNumber, m_characterArr->GetPos().x, m_characterArr->GetPos().y);
+	else
+		m_inGameUI->DrawHeadUpUI(hdc, m_characterArr->GetPos().y);
+
 }
 
 void InGameScene::Timer(const double time){
@@ -73,7 +92,8 @@ void InGameScene::Timer(const double time){
 		m_platArr[i].Update(m_characterArr->GetSpeed(), time);
 
 	ComputePawn();
-	ShowPawnState();	//Debug
+	EmotionUIProc();
+	//ShowPawnState();	//Debug
 }
 
 bool InGameScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
@@ -90,6 +110,30 @@ bool InGameScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPa
 			break;
 		case 'G':
 
+			break;
+		case '1':
+			m_emotionNumber = 1;
+			m_emotionTimer = 1;
+			break;
+		case '2':
+			m_emotionNumber = 2;
+			m_emotionTimer = 1;
+			break;
+		case '3':
+			m_emotionNumber = 3;
+			m_emotionTimer = 1;
+			break;
+		case '4':
+			m_emotionNumber = 4;
+			m_emotionTimer = 1;
+			break;
+		case '5':
+			m_emotionNumber = 5;
+			m_emotionTimer = 1;
+			break;
+		case '6':
+			m_emotionNumber = 6;
+			m_emotionTimer = 1;
 			break;
 		}
 	}
@@ -252,5 +296,16 @@ void InGameScene::ShowPawnState() const {
 		}
 		else
 			std::cout << "What is the Problem!!" << std::endl;
+	}
+}
+
+void InGameScene::EmotionUIProc() {
+	if (m_emotionNumber) {
+		m_emotionTimer++;
+
+		if (m_emotionTimer >= 90) {
+			m_emotionTimer = 0;
+			m_emotionNumber = 0;
+		}
 	}
 }

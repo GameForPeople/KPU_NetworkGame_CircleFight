@@ -20,11 +20,14 @@ private:
 	//std::vector<BaseObject>	m_platArr;
 	BaseObject*					m_platArr;
 
-	CImage*						m_platImg;
+	CImage*						m_platImg[2];
 
 	InGameSceneUI*				m_inGameUI;
 		
 	int							m_numPlat;
+
+	int							m_emotionTimer{ 0 };
+	int							m_emotionNumber{ 0 };
 
 public:
 	InGameScene();
@@ -40,8 +43,9 @@ public:
 	virtual void Destory();
 
 public:
-	virtual void LoadPlat();
-	virtual void ComputePawn();
+	void LoadPlat();
+	void ComputePawn();
+	void EmotionUIProc();
 
 public:
 	//for network

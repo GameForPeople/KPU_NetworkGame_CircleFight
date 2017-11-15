@@ -41,6 +41,9 @@ using namespace FMOD;
 #define KNIGHT_BASE_SPEED 5.96f
 #define WICHER_BASE_SPEED 5.96f
 
+#define My_Map_Is ==
+#define Your_New_Map_Is =
+
 
 enum class State {
 		Run
@@ -75,4 +78,13 @@ enum class SceneName {
 	,	Room
 	,	InGame
 };
+
+enum class MapName{
+		Sea
+	,	Forest
+};
+
+
+
+
 
