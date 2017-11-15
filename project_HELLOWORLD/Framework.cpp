@@ -2,8 +2,8 @@
 #include <string>
 
 
-//#define TO_DEBUG_TITLE_SCENE
-#define TO_DEBUG_LOGIN_SCENE
+#define TO_DEBUG_TITLE_SCENE
+//#define TO_DEBUG_LOGIN_SCENE
 //#define TO_DEBUG_LOBBY_SCENE
 //#define TO_DEBUG_ROOM_SCENE
 //#define TO_DEBUG_INGAME_SCENE
@@ -230,7 +230,8 @@ void Framework::ChangeScene() {
 			m_nowScene = 3;
 		}
 		else if (SceneName::InGame == m_Scene[m_nowScene]->m_nextScene) {
-			m_Scene[4] = new LoginScene(m_hwnd);
+			m_Scene[4] = new InGameScene(m_hwnd , m_Scene[m_nowScene]->GetMapName(), m_Scene[m_nowScene]->GetCharacterName());
+			
 			m_Scene[m_nowScene]->~Scene();
 			m_nowScene = 4;
 		}

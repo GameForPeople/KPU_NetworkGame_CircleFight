@@ -28,5 +28,9 @@ public:
 	SceneName		m_nextScene;
 	bool			m_isDestory{ false };
 	bool			GetIsDestory() { return m_isDestory; }
+
+public:
+	virtual MapName		GetMapName() { return MapName::Forest;  };	//Only Use Room -> InGame
+	virtual CharacterName GetCharacterName() { return CharacterName::Archer;  }; //Only Use Room -> InGame
 };
 

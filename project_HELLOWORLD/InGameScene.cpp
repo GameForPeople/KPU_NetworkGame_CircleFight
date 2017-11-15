@@ -50,6 +50,37 @@ InGameScene::InGameScene(HWND hwnd) : Scene(hwnd)
 	m_inGameUI = new InGameSceneUI;
 }
 
+InGameScene::InGameScene(HWND hwnd, MapName insertMap, CharacterName insertCharacter) : Scene(hwnd)
+{
+	if(insertCharacter == CharacterName::Archer)
+		m_characterArr = new Pawn(CharacterName::Archer);
+	else if (insertCharacter == CharacterName::Zombie)
+		m_characterArr = new Pawn(CharacterName::Zombie);
+	else if (insertCharacter == CharacterName::Knight)
+		m_characterArr = new Pawn(CharacterName::Knight);
+	else if (insertCharacter == CharacterName::Wicher)
+		m_characterArr = new Pawn(CharacterName::Wicher);
+	
+	m_characterArr->SetState(State::Fall);
+	
+	if (insertMap == MapName::Sea)
+		m_map = new Map(0, 0, "Resource/Image/Background/Background.png");
+	else if (insertMap == MapName::Forest)
+		m_map = new Map(0, 0, "Resource/Image/Background/Background_2.png");
+	
+	m_platImg[0] = new CImage;
+	m_platImg[1] = new CImage;
+
+	m_platImg[0]->Load("Resource/Image/Plat/Plat_2.png");
+	m_platImg[1]->Load("Resource/Image/Plat/Plat_1.png");
+
+	m_numPlat = PLAT_MAX_NUMBER;
+	m_platArr = new BaseObject[m_numPlat];
+	LoadPlat();
+
+	m_inGameUI = new InGameSceneUI;
+}
+
 InGameScene::InGameScene() 
 {
 }

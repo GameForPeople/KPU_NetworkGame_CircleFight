@@ -32,6 +32,7 @@ private:
 public:
 	InGameScene();
 	InGameScene(HWND);
+	InGameScene(HWND, MapName, CharacterName);
 
 	virtual ~InGameScene();
 
