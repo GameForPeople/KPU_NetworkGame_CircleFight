@@ -44,8 +44,6 @@ bool RoomScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPa
 		mouseY = HIWORD(lParam);
 		mouseX = LOWORD(lParam);
 
-		//std::cout << mouseX << "  " << mouseY << std::endl;
-
 		if (mouseY > 80 && mouseY < 195 && mouseX > 1020 && mouseX < 1129) {
 			std::cout << "³ª´Â ¾ÆÃ³ °ñ¶ú½À´Ï´Ù." << std::endl;
 			m_characterName = CharacterName::Archer;

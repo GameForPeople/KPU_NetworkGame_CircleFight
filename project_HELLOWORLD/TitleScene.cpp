@@ -95,9 +95,9 @@ void TitleScene::Timer(const double count) {
 	//알파값을 점점 더해서 선명하게 만든다.
 	
 	if (m_isOnUpAlpha)
-		m_nAlpha+= 3;
+		m_nAlpha+= 2;
 	else
-		m_nAlpha-= 5;
+		m_nAlpha-= 4;
 
 	//한계수치가 넘을경우 0으로 초기화 한다.
 	if (m_nAlpha >= 255)

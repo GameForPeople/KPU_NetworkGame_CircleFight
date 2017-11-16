@@ -145,7 +145,7 @@
       <Filter>소스 파일\Scene\LobbyScene</Filter>
     </ClCompile>
     <ClCompile Include="RoomScene.cpp">
-      <Filter>소스 파일</Filter>
+      <Filter>소스 파일\Scene\RoomScene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -210,7 +210,7 @@
       <Filter>소스 파일\Scene\LobbyScene</Filter>
     </ClInclude>
     <ClInclude Include="RoomScene.h">
-      <Filter>헤더 파일</Filter>
+      <Filter>소스 파일\Scene\RoomScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

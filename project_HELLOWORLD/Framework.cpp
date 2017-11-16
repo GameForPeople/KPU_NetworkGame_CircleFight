@@ -241,6 +241,7 @@ void Framework::ChangeScene() {
 bool Framework::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
 	
 	if (m_Scene[m_nowScene]->KeyProcess(hwnd, iMessage, wParam, lParam)) return false;
+	
 	switch (iMessage)
 	{
 	case WM_KEYDOWN:
