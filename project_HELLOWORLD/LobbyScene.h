@@ -1,5 +1,7 @@
 #pragma once
 #include "Scene.h"
+#define BUF_SIZE 30
+
 class LobbyScene :
 	public Scene
 {
@@ -22,8 +24,8 @@ public:
 
 private:
 	CImage m_backImg;
-	TCHAR	m_chatBuf[5][100] = { NULL };
-	TCHAR	m_chat[100] = { NULL };
+	TCHAR	m_chatBuf[5][BUF_SIZE] = { NULL };
+	TCHAR	m_chat[BUF_SIZE] = { NULL };
 	size_t	m_Len = 0;
 };
 

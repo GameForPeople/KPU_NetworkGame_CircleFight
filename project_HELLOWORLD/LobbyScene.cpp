@@ -90,7 +90,7 @@ bool LobbyScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 	switch (iMessage) {
 	case WM_KEYDOWN:
 			if ('A' <= wParam && wParam <= 'z') {
-				if (m_Len < 99) {
+				if (m_Len < BUF_SIZE - 1) {
 					m_chat[m_Len++] = (TCHAR)wParam;
 					m_chat[m_Len] = '\0';
 				}
@@ -102,7 +102,7 @@ bool LobbyScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 				}
 			}
 			else if (wParam == VK_SPACE) {
-				if (m_Len < 98) {
+				if (m_Len <BUF_SIZE - 2) {
 					m_chat[m_Len++] = ' ';
 					m_chat[m_Len] = '\0';
 				}
