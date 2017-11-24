@@ -8,6 +8,7 @@
 #include "LoginScene.h"
 #include "LobbyScene.h"
 #include "RoomScene.h"
+#include "RoomSceneGuest.h"
 
 #define MAX_FPS  1.0 / 60.0
 #define MAX_UPDATE_FPS  1.0 / 3.0

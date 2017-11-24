@@ -69,6 +69,7 @@ enum class CharacterName {
 	,	Zombie
 	,	Knight
 	,	Wicher
+	,	NONE
 };
 
 enum class SceneName {
@@ -76,6 +77,7 @@ enum class SceneName {
 	,	Login
 	,	Lobby
 	,	Room
+	,	RoomGuest
 	,	InGame
 };
 
@@ -87,4 +89,34 @@ enum class MapName{
 
 
 
+//------------------------------------------- Room Ελ½ΕΏλ -----------------------------------------------------
+#define MAX_PLAYER 4
 
+enum { ROOMCHNG = 301, CHACHNG, MAPCHNG, REQEXIT, NOTIFYEXIT };
+
+struct RoomConnect {
+	int idx;
+	SOCKET sock;
+
+	RoomConnect(int idx, SOCKET sock) :idx(idx), sock(sock) {}
+};
+
+struct QueueData {
+	int op;
+	int fromIdx;
+
+	QueueData(int op = NULL, int fromIdx = NULL)
+		:op(op), fromIdx(fromIdx) {}
+};
+
+struct RoomInfo {
+	CharacterName charInfo[4];
+	int mapInfo;
+};
+
+struct ChaChng {
+	int idx;
+	int charNum;
+
+	ChaChng(int idx, int charNum) : idx(idx), charNum(charNum) {}
+};

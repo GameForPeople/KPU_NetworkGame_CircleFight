@@ -72,6 +72,13 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 			m_isDestory = true;
 			m_nextScene = SceneName::Room;
 		}
+		else if (mouseY > 80 && mouseY < 450 && mouseX>20 && mouseX < 1250)
+		{
+			// 방입장(임시)
+			std::cout << "방입장합니다!! " << std::endl;
+			m_isDestory = true;
+			m_nextScene = SceneName::RoomGuest;
+		}
 		else if (mouseY > 630 && mouseY < 670 && mouseX > 640 && mouseX < 725) {
 			memcpy(m_chatBuf[0], m_chatBuf[1], sizeof(m_chatBuf[1]));
 			memcpy(m_chatBuf[1], m_chatBuf[2], sizeof(m_chatBuf[2]));

@@ -2,9 +2,9 @@
 #include <string>
 
 
-#define TO_DEBUG_TITLE_SCENE
+//#define TO_DEBUG_TITLE_SCENE
 //#define TO_DEBUG_LOGIN_SCENE
-//#define TO_DEBUG_LOBBY_SCENE
+#define TO_DEBUG_LOBBY_SCENE
 //#define TO_DEBUG_ROOM_SCENE
 //#define TO_DEBUG_INGAME_SCENE
 
@@ -226,6 +226,11 @@ void Framework::ChangeScene() {
 		}
 		else if (SceneName::Room == m_Scene[m_nowScene]->m_nextScene) {
 			m_Scene[3] = new RoomScene(m_hwnd);
+			m_Scene[m_nowScene]->~Scene();
+			m_nowScene = 3;
+		}
+		else if (SceneName::RoomGuest == m_Scene[m_nowScene]->m_nextScene) {
+			m_Scene[3] = new RoomSceneGuest(m_hwnd);
 			m_Scene[m_nowScene]->~Scene();
 			m_nowScene = 3;
 		}

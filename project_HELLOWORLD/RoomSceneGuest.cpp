@@ -1,27 +1,22 @@
-#include "RoomScene.h"
+#include "RoomSceneGuest.h"
 
 
-
-RoomScene::RoomScene()
+RoomSceneGuest::RoomSceneGuest()
 {
 }
 
-RoomScene::RoomScene(HWND hWnd) : Scene(hWnd)
+RoomSceneGuest::RoomSceneGuest(HWND hWnd) : Scene(hWnd)
 {
-	for (int i = 0; i < 4; ++i)
-	{
-		roomInfo.charInfo[i] = CharacterName::Archer;
-	}
 	LoadCImage();
 }
 
-RoomScene::~RoomScene()
+RoomSceneGuest::~RoomSceneGuest()
 {
 }
 
 
-void RoomScene::Draw(HDC hdc) {
-	if(m_What_Is_Your_Map == MapName::Sea)
+void RoomSceneGuest::Draw(HDC hdc) {
+	if (m_What_Is_Your_Map == MapName::Sea)
 		m_backImg[0].StretchBlt(hdc, 0, 0, SCREEN_WIDTH - 15, SCREEN_HEIGHT - 40, SRCCOPY);
 	else if (m_What_Is_Your_Map == MapName::Forest)
 		m_backImg[1].StretchBlt(hdc, 0, 0, SCREEN_WIDTH - 15, SCREEN_HEIGHT - 40, SRCCOPY);
@@ -30,7 +25,7 @@ void RoomScene::Draw(HDC hdc) {
 	DrawCharacter(hdc);
 }
 
-void RoomScene::DrawCharacter(HDC hdc) {
+void RoomSceneGuest::DrawCharacter(HDC hdc) {
 	int x, y;
 
 	for (int i = 0; i < 4; ++i)
@@ -48,7 +43,7 @@ void RoomScene::DrawCharacter(HDC hdc) {
 	}
 }
 
-int RoomScene::GetXPosByIdx(int idx)
+int RoomSceneGuest::GetXPosByIdx(int idx)
 {
 	// Red 팀
 	if (idx == 0) return 50;
@@ -59,7 +54,7 @@ int RoomScene::GetXPosByIdx(int idx)
 	return -1;	// 오류
 }
 
-int RoomScene::GetYPosByIdx(int idx)
+int RoomSceneGuest::GetYPosByIdx(int idx)
 {
 	// Red 팀
 	if (idx == 0) return 90;
@@ -70,7 +65,8 @@ int RoomScene::GetYPosByIdx(int idx)
 	return -1;	// 오류
 }
 
-bool RoomScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
+
+bool RoomSceneGuest::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
 	float mouseX, mouseY;
 
 	if (iMessage == WM_LBUTTONDOWN) {
@@ -97,27 +93,7 @@ bool RoomScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPa
 
 		}
 
-
-		else if (mouseY > 440 && mouseY < 485 && mouseX > 1010 && mouseX < 1060) {
-			std::cout << "나는 맵을 바꿧습니다." << std::endl;
-
-			if (m_What_Is_Your_Map My_Map_Is MapName::Sea)
-				m_What_Is_Your_Map Your_New_Map_Is MapName::Forest;
-			else if (m_What_Is_Your_Map == MapName::Forest)
-				m_What_Is_Your_Map = MapName::Sea;
-		}
-
-		else if (mouseY > 440 && mouseY < 485 && mouseX > 1210 && mouseX < 1250) {
-			std::cout << "나는 맵을 바꿧습니다." << std::endl;
-
-			if (m_What_Is_Your_Map == MapName::Sea)
-				m_What_Is_Your_Map = MapName::Forest;
-			else if (m_What_Is_Your_Map == MapName::Forest)
-				m_What_Is_Your_Map = MapName::Sea;
-		}
-
-
-		else if (mouseY > 277  && mouseY < 395 && mouseX > 448 && mouseX < 565 ) {
+		else if (mouseY > 277 && mouseY < 395 && mouseX > 448 && mouseX < 565) {
 			// 게임시작
 			std::cout << "게임을 시작합니다" << std::endl;
 			m_isDestory = true;
@@ -135,14 +111,14 @@ bool RoomScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPa
 	}
 }
 
-void RoomScene::Timer(const double count) {
+void RoomSceneGuest::Timer(const double count) {
 
 }
 
 
-void RoomScene::LoadCImage() {
-	m_backImg[0].Load("Resource/Image/Room/GameRoom_host_1.png");	//Sea
-	m_backImg[1].Load("Resource/Image/Room/GameRoom_host_2.png");	//Forest
+void RoomSceneGuest::LoadCImage() {
+	m_backImg[0].Load("Resource/Image/Room/GameRoom_guest_1.png");	//Sea
+	m_backImg[1].Load("Resource/Image/Room/GameRoom_guest_2.png");	//Forest
 
 	m_ImgArcher.Load("Resource/Image/Room/Room_Archer.png");
 	m_ImgZombie.Load("Resource/Image/Room/Room_Zombie.png");

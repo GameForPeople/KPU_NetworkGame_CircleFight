@@ -42,7 +42,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -157,15 +157,18 @@
     <ClCompile Include="NewMain_Backup.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="RoomScene.cpp" />
+    <ClCompile Include="RoomSceneGuest.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="StaticActor.cpp" />
     <ClCompile Include="BaseObject.cpp" />
     <ClCompile Include="Main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="NewMain.cpp" />
     <ClCompile Include="NoEdit.cpp">
@@ -197,6 +200,7 @@
     <ClInclude Include="Map.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="RoomScene.h" />
+    <ClInclude Include="RoomSceneGuest.h" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="StaticActor.h" />
     <ClInclude Include="BaseObject.h" />

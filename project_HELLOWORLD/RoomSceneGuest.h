@@ -2,12 +2,12 @@
 
 #include "Scene.h"
 
-class RoomScene : public Scene
+class RoomSceneGuest : public Scene
 {
 public:
-	RoomScene();
-	RoomScene(HWND);
-	~RoomScene();
+	RoomSceneGuest();
+	RoomSceneGuest(HWND);
+	~RoomSceneGuest();
 
 public:
 	virtual void Draw(HDC hdc);
@@ -33,11 +33,9 @@ private:
 	MapName			m_What_Is_Your_Map{ MapName::Sea };
 	CharacterName	m_characterName{ CharacterName::Archer };
 
-	int numPlayer = 1;
 	RoomInfo roomInfo;
 
 public:
 	virtual MapName		GetMapName() { return m_What_Is_Your_Map; }
 	virtual CharacterName GetCharacterName() { return m_characterName; }
 };
-

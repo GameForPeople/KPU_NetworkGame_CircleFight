@@ -147,6 +147,9 @@
     <ClCompile Include="RoomScene.cpp">
       <Filter>소스 파일\Scene\RoomScene</Filter>
     </ClCompile>
+    <ClCompile Include="RoomSceneGuest.cpp">
+      <Filter>소스 파일\Scene\RoomScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NewMain.h">
@@ -210,6 +213,9 @@
       <Filter>소스 파일\Scene\LobbyScene</Filter>
     </ClInclude>
     <ClInclude Include="RoomScene.h">
+      <Filter>소스 파일\Scene\RoomScene</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomSceneGuest.h">
       <Filter>소스 파일\Scene\RoomScene</Filter>
     </ClInclude>
   </ItemGroup>
