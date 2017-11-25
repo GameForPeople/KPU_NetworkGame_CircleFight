@@ -47,6 +47,11 @@ void Pawn::Update(State state, double time) {
 //	m_unit->Draw(hdc, m_pos.x, m_pos.y, m_size.x, m_size.y, );
 //}
 
+void Pawn::Draw(HDC hdc, float xDiff, State state)
+{
+	m_unit->Draw(hdc, m_pos.x + xDiff, m_pos.y, m_size.x, m_size.y, state);
+}
+
 void Pawn::Draw(HDC hdc, State state) {
 	m_unit->Draw(hdc, m_pos.x, m_pos.y, m_size.x, m_size.y, state);
 }

@@ -18,6 +18,7 @@
 // C++ 런타임 헤더 파일입니다.
 #include <iostream>
 #include <chrono>
+#include <deque>
 
 // CImage 를 위한 헤더 파일입니다.
 #include <atlimage.h>
@@ -87,8 +88,6 @@ enum class MapName{
 };
 
 
-
-
 //------------------------------------------- Room 통신용 -----------------------------------------------------
 #define MAX_PLAYER 4
 
@@ -98,6 +97,7 @@ struct RoomConnect {
 	int idx;
 	SOCKET sock;
 
+	RoomConnect(){}
 	RoomConnect(int idx, SOCKET sock) :idx(idx), sock(sock) {}
 };
 
@@ -111,12 +111,13 @@ struct QueueData {
 
 struct RoomInfo {
 	CharacterName charInfo[4];
-	int mapInfo;
+	MapName mapInfo;
 };
 
 struct ChaChng {
 	int idx;
-	int charNum;
+	CharacterName charInfo;
 
-	ChaChng(int idx, int charNum) : idx(idx), charNum(charNum) {}
+	ChaChng() {}
+	ChaChng(int idx, CharacterName charInfo) : idx(idx), charInfo(charInfo) {}
 };

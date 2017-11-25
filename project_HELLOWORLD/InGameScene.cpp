@@ -13,22 +13,22 @@
 InGameScene::InGameScene(HWND hwnd) : Scene(hwnd)
 {
 #ifdef TO_DEBUG_ARCHER
-	m_characterArr = new Pawn(CharacterName::Archer);
+	m_characterArr[0] = Pawn(CharacterName::Archer);
 #endif
 
 #ifdef TO_DEBUG_ZOMBIE
-	m_characterArr = new Pawn(CharacterName::Zombie);
+	m_characterArr[0] = Pawn(CharacterName::Zombie);
 #endif
 
 #ifdef TO_DEBUG_KNIGHT
-	m_characterArr = new Pawn(CharacterName::Knight);
+	m_characterArr[0] = Pawn(CharacterName::Knight);
 #endif
 
 #ifdef TO_DEBUG_WICHER
-	m_characterArr = new Pawn(CharacterName::Wicher);
+	m_characterArr[0] = Pawn(CharacterName::Wicher);
 #endif
 
-	m_characterArr->SetState(State::Fall);
+	m_characterArr[0].SetState(State::Fall);
 
 #ifdef TO_DEBUG_MAP_SEA
 	m_map = new Map(0, 0, "Resource/Image/Background/Background.png");
@@ -50,16 +50,20 @@ InGameScene::InGameScene(HWND hwnd) : Scene(hwnd)
 	m_inGameUI = new InGameSceneUI;
 }
 
-InGameScene::InGameScene(HWND hwnd, MapName insertMap, CharacterName insertCharacter) : Scene(hwnd)
+InGameScene::InGameScene(HWND hwnd, MapName insertMap, CharacterName* insertCharacter) : Scene(hwnd)
 {
-	if(insertCharacter == CharacterName::Archer)
-		m_characterArr = new Pawn(CharacterName::Archer);
-	else if (insertCharacter == CharacterName::Zombie)
-		m_characterArr = new Pawn(CharacterName::Zombie);
-	else if (insertCharacter == CharacterName::Knight)
-		m_characterArr = new Pawn(CharacterName::Knight);
-	else if (insertCharacter == CharacterName::Wicher)
-		m_characterArr = new Pawn(CharacterName::Wicher);
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		if (insertCharacter[i] == CharacterName::Archer)
+			m_characterArr[i] = Pawn(CharacterName::Archer);
+		else if (insertCharacter[i] == CharacterName::Zombie)
+			m_characterArr[i] = Pawn(CharacterName::Zombie);
+		else if (insertCharacter[i] == CharacterName::Knight)
+			m_characterArr[i] = Pawn(CharacterName::Knight);
+		else if (insertCharacter[i] == CharacterName::Wicher)
+			m_characterArr[i] = Pawn(CharacterName::Wicher);
+	}
+	
 	
 	m_characterArr->SetState(State::Fall);
 	
@@ -101,28 +105,41 @@ void InGameScene::Draw(HDC hdc) {
 			m_platImg[1]->TransparentBlt(hdc, m_platArr[i].GetPos().x, m_platArr[i].GetPos().y, PLAT_WIDTH, m_platImg[1]->GetHeight() , RGB(255,255,255));
 	}
 
-	m_characterArr->Draw(hdc, m_characterArr->GetState());
-	m_inGameUI->DrawComboUI(hdc, m_characterArr->GetCombo());
-	m_inGameUI->DrawBarUI(hdc, m_characterArr->GetTotalDistance()/100);
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		m_characterArr[i].Draw(hdc, m_characterArr[i].GetTotalDistance() - m_characterArr[0].GetTotalDistance(), m_characterArr[i].GetState());
+	}
+	m_inGameUI->DrawComboUI(hdc, m_characterArr[0].GetCombo());
+	m_inGameUI->DrawBarUI(hdc, m_characterArr[0].GetTotalDistance()/100);
 	m_inGameUI->DrawInventoryUI(hdc, 0, 0);
 
-	if (m_emotionNumber)
-		m_inGameUI->DrawEmotionUI(hdc, m_emotionNumber, m_characterArr->GetPos().x, m_characterArr->GetPos().y);
-	else
-		m_inGameUI->DrawHeadUpUI(hdc, m_characterArr->GetPos().y);
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		if (m_emotionNumber)
+			m_inGameUI->DrawEmotionUI(hdc, m_emotionNumber, m_characterArr[i].GetPos().x, m_characterArr[i].GetPos().y);
+		else
+			m_inGameUI->DrawHeadUpUI(hdc, m_characterArr[i].GetPos().y);
+	}
+	
 
 }
 
 void InGameScene::Timer(const double time){
 
-	m_map->Update(m_characterArr->GetSpeed(), time);
-	m_characterArr->Update(m_characterArr->GetState(), time);
+	m_map->Update(m_characterArr[0].GetSpeed(), time);
+
+	for(int i=0; i<MAX_PLAYER; ++i)
+		m_characterArr[i].Update(m_characterArr[i].GetState(), time);
 
 
 	for( int i = 0 ; i < PLAT_MAX_NUMBER; i++)
-		m_platArr[i].Update(m_characterArr->GetSpeed(), time);
+		m_platArr[i].Update(m_characterArr[0].GetSpeed(), time);
 
-	ComputePawn();
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		ComputePawn(i);
+	}
+	
 	EmotionUIProc();
 	//ShowPawnState();	//Debug
 }
@@ -133,7 +150,7 @@ bool InGameScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPa
 	{
 	case WM_KEYDOWN:
 	{
-		if (m_characterArr->InsertKey(wParam))return true;
+		if (m_characterArr[0].InsertKey(wParam))return true;
 		
 		switch (wParam) {
 		case VK_SPACE:
@@ -226,18 +243,18 @@ void InGameScene::LoadPlat() {
 	*/
 }
 
-void InGameScene::ComputePawn() {
+void InGameScene::ComputePawn(int idx) {
 	//std::cout << m_characterArr->GetTotalDistance() / 100 + 2 << std::endl;
 #pragma region [캐릭터의 Y값을 계산합니다.]
 
-	int leftPlat = (int)(m_characterArr->GetTotalDistance() / PLAT_WIDTH + 2);
-	int rightPlat = (int)(m_characterArr->GetTotalDistance() / PLAT_WIDTH + 3);
+	int leftPlat = (int)(m_characterArr[idx].GetTotalDistance() / PLAT_WIDTH + 2);
+	int rightPlat = (int)(m_characterArr[idx].GetTotalDistance() / PLAT_WIDTH + 3);
 
 	float pawnPosY = m_characterArr->GetPos().y + 185;
 
-	if (m_characterArr->GetState() == State::Fall
-		|| m_characterArr->GetState() == State::JumpEnd
-		|| m_characterArr->GetState() == State::DoubleJumpEnd
+	if (m_characterArr[idx].GetState() == State::Fall
+		|| m_characterArr[idx].GetState() == State::JumpEnd
+		|| m_characterArr[idx].GetState() == State::DoubleJumpEnd
 		) {
 		//if (m_platArr[leftPlat].GetPos().y - 5<= pawnPosY
 		//	&& m_platArr[leftPlat].GetPos().y + 5 > pawnPosY) {
@@ -251,18 +268,18 @@ void InGameScene::ComputePawn() {
 		if (m_platArr[rightPlat].GetPos().y - 10 <= pawnPosY
 			&& m_platArr[rightPlat].GetPos().y + 30 > pawnPosY) {
 
-			m_characterArr->SetPos(200, m_platArr[rightPlat].GetPos().y - 185);
-			m_characterArr->SetState(State::Run);
-			m_characterArr->GetUnit().SetImageCount(0);
-			m_characterArr->ResetFallSpeed();
+			m_characterArr[idx].SetPos(200, m_platArr[rightPlat].GetPos().y - 185);
+			m_characterArr[idx].SetState(State::Run);
+			m_characterArr[idx].GetUnit().SetImageCount(0);
+			m_characterArr[idx].ResetFallSpeed();
 		}
 		else if (pawnPosY > SCREEN_HEIGHT + 50 ){
-			m_characterArr->ResetCombo();
-			m_characterArr->SetPos(200, 0);
-			m_characterArr->SetState(State::JumpEnd);
+			m_characterArr[idx].ResetCombo();
+			m_characterArr[idx].SetPos(200, 0);
+			m_characterArr[idx].SetState(State::JumpEnd);
 		}
 	}
-	else if (m_characterArr->GetState() == State::Run) {
+	else if (m_characterArr[idx].GetState() == State::Run) {
 		
 		bool isValue = false;
 		//if (m_platArr[leftPlat].GetPos().y - 5 <= pawnPosY
@@ -273,7 +290,7 @@ void InGameScene::ComputePawn() {
 			&& m_platArr[rightPlat].GetPos().y + 30 > pawnPosY) {
 		}
 		else {
-			m_characterArr->SetState(State::Fall);
+			m_characterArr[idx].SetState(State::Fall);
 		}
 	}
 		//else m_characterArr->SetState(State::Fall);
@@ -282,47 +299,47 @@ void InGameScene::ComputePawn() {
 
 }
 
-void InGameScene::ShowPawnState() const {
+void InGameScene::ShowPawnState()  {
 
-	if (m_characterArr->GetState() == State::Run) {
+	if (m_characterArr[0].GetState() == State::Run) {
 		std::cout << "Run" << std::endl;
 	}
-	else if (m_characterArr->GetState() == State::JumpLoop) {
+	else if (m_characterArr[0].GetState() == State::JumpLoop) {
 		std::cout << "JUMPLOOP" << std::endl;
 	}
-	else if (m_characterArr->GetState() == State::JumpEnd) {
+	else if (m_characterArr[0].GetState() == State::JumpEnd) {
 		std::cout << "JUMPEnd" << std::endl;
 	}
-	else if (m_characterArr->GetState() == State::DoubleJumpEnd) {
+	else if (m_characterArr[0].GetState() == State::DoubleJumpEnd) {
 		std::cout << "DoubleJUMPEnd" << std::endl;
 	}
 
-	else if (m_characterArr->GetState() == State::Fall) {
+	else if (m_characterArr[0].GetState() == State::Fall) {
 		std::cout << "Fall" << std::endl;
 	}
 	else {
-		if (m_characterArr->GetState() == State::Boost) {
+		if (m_characterArr[0].GetState() == State::Boost) {
 			std::cout << "Boost" << std::endl;
 		}
-		else if (m_characterArr->GetState() == State::Collide) {
+		else if (m_characterArr[0].GetState() == State::Collide) {
 			std::cout << "Collide" << std::endl;
 		}
-		else if (m_characterArr->GetState() == State::Death) {
+		else if (m_characterArr[0].GetState() == State::Death) {
 			std::cout << "Death" << std::endl;
 		}
-		else if (m_characterArr->GetState() == State::DoubleJumpLoop) {
+		else if (m_characterArr[0].GetState() == State::DoubleJumpLoop) {
 			std::cout << "DoupleJump" << std::endl;
 		}
-		else if (m_characterArr->GetState() == State::Sleep) {
+		else if (m_characterArr[0].GetState() == State::Sleep) {
 			std::cout << "Sleep" << std::endl;
 		}
-		else if (m_characterArr->GetState() == State::Slow) {
+		else if (m_characterArr[0].GetState() == State::Slow) {
 			std::cout << "Slow" << std::endl;
 		}
-		else if (m_characterArr->GetState() == State::Stun) {
+		else if (m_characterArr[0].GetState() == State::Stun) {
 			std::cout << "Stun" << std::endl;
 		}
-		else if (m_characterArr->GetState() == State::TripleJump) {
+		else if (m_characterArr[0].GetState() == State::TripleJump) {
 			std::cout << "TripleJump" << std::endl;
 		}
 		else

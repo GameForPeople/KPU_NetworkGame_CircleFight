@@ -14,7 +14,7 @@ class InGameScene :
 	public Scene
 {
 private:
-	Pawn*						m_characterArr;
+	Pawn						m_characterArr[MAX_PLAYER];
 	Map*						m_map;
 						
 	//std::vector<BaseObject>	m_platArr;
@@ -32,7 +32,7 @@ private:
 public:
 	InGameScene();
 	InGameScene(HWND);
-	InGameScene(HWND, MapName, CharacterName);
+	InGameScene(HWND, MapName, CharacterName*);
 
 	virtual ~InGameScene();
 
@@ -45,7 +45,7 @@ public:
 
 public:
 	void LoadPlat();
-	void ComputePawn();
+	void ComputePawn(int idx);
 	void EmotionUIProc();
 
 public:
@@ -54,6 +54,6 @@ public:
 
 public:
 	//for debug
-	void ShowPawnState() const;	
+	void ShowPawnState();	
 };
 

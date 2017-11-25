@@ -29,6 +29,11 @@ void BaseObject::Update(float speed, double time) {
 	m_pos.x -= speed;
 }
 
+void BaseObject::Draw(HDC hdc, float xDiff)
+{
+
+}
+
 void BaseObject::Draw(HDC hdc) {
 	
 }

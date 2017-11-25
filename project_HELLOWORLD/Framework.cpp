@@ -17,11 +17,15 @@ T GetUserDataPtr(HWND hWnd)
 
 Framework::Framework()
 {
+	// 윈속 초기화
+	WSADATA wsa;
+	WSAStartup(MAKEWORD(2, 2), &wsa);
 	m_grid = new StaticActor(0, 0, "Resource/Image/grid.png");
 }
 
 Framework::~Framework()
 {
+	WSACleanup();
 }
 
 bool Framework::Create(HWND hwnd, RECT rect) {

@@ -154,6 +154,7 @@
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="LogInScene.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="NetworkFunc.cpp" />
     <ClCompile Include="NewMain_Backup.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -198,6 +199,7 @@
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="LogInScene.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="NetworkFunc.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="RoomScene.h" />
     <ClInclude Include="RoomSceneGuest.h" />

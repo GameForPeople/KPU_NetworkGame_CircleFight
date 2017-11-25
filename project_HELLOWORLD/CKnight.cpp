@@ -34,7 +34,7 @@ void CKnight::Draw(HDC hdc, float x, float y, float sizeX, float sizeY, State st
 void CKnight::ChangeImage(State state) {
 	m_imageTimer++;
 
-	std::cout << m_imageTimer << "  " << m_imageCount;
+	//std::cout << m_imageTimer << "  " << m_imageCount;
 
 	if (state == State::Run) {
 		if (m_imageTimer % 2 == 0) {
@@ -67,7 +67,7 @@ void CKnight::ChangeImage(State state) {
 			m_imageCount = 1;
 	}
 
-	std::cout << m_imageTimer << "  " << m_imageCount << "        " ;
+	//std::cout << m_imageTimer << "  " << m_imageCount << "        " ;
 
 }
 

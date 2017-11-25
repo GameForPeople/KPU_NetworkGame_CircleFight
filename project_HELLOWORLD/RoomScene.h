@@ -1,6 +1,11 @@
 #pragma once
 
 #include "Scene.h"
+#include "NetworkFunc.h"
+
+static int numPlayer = 0;
+static RoomInfo roomInfo;
+static deque<QueueData> sendQueue[MAX_PLAYER];
 
 class RoomScene : public Scene
 {
@@ -29,15 +34,7 @@ private:
 	CImage			m_ImgKnight;
 	CImage			m_ImgWicher;
 
-
-	MapName			m_What_Is_Your_Map{ MapName::Sea };
-	CharacterName	m_characterName{ CharacterName::Archer };
-
-	int numPlayer = 1;
-	RoomInfo roomInfo;
-
 public:
-	virtual MapName		GetMapName() { return m_What_Is_Your_Map; }
-	virtual CharacterName GetCharacterName() { return m_characterName; }
+	virtual MapName		GetMapName() { return roomInfo.mapInfo; }
+	virtual CharacterName* GetCharacterName() { return roomInfo.charInfo; }
 };
-

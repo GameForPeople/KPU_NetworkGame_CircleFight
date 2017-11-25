@@ -40,6 +40,7 @@ public:
 	Pawn(float x, float y );
 
 	virtual void Update(State state, double time);
+	virtual void Draw(HDC hdc, float xDiff, State state);
 	virtual void Draw(HDC hdc, State state);
 	//virtual void Draw(HDC hdc, float x, float y, float sizeX, float sizeY);
 

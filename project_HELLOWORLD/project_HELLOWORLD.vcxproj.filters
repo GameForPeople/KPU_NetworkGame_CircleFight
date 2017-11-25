@@ -150,6 +150,9 @@
     <ClCompile Include="RoomSceneGuest.cpp">
       <Filter>소스 파일\Scene\RoomScene</Filter>
     </ClCompile>
+    <ClCompile Include="NetworkFunc.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NewMain.h">
@@ -217,6 +220,9 @@
     </ClInclude>
     <ClInclude Include="RoomSceneGuest.h">
       <Filter>소스 파일\Scene\RoomScene</Filter>
+    </ClInclude>
+    <ClInclude Include="NetworkFunc.h">
+      <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -31,6 +31,6 @@ public:
 
 public:
 	virtual MapName		GetMapName() { return MapName::Forest;  };	//Only Use Room -> InGame
-	virtual CharacterName GetCharacterName() { return CharacterName::Archer;  }; //Only Use Room -> InGame
+	virtual CharacterName* GetCharacterName() { return NULL;  }; //Only Use Room -> InGame
 };
 

@@ -20,6 +20,7 @@ public:
 	BaseObject::BaseObject(const float x, const float y, const float sizeX, const float sizeY);
 
 	virtual void Update(const float speed, const double time);
+	virtual void Draw(HDC hdc, float xDiff);
 	virtual void Draw(HDC);
 
 	void SetPos(const float x, const float y);
