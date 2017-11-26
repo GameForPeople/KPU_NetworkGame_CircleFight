@@ -153,6 +153,9 @@
     <ClCompile Include="NetworkFunc.cpp">
       <Filter>헤더 파일</Filter>
     </ClCompile>
+    <ClCompile Include="InGameSceneGuest.cpp">
+      <Filter>소스 파일\Scene\InGameScene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NewMain.h">
@@ -223,6 +226,9 @@
     </ClInclude>
     <ClInclude Include="NetworkFunc.h">
       <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="InGameSceneGuest.h">
+      <Filter>소스 파일\Scene\InGameScene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

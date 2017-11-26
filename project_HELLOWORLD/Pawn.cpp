@@ -56,8 +56,11 @@ void Pawn::Draw(HDC hdc, State state) {
 	m_unit->Draw(hdc, m_pos.x, m_pos.y, m_size.x, m_size.y, state);
 }
 
-void Pawn::ComputeTotalDistance() {
-	m_totalDistance += m_speed;
+void Pawn::ComputeTotalDistance(float speed) {
+	if(speed==0)
+		m_totalDistance += m_speed;
+	else
+		m_totalDistance += speed;
 }
 
 void Pawn::ProcessCombo() {

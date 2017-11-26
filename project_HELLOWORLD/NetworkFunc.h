@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+#include "BaseObject.h"
 #include <WinSock2.h>
 #include <WS2tcpip.h>
 
@@ -8,6 +9,11 @@
 
 #define HOSTPORT 9999
 #define ACCEPT_DENIED 18446744073709551615
+
+extern deque<QueueData> sendQueue[MAX_PLAYER];
+extern deque<int> sendQueueGuest;
+extern int m_idx;
+extern BasicInfo basicInfo;
 
 void err_quit(char *msg);
 void err_display(char *msg);

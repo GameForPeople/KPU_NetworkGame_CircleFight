@@ -49,7 +49,7 @@
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -150,6 +150,7 @@
     <ClCompile Include="CZombie.cpp" />
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="InGameScene.cpp" />
+    <ClCompile Include="InGameSceneGuest.cpp" />
     <ClCompile Include="InGameSceneUI.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="LogInScene.cpp" />
@@ -159,6 +160,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Pawn.cpp" />
     <ClCompile Include="RoomScene.cpp" />
@@ -170,6 +172,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="NewMain.cpp" />
     <ClCompile Include="NoEdit.cpp">
@@ -195,6 +198,7 @@
     <ClInclude Include="CZombie.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="InGameScene.h" />
+    <ClInclude Include="InGameSceneGuest.h" />
     <ClInclude Include="InGameSceneUI.h" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="LogInScene.h" />

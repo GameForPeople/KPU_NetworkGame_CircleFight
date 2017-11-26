@@ -14,6 +14,8 @@ RoomScene::RoomScene()
 
 RoomScene::RoomScene(HWND hWnd) : Scene(hWnd)
 {
+	readyPlayer = 0;
+
 	CreateThread(NULL, 0, ListenThread, NULL, NULL, NULL);
 	if (numPlayer == 0)
 	{
@@ -151,6 +153,14 @@ bool RoomScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPa
 			{
 				// 게임시작
 				std::cout << "게임을 시작합니다" << std::endl;
+
+				for (int i = 1; i < MAX_PLAYER; ++i)
+				{
+					sendQueue[i].emplace_back(NOTIFYSTART);
+				}
+				readyPlayer++;
+				while (readyPlayer < MAX_PLAYER);
+				
 				m_isDestory = true;
 				m_nextScene = SceneName::InGame;
 			}
@@ -201,41 +211,43 @@ int GetEmptySlot()
 
 DWORD WINAPI SendData(LPVOID arg)
 {
-	RoomConnect *sock_info = (RoomConnect*)arg;
+	RoomConnect sock_info = *(RoomConnect*)arg;
 
 	int retval;
-	QueueData sendOp;
 	bool running = true;
 
-	sendQueue[sock_info->idx].clear();
+	QueueData sendOp;
+	
+	sendQueue[sock_info.idx].clear();
 
 	// 인덱스 정보 보내기
-	send(sock_info->sock, (char*)&sock_info->idx, sizeof(sock_info->idx), 0);
+	send(sock_info.sock, (char*)&sock_info.idx, sizeof(sock_info.idx), 0);
 
 	while (running)
 	{
-		if (!sendQueue[sock_info->idx].empty())
+		if (!sendQueue[sock_info.idx].empty())
 		{
-			sendOp = sendQueue[sock_info->idx].front();
-			sendQueue[sock_info->idx].pop_front();
-			send(sock_info->sock, (char*)&sendOp.op, sizeof(sendOp.op), 0);
+			sendOp = sendQueue[sock_info.idx].front();
+			sendQueue[sock_info.idx].pop_front();
+			send(sock_info.sock, (char*)&sendOp.op, sizeof(sendOp.op), 0);
 			switch (sendOp.op)
 			{
+				// InRoom통신
 			case ROOMCHNG:
-				send(sock_info->sock, (char*)&roomInfo, sizeof(roomInfo), 0);
+				send(sock_info.sock, (char*)&roomInfo, sizeof(roomInfo), 0);
 				break;
 			case MAPCHNG:
-				send(sock_info->sock, (char*)&roomInfo.mapInfo, sizeof(roomInfo.mapInfo), 0);
+				send(sock_info.sock, (char*)&roomInfo.mapInfo, sizeof(roomInfo.mapInfo), 0);
 				break;
 			case CHACHNG:
 			{
 				ChaChng chaInfo(sendOp.fromIdx, roomInfo.charInfo[sendOp.fromIdx]);
-				send(sock_info->sock, (char*)&chaInfo, sizeof(chaInfo), 0);
+				send(sock_info.sock, (char*)&chaInfo, sizeof(chaInfo), 0);
 				break;
 			}
 			case REQEXIT:
 				running = false;
-				roomInfo.charInfo[sock_info->idx] = CharacterName::NONE;
+				roomInfo.charInfo[sock_info.idx] = CharacterName::NONE;
 
 				for (int i = 1; i < MAX_PLAYER; ++i)
 				{
@@ -243,60 +255,71 @@ DWORD WINAPI SendData(LPVOID arg)
 					sendQueue[i].emplace_back(ROOMCHNG);
 				}
 
-				send(sock_info->sock, (char*)&running, sizeof(running), 0);
-				closesocket(sock_info->sock);
+				send(sock_info.sock, (char*)&running, sizeof(running), 0);
+				closesocket(sock_info.sock);
 				numPlayer--;
 				break;
 			case NOTIFYEXIT:
 				running = false;
-				closesocket(sock_info->sock);
+				closesocket(sock_info.sock);
+				break;
+
+				// InGame 통신
+			case BASICINFO:
+				send(sock_info.sock, (char*)&basicInfo, sizeof(basicInfo), 0);
 				break;
 			}
 		}
 	}
-	delete sock_info;
+
 	return 0;
 }
 
 DWORD WINAPI RecvData(LPVOID arg)
 {
-	RoomConnect *sock_info = (RoomConnect*)arg;
+	RoomConnect sock_info = *(RoomConnect*)arg;
 
 	int retval, op;
 	bool running = true;
 
 	while (running)
 	{
-		retval = recvn(sock_info->sock, (char*)&op, sizeof(op), 0);
+		retval = recvn(sock_info.sock, (char*)&op, sizeof(op), 0);
 		if (retval > 0)
 		{
 			switch (op)
 			{
 			case -1:	// 타임아웃
 				break;
+				// InRoom 통신
 			case CHACHNG:
-				retval = recvn(sock_info->sock, (char*)&roomInfo.charInfo[sock_info->idx], sizeof(roomInfo.charInfo[sock_info->idx]), 0);
+				retval = recvn(sock_info.sock, (char*)&roomInfo.charInfo[sock_info.idx], sizeof(roomInfo.charInfo[sock_info.idx]), 0);
 
 				for (int i = 1; i < MAX_PLAYER; ++i)
 				{
 					if (roomInfo.charInfo[i] == CharacterName::NONE) continue;
-					sendQueue[i].emplace_back(CHACHNG, sock_info->idx);
+					sendQueue[i].emplace_back(CHACHNG, sock_info.idx);
 				}
 				break;
 			case REQEXIT:
 				running = false;
-				closesocket(sock_info->sock);
-				sendQueue[sock_info->idx].emplace_back(REQEXIT);
+				closesocket(sock_info.sock);
+				sendQueue[sock_info.idx].emplace_back(REQEXIT);
 				break;
 			case NOTIFYEXIT:
 				running = false;
-				closesocket(sock_info->sock);
+				closesocket(sock_info.sock);
 				numPlayer--;
 				break;
+			case NOTIFYSTART:
+				readyPlayer++;
+				break;
+
+				// InGame통신
 			}
 		}
 	}
-	delete sock_info;
+
 	return 0;
 }
 
@@ -318,7 +341,7 @@ DWORD WINAPI ListenThread(LPVOID arg)
 
 	// 데이터 통신에 사용할 변수
 	SOCKADDR_IN clientaddr;
-	RoomConnect *threadInfo;
+	RoomConnect threadInfo;
 	int addrlen;
 
 	while (true)
@@ -326,7 +349,6 @@ DWORD WINAPI ListenThread(LPVOID arg)
 		// accept()
 		addrlen = sizeof(clientaddr);
 		SOCKET sendSock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
-		cout << sendSock << endl;
 		if (sendSock == ACCEPT_DENIED) break;
 		int idx = GetEmptySlot();
 		if (idx == -1)
@@ -337,12 +359,12 @@ DWORD WINAPI ListenThread(LPVOID arg)
 		roomInfo.charInfo[idx] = CharacterName::Archer;
 		numPlayer++;
 		// Send생성
-		threadInfo = new RoomConnect(idx, sendSock);
-		CreateThread(NULL, 0, SendData, (LPVOID)threadInfo, 0, NULL);
+		threadInfo = RoomConnect(idx, sendSock);
+		CreateThread(NULL, 0, SendData, (LPVOID)&threadInfo, 0, NULL);
 		SOCKET recvSock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
 		// Recv생성
-		threadInfo = new RoomConnect(idx, recvSock);
-		CreateThread(NULL, 0, RecvData, (LPVOID)threadInfo, 0, NULL);
+		threadInfo = RoomConnect(idx, recvSock);
+		CreateThread(NULL, 0, RecvData, (LPVOID)&threadInfo, 0, NULL);
 
 		// 변한 방 정보 전송
 		for (int i = 1; i < MAX_PLAYER; ++i)

@@ -21,20 +21,20 @@ RoomSceneGuest::RoomSceneGuest(HWND hWnd) : Scene(hWnd)
 	inet_pton(AF_INET, "127.0.0.1", (PVOID *)(&serveraddr.sin_addr.s_addr));
 	serveraddr.sin_port = htons(HOSTPORT);
 
-	int retval, idx;
+	int retval;
 	// recv소켓 연결 시도
 	SOCKET newSock = socket(AF_INET, SOCK_STREAM, 0);
 	if (newSock == INVALID_SOCKET) err_quit("socket()");
 	connect(newSock, (SOCKADDR *)&serveraddr, sizeof(serveraddr));
-	retval = recvn(newSock, (char*)&idx, sizeof(idx), 0);
+	retval = recvn(newSock, (char*)&m_idx, sizeof(m_idx), 0);
 	if (retval > 0)
 	{
-		hThreadGuest[0] = CreateThread(NULL, 0, RecvDataGuest, (LPVOID)&RoomConnect(idx, newSock), 0, NULL);
+		hThreadGuest[0] = CreateThread(NULL, 0, RecvDataGuest, (LPVOID)&RoomConnect(m_idx, newSock), 0, NULL);
 		//send소켓 연결 시도
 		newSock = socket(AF_INET, SOCK_STREAM, 0);
 		if (newSock == INVALID_SOCKET) err_quit("socket()");
 		connect(newSock, (SOCKADDR *)&serveraddr, sizeof(serveraddr));
-		hThreadGuest[1] = CreateThread(NULL, 0, SendDataGuest, (LPVOID)&RoomConnect(idx, newSock), 0, NULL);
+		hThreadGuest[1] = CreateThread(NULL, 0, SendDataGuest, (LPVOID)&RoomConnect(m_idx, newSock), 0, NULL);
 	}
 
 	if (retval <= 0)
@@ -151,6 +151,11 @@ void RoomSceneGuest::Timer(const double count) {
 		m_isDestory = true;
 		m_nextScene = SceneName::Lobby;
 	}
+	else if (gameStart)
+	{
+		m_isDestory = true;
+		m_nextScene = SceneName::InGameGuest;
+	}
 }
 
 
@@ -179,6 +184,7 @@ DWORD WINAPI RecvDataGuest(LPVOID arg)
 		retval = recvn(sock_info.sock, (char*)&op, sizeof(op), 0);
 		switch (op)
 		{
+			// InRoom 통신
 		case ROOMCHNG:
 			retval = recvn(sock_info.sock, (char*)&roomInfoGuest, sizeof(RoomInfo), 0);
 			break;
@@ -199,6 +205,16 @@ DWORD WINAPI RecvDataGuest(LPVOID arg)
 			sendQueueGuest.push_back(NOTIFYEXIT);
 			closesocket(sock_info.sock);
 			running = false;
+			break;
+		case NOTIFYSTART:
+			// 게임시작
+			std::cout << "게임을 시작합니다" << std::endl;
+			gameStart = true;
+			break;
+
+			// InGame 통신
+		case BASICINFO:
+			recvn(sock_info.sock, (char*)&basicInfo, sizeof(basicInfo), 0);
 			break;
 		}
 	}
@@ -221,6 +237,7 @@ DWORD WINAPI SendDataGuest(LPVOID arg)
 			send(sock_info.sock, (char*)&op, sizeof(op), 0);
 			switch (op)
 			{
+				// InRoom 통신
 			case CHACHNG:
 				retval = send(sock_info.sock, (char*)&hopCha, sizeof(hopCha), 0);
 				break;
@@ -230,6 +247,8 @@ DWORD WINAPI SendDataGuest(LPVOID arg)
 				hThreadGuest[0] = NULL;
 				running = false;
 				break;
+
+				// InGame 통신
 			}
 		}
 	}

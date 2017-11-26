@@ -19,6 +19,7 @@
 #include <iostream>
 #include <chrono>
 #include <deque>
+#include <atomic>
 
 // CImage 를 위한 헤더 파일입니다.
 #include <atlimage.h>
@@ -80,6 +81,7 @@ enum class SceneName {
 	,	Room
 	,	RoomGuest
 	,	InGame
+	,	InGameGuest
 };
 
 enum class MapName{
@@ -88,10 +90,11 @@ enum class MapName{
 };
 
 
+
 //------------------------------------------- Room 통신용 -----------------------------------------------------
 #define MAX_PLAYER 4
 
-enum { ROOMCHNG = 301, CHACHNG, MAPCHNG, REQEXIT, NOTIFYEXIT };
+enum { ROOMCHNG = 301, CHACHNG, MAPCHNG, REQEXIT, NOTIFYEXIT, NOTIFYSTART };
 
 struct RoomConnect {
 	int idx;
@@ -120,4 +123,24 @@ struct ChaChng {
 
 	ChaChng() {}
 	ChaChng(int idx, CharacterName charInfo) : idx(idx), charInfo(charInfo) {}
+};
+
+
+//------------------------------------------- InGame 통신용 -----------------------------------------------------
+
+enum { BASICINFO = 401 };
+
+struct Pos2d {
+	float x;
+	float y;
+};
+
+struct BasicInfo {
+	Pos2d position[MAX_PLAYER];		// 캐릭터 위치
+	float speed[MAX_PLAYER];			// 캐릭터 속도
+	State state[MAX_PLAYER];			// 캐릭터 현재 상태
+	int imgCnt[MAX_PLAYER];			// 애니메이션 이미지 카운트
+	float combo[MAX_PLAYER];			// 캐릭터 콤보 상태
+	int emoticon[MAX_PLAYER];		// 캐릭터 감정 표현
+	double eTime;			// elapsed time
 };

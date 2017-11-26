@@ -29,6 +29,7 @@ public:
 	virtual float GetBaseSpeed() const;
 	virtual int GetJumpImageCount() const;
 	void SetImageCount(const int input);
+	int GetImageCount() { return m_imageCount; }
 
 	virtual void LoadCharacterImage() = 0;
 };

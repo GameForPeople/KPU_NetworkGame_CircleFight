@@ -1,11 +1,8 @@
 #pragma once
-
+#include "stdafx.h"
 #include <windows.h>
 
-struct Pos2d {
-	float x;
-	float y;
-};
+
 
 class BaseObject
 {
@@ -24,5 +21,6 @@ public:
 	virtual void Draw(HDC);
 
 	void SetPos(const float x, const float y);
+	void SetPos(const Pos2d pos) { m_pos = pos; }
 	Pos2d GetPos() const;
 };

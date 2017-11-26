@@ -11,10 +11,11 @@
 #define PLAT_HEIGHT 50
 #define PLAT_LOW_HEIGHT 600
 
-class InGameScene :
+class InGameSceneGuest :
 	public Scene
 {
 private:
+
 	//std::vector<BaseObject>	m_platArr;
 	BaseObject*					m_platArr;
 	Pawn						m_characterArr[MAX_PLAYER];
@@ -22,31 +23,29 @@ private:
 
 	CImage*						m_platImg[2];
 
-	int	m_emotionNumber[MAX_PLAYER];
-	int    m_emotionTimer[MAX_PLAYER];
-
 	InGameSceneUI*				m_inGameUI;
-		
+
+	int	m_emotionNumber[MAX_PLAYER];
+	int m_emotionTimer[MAX_PLAYER];
+
 	int							m_numPlat;
 
 public:
-	InGameScene();
-	InGameScene(HWND);
-	InGameScene(HWND, MapName, CharacterName*);
+	InGameSceneGuest();
+	InGameSceneGuest(HWND);
+	InGameSceneGuest(HWND, MapName, CharacterName*);
 
-	virtual ~InGameScene();
+	virtual ~InGameSceneGuest();
 
 public:
 	virtual void Draw(HDC hdc);
-	virtual void Timer(const double time) ;
+	virtual void Timer(const double time);
 	virtual bool KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
-	virtual bool MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) ;
+	virtual bool MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 	virtual void Destory();
 
 public:
 	void LoadPlat();
-	void ComputePawn(int idx);
-	void EmotionUIProc();
 
 public:
 	//for network
@@ -54,6 +53,6 @@ public:
 
 public:
 	//for debug
-	void ShowPawnState();	
+	void ShowPawnState();
 };
 

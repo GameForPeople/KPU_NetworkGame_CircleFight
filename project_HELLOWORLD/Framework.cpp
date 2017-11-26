@@ -244,6 +244,12 @@ void Framework::ChangeScene() {
 			m_Scene[m_nowScene]->~Scene();
 			m_nowScene = 4;
 		}
+		else if (SceneName::InGameGuest == m_Scene[m_nowScene]->m_nextScene) {
+			m_Scene[4] = new InGameSceneGuest(m_hwnd, m_Scene[m_nowScene]->GetMapName(), m_Scene[m_nowScene]->GetCharacterName());
+
+			m_Scene[m_nowScene]->~Scene();
+			m_nowScene = 4;
+		}
 	}
 }
 

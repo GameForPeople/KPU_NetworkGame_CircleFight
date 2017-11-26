@@ -82,7 +82,7 @@ public:
 		m_fallSpeed = 2.0;
 	} 
 
-	void ComputeTotalDistance();
+	void ComputeTotalDistance(float speed = 0);
 	void ProcessCombo();
 	void ProcessGravity();
 	void ProcessJump();

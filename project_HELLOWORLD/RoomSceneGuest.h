@@ -3,8 +3,10 @@
 #include "Scene.h"
 #include "NetworkFunc.h"
 
+#define PLAT_MAX_NUMBER 150
+
 static RoomInfo roomInfoGuest;
-static deque<int> sendQueueGuest;
+static bool gameStart;
 
 class RoomSceneGuest : public Scene
 {

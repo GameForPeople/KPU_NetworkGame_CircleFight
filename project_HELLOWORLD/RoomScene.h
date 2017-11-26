@@ -5,7 +5,7 @@
 
 static int numPlayer = 0;
 static RoomInfo roomInfo;
-static deque<QueueData> sendQueue[MAX_PLAYER];
+static atomic<int> readyPlayer;
 
 class RoomScene : public Scene
 {
