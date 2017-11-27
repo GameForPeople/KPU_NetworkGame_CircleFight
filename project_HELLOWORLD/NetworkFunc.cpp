@@ -6,6 +6,10 @@ deque<QueueData> sendQueue[MAX_PLAYER];
 deque<int> sendQueueGuest;
 int m_idx;
 BasicInfo basicInfo;
+FirstPlatInfo platFirst[MAX_PLAYER];
+Pawn* charArr;
+int	*emotionNum;
+int  *emotionTime;
 
 void err_quit(char *msg)
 {

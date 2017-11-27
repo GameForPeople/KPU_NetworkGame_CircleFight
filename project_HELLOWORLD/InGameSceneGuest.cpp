@@ -68,9 +68,6 @@ InGameSceneGuest::InGameSceneGuest(HWND hwnd, MapName insertMap, CharacterName* 
 			m_characterArr[i] = Pawn(CharacterName::Wicher);
 	}
 
-
-	m_characterArr->SetState(State::Fall);
-
 	if (insertMap == MapName::Sea)
 		m_map = new Map(0, 0, "Resource/Image/Background/Background.png");
 	else if (insertMap == MapName::Forest)
@@ -88,6 +85,8 @@ InGameSceneGuest::InGameSceneGuest(HWND hwnd, MapName insertMap, CharacterName* 
 
 	m_inGameUI = new InGameSceneUI;
 
+	emotionNum = m_emotionNumber;
+
 	sendQueueGuest.push_back(NOTIFYSTART);
 }
 
@@ -103,8 +102,8 @@ InGameSceneGuest::~InGameSceneGuest()
 
 void InGameSceneGuest::Draw(HDC hdc) {
 	m_map->Draw(hdc);
-
-	for (int i = 0; i < m_numPlat; i++) {
+	
+	for (int i = basicInfo.platInfo.idx; i < basicInfo.platInfo.idx + PLAT_SHOWN_CNT; i++) {
 		if (m_platArr[i].GetPos().y != PLAT_LOW_HEIGHT)
 			m_platImg[0]->TransparentBlt(hdc, m_platArr[i].GetPos().x, m_platArr[i].GetPos().y, PLAT_WIDTH, PLAT_HEIGHT, RGB(255, 255, 255));
 		else
@@ -114,37 +113,42 @@ void InGameSceneGuest::Draw(HDC hdc) {
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
 		if (i == m_idx) continue;
-		m_characterArr[i].Draw(hdc, m_characterArr[i].GetTotalDistance() - m_characterArr[m_idx].GetTotalDistance(), m_characterArr[i].GetState());
+		//m_characterArr[i].NetworkDrawCharacter(hdc, basicInfo.totalDis[m_idx], basicInfo.totalDis[i], basicInfo.position[i].y,
+		//	basicInfo.imgCnt[i], basicInfo.state[i]);
+		m_characterArr[i].Draw(hdc, basicInfo.totalDis[i] - basicInfo.totalDis[m_idx], basicInfo.state[i]);
 	}
-	m_characterArr[m_idx].Draw(hdc, m_characterArr[m_idx].GetState());
+	//m_characterArr[m_idx].Draw(hdc, basicInfo.state[m_idx]);
+	m_characterArr[m_idx].NetworkDrawCharacter(hdc, 0, 0, basicInfo.position[m_idx].y,
+		basicInfo.imgCnt[m_idx], basicInfo.state[m_idx]);
 
-	m_inGameUI->DrawComboUI(hdc, m_characterArr[m_idx].GetCombo());
+	m_inGameUI->DrawComboUI(hdc, basicInfo.combo[m_idx]);
 	m_inGameUI->DrawBarUI(hdc, m_characterArr[m_idx].GetTotalDistance() / 100);
 	m_inGameUI->DrawInventoryUI(hdc, 0, 0);
 
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
-		if (m_emotionNumber[i])
-			m_inGameUI->DrawEmotionUI(hdc, m_emotionNumber[i], m_characterArr[i].GetPos().x, m_characterArr[i].GetPos().y);
+		if (basicInfo.emoticon[i])
+			m_inGameUI->DrawEmotionUI(hdc, basicInfo.emoticon[i], basicInfo.position[i].x, basicInfo.position[i].y);
 		else
-			m_inGameUI->DrawHeadUpUI(hdc, m_characterArr[i].GetPos().y);
+			m_inGameUI->DrawHeadUpUI(hdc, basicInfo.position[i].y);
 	}
 
 
 }
 
 void InGameSceneGuest::Timer(const double time) {
-	m_map->Update(basicInfo.speed[m_idx], basicInfo.eTime + time);
-	/*for (int i = 0; i < PLAT_MAX_NUMBER; i++)
-		m_platArr[i].Update(basicInfo.speed[m_idx], basicInfo.eTime + time);*/
+	m_map->Update(basicInfo.speed[m_idx], time);
+
+	m_platArr[basicInfo.platInfo.idx].SetXPos(basicInfo.platInfo.xPos);
+	for (int i = basicInfo.platInfo.idx + 1, j=1; i < basicInfo.platInfo.idx + PLAT_SHOWN_CNT; ++i, ++j)
+	{
+		m_platArr[i].SetXPos(basicInfo.platInfo.xPos + PLAT_WIDTH * j);
+	}
+
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
-		m_characterArr[i].ComputeTotalDistance(basicInfo.speed[i]);
 		m_characterArr[i].SetPos(basicInfo.position[i]);
-		m_characterArr[i].SetState(basicInfo.state[i]);
 		m_characterArr[i].GetUnit().SetImageCount(basicInfo.imgCnt[i]);
-		m_characterArr[i].SetCombo(basicInfo.combo[i]);
-		m_emotionNumber[i] = basicInfo.emoticon[i];
 	}
 	//ShowPawnState();	//Debug
 }
@@ -159,28 +163,34 @@ bool InGameSceneGuest::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARA
 
 		switch (wParam) {
 		case VK_SPACE:
-
+			sendQueueGuest.emplace_back(INPUT_JUMP);
 			break;
 		case 'G':
 
 			break;
 		case '1':
 			m_emotionNumber[m_idx] = 1;
+			sendQueueGuest.emplace_back(INPUT_EMOTION);
 			break;
 		case '2':
 			m_emotionNumber[m_idx] = 2;
+			sendQueueGuest.emplace_back(INPUT_EMOTION);
 			break;
 		case '3':
 			m_emotionNumber[m_idx] = 3;
+			sendQueueGuest.emplace_back(INPUT_EMOTION);
 			break;
 		case '4':
 			m_emotionNumber[m_idx] = 4;
+			sendQueueGuest.emplace_back(INPUT_EMOTION);
 			break;
 		case '5':
 			m_emotionNumber[m_idx] = 5;
+			sendQueueGuest.emplace_back(INPUT_EMOTION);
 			break;
 		case '6':
 			m_emotionNumber[m_idx] = 6;
+			sendQueueGuest.emplace_back(INPUT_EMOTION);
 
 			break;
 		}

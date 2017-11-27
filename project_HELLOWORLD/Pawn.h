@@ -93,6 +93,6 @@ public:
 	void ResetCombo();
 
 	//for network
-	void NetworkDrawCharacter(HDC hdc, float playerDisX, float thisDisX, float thisY, int cImageIndex, int combo, State state);
+	void NetworkDrawCharacter(HDC hdc, float playerDisX, float thisDisX, float thisY, int cImageIndex, State state);
 };
 

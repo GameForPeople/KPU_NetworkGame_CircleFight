@@ -4,12 +4,14 @@
 #include "InGameSceneUI.h"
 #include "NetworkFunc.h"
 
-#include <vector>
+//#include <vector>
 
 #define PLAT_MAX_NUMBER 150
 #define PLAT_WIDTH 100
 #define PLAT_HEIGHT 50
 #define PLAT_LOW_HEIGHT 600
+
+#define PLAT_SHOWN_CNT 16
 
 class InGameScene :
 	public Scene
@@ -21,6 +23,11 @@ private:
 	Map*						m_map;
 
 	CImage*						m_platImg[2];
+	
+	int	m_platFirstIdx[MAX_PLAYER]{};
+	int	m_platXArr[MAX_PLAYER][PLAT_MAX_NUMBER]{};
+	//deque<int>	m_platXArr[MAX_PLAYER];
+	int	m_platXArrBeg[MAX_PLAYER]{};
 
 	int	m_emotionNumber[MAX_PLAYER];
 	int    m_emotionTimer[MAX_PLAYER];

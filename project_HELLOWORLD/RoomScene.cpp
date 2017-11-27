@@ -266,6 +266,7 @@ DWORD WINAPI SendData(LPVOID arg)
 
 				// InGame 통신
 			case BASICINFO:
+				basicInfo.platInfo = platFirst[sock_info.idx];
 				send(sock_info.sock, (char*)&basicInfo, sizeof(basicInfo), 0);
 				break;
 			}
@@ -316,6 +317,13 @@ DWORD WINAPI RecvData(LPVOID arg)
 				break;
 
 				// InGame통신
+			case INPUT_JUMP:
+				charArr[sock_info.idx].InsertKey(VK_SPACE);
+				break;
+			case INPUT_EMOTION:
+				emotionTime[sock_info.idx] = 1;
+				recvn(sock_info.sock, (char*)&emotionNum[sock_info.idx], sizeof(emotionNum[0]), 0);
+				break;
 			}
 		}
 	}

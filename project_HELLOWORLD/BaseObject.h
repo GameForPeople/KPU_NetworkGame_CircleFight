@@ -22,5 +22,7 @@ public:
 
 	void SetPos(const float x, const float y);
 	void SetPos(const Pos2d pos) { m_pos = pos; }
+	void SetXPos(const float x) { m_pos.x = x; }
+
 	Pos2d GetPos() const;
 };

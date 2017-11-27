@@ -11,6 +11,9 @@
 #define PLAT_HEIGHT 50
 #define PLAT_LOW_HEIGHT 600
 
+#define PLAT_SHOWN_CNT 16
+
+
 class InGameSceneGuest :
 	public Scene
 {

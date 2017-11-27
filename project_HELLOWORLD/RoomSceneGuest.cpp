@@ -249,6 +249,9 @@ DWORD WINAPI SendDataGuest(LPVOID arg)
 				break;
 
 				// InGame Ελ½Ε
+			case INPUT_EMOTION:
+				send(sock_info.sock, (char*)&emotionNum[sock_info.idx], sizeof(emotionNum[0]), 0);
+				break;
 			}
 		}
 	}

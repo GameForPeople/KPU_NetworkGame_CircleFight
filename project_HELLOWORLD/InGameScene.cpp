@@ -87,6 +87,10 @@ InGameScene::InGameScene(HWND hwnd, MapName insertMap, CharacterName* insertChar
 	LoadPlat();
 
 	m_inGameUI = new InGameSceneUI;
+
+	charArr = m_characterArr;
+	emotionNum = m_emotionNumber;
+	emotionTime = m_emotionTimer;
 }
 
 InGameScene::InGameScene() 
@@ -102,11 +106,21 @@ InGameScene::~InGameScene()
 void InGameScene::Draw(HDC hdc) {
 	m_map->Draw(hdc);
 
-	for (int i = 0; i < m_numPlat; i++) {
-		if(m_platArr[i].GetPos().y != PLAT_LOW_HEIGHT)
-			m_platImg[0]->TransparentBlt(hdc, m_platArr[i].GetPos().x, m_platArr[i].GetPos().y, PLAT_WIDTH, PLAT_HEIGHT, RGB(255, 255, 255));
+	//int platYBeg = m_platFirstIdx[0];
+	//for (int i = 0; i < PLAT_SHOWN_CNT; i++) {
+	//	if(m_platArr[platYBeg].GetPos().y != PLAT_LOW_HEIGHT)
+	//		m_platImg[0]->TransparentBlt(hdc, m_platXArr[0][i], m_platArr[platYBeg].GetPos().y, PLAT_WIDTH, PLAT_HEIGHT, RGB(255, 255, 255));
+	//	else
+	//		m_platImg[1]->TransparentBlt(hdc, m_platXArr[0][i], m_platArr[platYBeg].GetPos().y, PLAT_WIDTH, m_platImg[1]->GetHeight() , RGB(255,255,255));
+	//	platYBeg++;
+	//}
+
+	int first = m_platFirstIdx[0];
+	for (int i = first; i < first + PLAT_SHOWN_CNT; i++) {
+		if (m_platArr[i].GetPos().y != PLAT_LOW_HEIGHT)
+			m_platImg[0]->TransparentBlt(hdc, m_platXArr[0][i], m_platArr[i].GetPos().y, PLAT_WIDTH, PLAT_HEIGHT, RGB(255, 255, 255));
 		else
-			m_platImg[1]->TransparentBlt(hdc, m_platArr[i].GetPos().x, m_platArr[i].GetPos().y, PLAT_WIDTH, m_platImg[1]->GetHeight() , RGB(255,255,255));
+			m_platImg[1]->TransparentBlt(hdc, m_platXArr[0][i], m_platArr[i].GetPos().y, PLAT_WIDTH, m_platImg[1]->GetHeight(), RGB(255, 255, 255));
 	}
 
 	for (int i = 1; i < MAX_PLAYER; ++i)
@@ -126,32 +140,57 @@ void InGameScene::Draw(HDC hdc) {
 		else
 			m_inGameUI->DrawHeadUpUI(hdc, m_characterArr[i].GetPos().y);
 	}
-	
-
 }
 
 void InGameScene::Timer(const double time){
-	basicInfo.eTime = time;
+
 	m_map->Update(m_characterArr[0].GetSpeed(), time);
 
 	for (int i = 0; i < MAX_PLAYER; ++i)
 		m_characterArr[i].Update(m_characterArr[i].GetState(), time);
 
 
-	for( int i = 0 ; i < PLAT_MAX_NUMBER; i++)
-		m_platArr[i].Update(m_characterArr[0].GetSpeed(), time);
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		int &first = m_platFirstIdx[i];
+		float spd = m_characterArr[i].GetSpeed();
+
+		for (int j = first; j < first + PLAT_SHOWN_CNT; ++j)
+			m_platXArr[i][j] -= spd;
+
+		if (m_platXArr[i][first] < -PLAT_WIDTH)
+		{
+			m_platXArr[i][first + PLAT_SHOWN_CNT] = m_platXArr[i][first + PLAT_SHOWN_CNT - 1] + PLAT_WIDTH;
+			first++;
+		}
+
+		platFirst[i].idx = first;
+		platFirst[i].xPos = m_platXArr[i][first];
+
+		//for (int j = 0; j < PLAT_SHOWN_CNT; ++j)
+		//	m_platXArr[i][j] -= spd;
+		//if (m_platXArr[i][0] < -PLAT_WIDTH)
+		//{
+		//	m_platXArr[i].pop_front();
+		//	m_platXArr[i].emplace_back(m_platXArr[i].back() + PLAT_WIDTH);
+		//	first++;
+		//}
+		//platFirst[i].idx = first;
+		//platFirst[i].xPos = m_platXArr[i][0];
+	}
+	
+	EmotionUIProc();
 
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
 		ComputePawn(i);
 		basicInfo.position[i] = m_characterArr[i].GetPos();
+		basicInfo.totalDis[i] = m_characterArr[i].GetTotalDistance();
 		basicInfo.speed[i] = m_characterArr[i].GetSpeed();
 		basicInfo.state[i] = m_characterArr[i].GetState();
 		basicInfo.imgCnt[i] = m_characterArr[i].GetUnit().GetImageCount();
 		basicInfo.combo[i] = m_characterArr[i].GetCombo();
 	}
-	
-	EmotionUIProc();
 
 	for (int i = 1; i < MAX_PLAYER; ++i)
 	{
@@ -221,7 +260,6 @@ void InGameScene::Destory() {
 }
 
 
-
 void InGameScene::LoadPlat() {
 	//ifstream inFile("Resource/Data/platData.txt", ios::in);
 	ifstream inFile("Resource/Data/NewPlatData.txt", ios::in);
@@ -241,6 +279,24 @@ void InGameScene::LoadPlat() {
 		//std::cout << i << "번째  " << posY << "   " << m_platArr[i].GetPos().x << "   " << m_platArr[i].GetPos().y << std::endl;
 	}
 	inFile.close();
+
+	int val;
+	for (int j = 0; j < MAX_PLAYER; ++j)
+	{
+		for (int i = 0; i < PLAT_SHOWN_CNT; ++i)
+		{
+			val = m_platArr[i].GetPos().x;
+			m_platXArr[j][i] = val;
+			//m_platXArr[j].push_back(val);
+		}
+	}
+
+	val = m_platArr[0].GetPos().x;
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		platFirst[i].idx = 0;
+		platFirst[i].xPos = val;
+	}
 	/*
 	FILE *fp;
 
@@ -263,8 +319,9 @@ void InGameScene::ComputePawn(int idx) {
 	//std::cout << m_characterArr->GetTotalDistance() / 100 + 2 << std::endl;
 #pragma region [캐릭터의 Y값을 계산합니다.]
 
-	int leftPlat = (int)(m_characterArr[idx].GetTotalDistance() / PLAT_WIDTH + 2);
-	int rightPlat = (int)(m_characterArr[idx].GetTotalDistance() / PLAT_WIDTH + 3);
+//	int leftPlat = (int)(m_characterArr[idx].GetTotalDistance() / PLAT_WIDTH + 2);
+	//int rightPlat = (int)(m_characterArr[idx].GetTotalDistance() / PLAT_WIDTH + 3);
+	int rightPlat = m_platFirstIdx[idx] + 4;
 
 	float pawnPosY = m_characterArr[idx].GetPos().y + 185;
 

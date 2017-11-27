@@ -128,19 +128,25 @@ struct ChaChng {
 
 //------------------------------------------- InGame 통신용 -----------------------------------------------------
 
-enum { BASICINFO = 401 };
+enum { BASICINFO = 401, INPUT_JUMP, INPUT_EMOTION };
 
 struct Pos2d {
 	float x;
 	float y;
 };
 
+struct FirstPlatInfo {
+	int idx;
+	float xPos;
+};
+
 struct BasicInfo {
 	Pos2d position[MAX_PLAYER];		// 캐릭터 위치
+	float totalDis[MAX_PLAYER];			// 캐릭터 속도
 	float speed[MAX_PLAYER];			// 캐릭터 속도
 	State state[MAX_PLAYER];			// 캐릭터 현재 상태
 	int imgCnt[MAX_PLAYER];			// 애니메이션 이미지 카운트
 	float combo[MAX_PLAYER];			// 캐릭터 콤보 상태
 	int emoticon[MAX_PLAYER];		// 캐릭터 감정 표현
-	double eTime;			// elapsed time
+	FirstPlatInfo platInfo;					// 첫 발판 정보
 };

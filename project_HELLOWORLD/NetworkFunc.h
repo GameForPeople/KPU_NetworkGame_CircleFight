@@ -3,6 +3,7 @@
 #include "BaseObject.h"
 #include <WinSock2.h>
 #include <WS2tcpip.h>
+#include "Pawn.h"
 
 #pragma comment(lib, "ws2_32")
 
@@ -14,6 +15,10 @@ extern deque<QueueData> sendQueue[MAX_PLAYER];
 extern deque<int> sendQueueGuest;
 extern int m_idx;
 extern BasicInfo basicInfo;
+extern FirstPlatInfo platFirst[MAX_PLAYER];
+extern Pawn* charArr;
+extern int	*emotionNum;
+extern int  *emotionTime;
 
 void err_quit(char *msg);
 void err_display(char *msg);

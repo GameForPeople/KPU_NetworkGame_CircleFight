@@ -154,7 +154,7 @@ void Pawn::ResetCombo() {
 	ResetFallSpeed();
 }
 
-void Pawn::NetworkDrawCharacter(HDC hdc, float playerDisX, float thisDisX, float thisY, int cImageIndex, int combo, State state) {
+void Pawn::NetworkDrawCharacter(HDC hdc, float playerDisX, float thisDisX, float thisY, int cImageIndex, State state) {
 
 	if (thisDisX - playerDisX > 1100)
 		return;
@@ -163,11 +163,9 @@ void Pawn::NetworkDrawCharacter(HDC hdc, float playerDisX, float thisDisX, float
 
 	float newPosX = playerDisX - thisDisX;
 
-	if (newPosX < 0) {
-		m_pos.x = INIT_PAWN_POS_X - newPosX;
-		m_pos.y = thisY;
-		m_unit->SetImageCount(cImageIndex);
+	m_pos.x = INIT_PAWN_POS_X - newPosX;
+	m_pos.y = thisY;
+	m_unit->SetImageCount(cImageIndex);
 
-		Draw(hdc, state);
-	}
+	Draw(hdc, state);
 }
