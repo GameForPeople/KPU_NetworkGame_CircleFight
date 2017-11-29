@@ -148,5 +148,5 @@ struct BasicInfo {
 	int imgCnt[MAX_PLAYER];			// 애니메이션 이미지 카운트
 	float combo[MAX_PLAYER];			// 캐릭터 콤보 상태
 	int emoticon[MAX_PLAYER];		// 캐릭터 감정 표현
-	FirstPlatInfo platInfo;					// 첫 발판 정보
+	FirstPlatInfo platInfo[MAX_PLAYER];					// 첫 발판 정보
 };

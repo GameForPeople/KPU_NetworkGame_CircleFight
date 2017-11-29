@@ -19,15 +19,17 @@ RoomScene::RoomScene(HWND hWnd) : Scene(hWnd)
 	CreateThread(NULL, 0, ListenThread, NULL, NULL, NULL);
 	if (numPlayer == 0)
 	{
+		for (int i = 0; i < 4; ++i)
+		{
+			sendQueue[i].clear();
+			roomInfo.charInfo[i] = CharacterName::NONE;
+		}
+
 		numPlayer = 1;
 		roomInfo.mapInfo = MapName::Sea;
 		roomInfo.charInfo[0] = CharacterName::Archer;
-		for (int i = 1; i < 4; ++i)
-		{
-			roomInfo.charInfo[i] = CharacterName::NONE;
-		}
 	}
-	sendQueue->clear();
+	
 	LoadCImage();
 }
 
@@ -217,11 +219,6 @@ DWORD WINAPI SendData(LPVOID arg)
 	bool running = true;
 
 	QueueData sendOp;
-	
-	sendQueue[sock_info.idx].clear();
-
-	// 인덱스 정보 보내기
-	send(sock_info.sock, (char*)&sock_info.idx, sizeof(sock_info.idx), 0);
 
 	while (running)
 	{
@@ -266,7 +263,6 @@ DWORD WINAPI SendData(LPVOID arg)
 
 				// InGame 통신
 			case BASICINFO:
-				basicInfo.platInfo = platFirst[sock_info.idx];
 				send(sock_info.sock, (char*)&basicInfo, sizeof(basicInfo), 0);
 				break;
 			}
@@ -346,33 +342,31 @@ DWORD WINAPI ListenThread(LPVOID arg)
 
 	// listen()
 	retval = listen(listen_sock, SOMAXCONN);
-
-	// 데이터 통신에 사용할 변수
-	SOCKADDR_IN clientaddr;
-	RoomConnect threadInfo;
-	int addrlen;
-
+	
 	while (true)
 	{
 		// accept()
-		addrlen = sizeof(clientaddr);
-		SOCKET sendSock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
-		if (sendSock == ACCEPT_DENIED) break;
+		SOCKET newSock = accept(listen_sock, NULL, NULL);
+		if (newSock == ACCEPT_DENIED) break;
 		int idx = GetEmptySlot();
 		if (idx == -1)
 		{
-			closesocket(sendSock);
+			closesocket(newSock);
 			continue;
 		}
+
+		// 인덱스 정보 보내기
+		send(newSock, (char*)&idx, sizeof(idx), 0);
+
 		roomInfo.charInfo[idx] = CharacterName::Archer;
 		numPlayer++;
+
 		// Send생성
-		threadInfo = RoomConnect(idx, sendSock);
-		CreateThread(NULL, 0, SendData, (LPVOID)&threadInfo, 0, NULL);
-		SOCKET recvSock = accept(listen_sock, (SOCKADDR*)&clientaddr, &addrlen);
+		CreateThread(NULL, 0, SendData, (LPVOID)&RoomConnect(idx, newSock), 0, NULL);
+		
 		// Recv생성
-		threadInfo = RoomConnect(idx, recvSock);
-		CreateThread(NULL, 0, RecvData, (LPVOID)&threadInfo, 0, NULL);
+		newSock = accept(listen_sock, NULL, NULL);
+		CreateThread(NULL, 0, RecvData, (LPVOID)&RoomConnect(idx, newSock), 0, NULL);
 
 		// 변한 방 정보 전송
 		for (int i = 1; i < MAX_PLAYER; ++i)

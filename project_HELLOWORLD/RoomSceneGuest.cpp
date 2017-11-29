@@ -27,6 +27,7 @@ RoomSceneGuest::RoomSceneGuest(HWND hWnd) : Scene(hWnd)
 	if (newSock == INVALID_SOCKET) err_quit("socket()");
 	connect(newSock, (SOCKADDR *)&serveraddr, sizeof(serveraddr));
 	retval = recvn(newSock, (char*)&m_idx, sizeof(m_idx), 0);
+
 	if (retval > 0)
 	{
 		hThreadGuest[0] = CreateThread(NULL, 0, RecvDataGuest, (LPVOID)&RoomConnect(m_idx, newSock), 0, NULL);
@@ -177,7 +178,6 @@ DWORD WINAPI RecvDataGuest(LPVOID arg)
 
 	int retval, op;
 	bool running = true;
-	sendQueueGuest.clear();
 
 	while (running)
 	{
@@ -242,6 +242,9 @@ DWORD WINAPI SendDataGuest(LPVOID arg)
 				retval = send(sock_info.sock, (char*)&hopCha, sizeof(hopCha), 0);
 				break;
 			case REQEXIT:
+				closesocket(sock_info.sock);
+				running = false;
+				break;
 			case NOTIFYEXIT:
 				closesocket(sock_info.sock);
 				hThreadGuest[0] = NULL;

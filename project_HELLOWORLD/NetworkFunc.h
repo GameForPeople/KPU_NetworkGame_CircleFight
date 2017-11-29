@@ -15,7 +15,6 @@ extern deque<QueueData> sendQueue[MAX_PLAYER];
 extern deque<int> sendQueueGuest;
 extern int m_idx;
 extern BasicInfo basicInfo;
-extern FirstPlatInfo platFirst[MAX_PLAYER];
 extern Pawn* charArr;
 extern int	*emotionNum;
 extern int  *emotionTime;

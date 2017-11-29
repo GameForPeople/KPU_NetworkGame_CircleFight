@@ -103,21 +103,20 @@ InGameSceneGuest::~InGameSceneGuest()
 void InGameSceneGuest::Draw(HDC hdc) {
 	m_map->Draw(hdc);
 	
-	for (int i = basicInfo.platInfo.idx; i < basicInfo.platInfo.idx + PLAT_SHOWN_CNT; i++) {
+	float xPos = basicInfo.platInfo[m_idx].xPos;
+	for (int i = basicInfo.platInfo[m_idx].idx, j=0; j < PLAT_SHOWN_CNT; ++i, ++j) {
 		if (m_platArr[i].GetPos().y != PLAT_LOW_HEIGHT)
-			m_platImg[0]->TransparentBlt(hdc, m_platArr[i].GetPos().x, m_platArr[i].GetPos().y, PLAT_WIDTH, PLAT_HEIGHT, RGB(255, 255, 255));
+			m_platImg[0]->TransparentBlt(hdc, xPos + PLAT_WIDTH * j, m_platArr[i].GetPos().y, PLAT_WIDTH, PLAT_HEIGHT, RGB(255, 255, 255));
 		else
-			m_platImg[1]->TransparentBlt(hdc, m_platArr[i].GetPos().x, m_platArr[i].GetPos().y, PLAT_WIDTH, m_platImg[1]->GetHeight(), RGB(255, 255, 255));
+			m_platImg[1]->TransparentBlt(hdc, xPos + PLAT_WIDTH * j, m_platArr[i].GetPos().y, PLAT_WIDTH, m_platImg[1]->GetHeight(), RGB(255, 255, 255));
 	}
 
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
 		if (i == m_idx) continue;
-		//m_characterArr[i].NetworkDrawCharacter(hdc, basicInfo.totalDis[m_idx], basicInfo.totalDis[i], basicInfo.position[i].y,
-		//	basicInfo.imgCnt[i], basicInfo.state[i]);
-		m_characterArr[i].Draw(hdc, basicInfo.totalDis[i] - basicInfo.totalDis[m_idx], basicInfo.state[i]);
+		m_characterArr[i].NetworkDrawCharacter(hdc, basicInfo.totalDis[m_idx], basicInfo.totalDis[i], basicInfo.position[i].y,
+			basicInfo.imgCnt[i], basicInfo.state[i]);
 	}
-	//m_characterArr[m_idx].Draw(hdc, basicInfo.state[m_idx]);
 	m_characterArr[m_idx].NetworkDrawCharacter(hdc, 0, 0, basicInfo.position[m_idx].y,
 		basicInfo.imgCnt[m_idx], basicInfo.state[m_idx]);
 
@@ -139,17 +138,6 @@ void InGameSceneGuest::Draw(HDC hdc) {
 void InGameSceneGuest::Timer(const double time) {
 	m_map->Update(basicInfo.speed[m_idx], time);
 
-	m_platArr[basicInfo.platInfo.idx].SetXPos(basicInfo.platInfo.xPos);
-	for (int i = basicInfo.platInfo.idx + 1, j=1; i < basicInfo.platInfo.idx + PLAT_SHOWN_CNT; ++i, ++j)
-	{
-		m_platArr[i].SetXPos(basicInfo.platInfo.xPos + PLAT_WIDTH * j);
-	}
-
-	for (int i = 0; i < MAX_PLAYER; ++i)
-	{
-		m_characterArr[i].SetPos(basicInfo.position[i]);
-		m_characterArr[i].GetUnit().SetImageCount(basicInfo.imgCnt[i]);
-	}
 	//ShowPawnState();	//Debug
 }
 

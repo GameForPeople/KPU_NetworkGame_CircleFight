@@ -6,7 +6,7 @@
 
 //#include <vector>
 
-#define PLAT_MAX_NUMBER 150
+#define PLAT_MAX_NUMBER 200
 #define PLAT_WIDTH 100
 #define PLAT_HEIGHT 50
 #define PLAT_LOW_HEIGHT 600
@@ -27,7 +27,6 @@ private:
 	int	m_platFirstIdx[MAX_PLAYER]{};
 	int	m_platXArr[MAX_PLAYER][PLAT_MAX_NUMBER]{};
 	//deque<int>	m_platXArr[MAX_PLAYER];
-	int	m_platXArrBeg[MAX_PLAYER]{};
 
 	int	m_emotionNumber[MAX_PLAYER];
 	int    m_emotionTimer[MAX_PLAYER];
