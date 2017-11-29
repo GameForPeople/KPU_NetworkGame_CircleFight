@@ -73,11 +73,11 @@
     <Filter Include="소스 파일\Scene\RoomScene">
       <UniqueIdentifier>{10862ca2-9d0e-4aaf-bbc8-5c0dcf0f612a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Network">
+      <UniqueIdentifier>{af8e3c43-d809-4cce-9235-f2e3a096c9d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="NewMain.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>미리 컴파일된 파일</Filter>
     </ClCompile>
@@ -147,6 +147,12 @@
     <ClCompile Include="RoomScene.cpp">
       <Filter>소스 파일\Scene\RoomScene</Filter>
     </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="NewMain.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NewMain.h">
@@ -211,6 +217,9 @@
     </ClInclude>
     <ClInclude Include="RoomScene.h">
       <Filter>소스 파일\Scene\RoomScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>소스 파일\Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -1,14 +1,104 @@
 #pragma once
 
+#include "mainServer.h"
+
+#pragma region [Error Function]
+
+// 소켓 함수 오류 출력 후 종료
+void err_quit(char *msg)
+{
+	LPVOID lpMsgBuf;
+	FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+		NULL, WSAGetLastError(),
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPTSTR)&lpMsgBuf, 0, NULL);
+	MessageBox(NULL, (LPCTSTR)lpMsgBuf, msg, MB_ICONERROR);
+	LocalFree(lpMsgBuf);
+	exit(1);
+}
+
+// 소켓 함수 오류 출력
+void err_display(char *msg)
+{
+	LPVOID lpMsgBuf;
+	FormatMessage(
+		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
+		NULL, WSAGetLastError(),
+		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+		(LPTSTR)&lpMsgBuf, 0, NULL);
+	printf("[%s] %s", msg, (char *)lpMsgBuf);
+	LocalFree(lpMsgBuf);
+}
+
+bool ErrorFunction(int value, int type) //type = 0 recv, type = 1send
+{
+	if (type == 0) {
+		if (value == SOCKET_ERROR) { err_display("recv()"); return false; } // 서버야 니가 이상해..ㅎ 그래도 클라 접속끊을거야
+		else if (!value) return false;	// 상대방의 접속이 이상함. 그러니 클라야 사요나라
+		else return true;	//정상적.
+	}
+	else if (type == 1) {
+		if (value == SOCKET_ERROR) { err_display("send()"); return false; }	// 몰라하른 서버 이상해 이놈. 그래도 클라 접속끊을거야
+		else if (!value) return false;	// 0...? 이런일 안일어남.	굿바이 클라
+		else return true;	// 정상적.
+	}
+}
+#pragma endregion 
+
 #pragma region [ GAME COMMUNICATION PROTOCOL]
 
 int ReturnTypeNumber(SOCKET& clientSock) {
 	int type, retVal;
 
+	std::cout << "   ToDebug : 데이터를 받으려고합니다." << std::endl;
 	retVal = recv(clientSock, (char*)&type, sizeof(type), 0);
-	ErrorFunction(retVal, 0);
+	if (!ErrorFunction(retVal, 0))
+		return 0;
+	std::cout << "   ToDebug : 데이터를 전송받았습니다.." << std::endl;
+
 	return type;
 }
+
+enum Protocol{ 
+	//LoginScene
+		DEMAND_LOGIN		=	100
+	,	FAIL_LOGIN			=	101
+	,	PERMIT_LOGIN		=	102
+
+	//LobbyScene
+	,	DEMAND_CREATEROOM	=	200
+	,	FAIL_CREATEROOM		=	201
+	,	PERMIT_CREATEROOM	=	202
+	
+	,	DEMAND_JOINROOM		=	203
+	,	FAIL_JOINROOM		=	204
+	,	PERMIT_JOINROOM		=	205
+	
+	,	DEMAND_LOBBYINFO	=	206
+	,	PERMIT_LOBBYINFO	=	207
+	
+	,	DEMAND_CHAT			=	208
+	,	PERMIT_CHAT			=	209
+
+	,	REQUEST_ROOMINFO	=	210 //Server -> Host  
+	,	SUPPLY_ROOMINFO		=	211	//Host	 -> Server
+
+
+	,	UPDATE_LOBBY		=	212
+	//RoomScene
+	,	SUPPLY_GAMESTART	=	395 //HOST	-> Server
+	
+	,	DEMAND_EXITROOM		=	396 //Host -> Server
+	,	PERMIT_EXITROOM		=	397 //Server -> Host
+
+	,	DEMAND_RELOGIN		=	398	//GUEST	-> Server	
+	,	PERMIT_RELOGIN		=	399 //
+		
+
+	//INGAMESCENE
+	,	SUPPLY_GAMEEND		=	499	//HOST	-> Server
+};
 
 #pragma endregion
 
@@ -48,9 +138,8 @@ struct FailCreateRoomStruct {
 
 // type 202
 struct PermitCreateRoomStruct {
-
+	int roomIndex;
 };
-
 
 
 // type 203
@@ -65,18 +154,18 @@ struct FailJoinRoomStruct {
 
 // type 205
 struct PermitJoinRoomStruct {
-
+	IN_ADDR hostAddr;
 };
 
 
 
 // type 206
-struct DemandLobbyInfoStruct{
-
+struct DemandExitRoomStruct{
+	int roomIndex;
 };
 
 //type 207
-struct PermitLobbyInfoStruct {
+struct PermitExitRoomStruct {
 	//LobbyInfo
 };
 
@@ -84,12 +173,12 @@ struct PermitLobbyInfoStruct {
 
 //type 208
 struct DemandChatStruct {
-	char chat[255];
+	char chat[CHAT_BUF_SIZE];
 };
 
 // type 209
 struct PermitChatStruct {
-	char chat[5][255];
+	char chat[CHAT_MAX_LINE][CHAT_BUF_SIZE];
 };
 
 
@@ -97,13 +186,55 @@ struct PermitChatStruct {
 // PerMit Host -> 서버
 
 //type 210
-struct DemandRoomInfoStruct {
+struct RequestRoomInfoStruct {
 
 };
 
 //type 211
-struct PermitRoomInfoStruct {
-	RoomData roomData;
+struct SupplyRoomInfoStruct {
+	//RoomData roomData;
+};
+
+//type 213
+struct UpdateLobbyInfoStruct {
+	int m_playersNumber[MAX_ROOM_COUNT]{};
+	int m_mapNumber[MAX_ROOM_COUNT]{}; // 맵넘버 1 - 바다, 2 - 숲
+};
+
+#pragma endregion
+
+#pragma region [ RoomScene 300 ~ 399 ]
+//type 395
+struct SupplyGameStartStruct {
+
+};
+
+//type 396
+struct DemandLobbyInfoStruct {
+
+};
+
+//type 397
+struct PermitLobbyInfoStruct {
+
+};
+
+//type 398
+struct DemandReLoginStruct {
+
+};
+
+//type 399
+struct PermitReLoginStruct {
+
+};
+#pragma endregion
+
+#pragma region [ RoomScene 400 ~ 499 ]
+
+//type 499
+struct SupplyGameEndStruct {
+
 };
 
 #pragma endregion

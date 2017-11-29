@@ -8,16 +8,31 @@
 //#define TO_DEBUG_ROOM_SCENE
 //#define TO_DEBUG_INGAME_SCENE
 
-
 template <typename T>
 T GetUserDataPtr(HWND hWnd)
 {
 	return reinterpret_cast<T>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 }
 
+DWORD WINAPI ThreadFunction(LPVOID arg) {
+	//ThreadStruct *threadStruct = (ThreadStruct *)arg;
+	Network* threadNetwork = (Network*)arg;
+	//printf("    %p    ", a);
+	//	printf("    %p    ", threadStruct->network);
+	threadNetwork->NetworkThreadFunction();
+	//	threadStruct->network.NetworkThreadFunction();
+	return 0;
+}
+
 Framework::Framework()
 {
 	m_grid = new StaticActor(0, 0, "Resource/Image/grid.png");
+
+	m_network.Connect();
+	HANDLE hThread = CreateThread(NULL, 0, ThreadFunction, &m_network, 0, NULL);
+
+	if (hThread == NULL) { closesocket(m_network.GetSocket()); }
+	else { CloseHandle(hThread); }
 }
 
 Framework::~Framework()
@@ -215,12 +230,18 @@ void Framework::Update(double val) {
 void Framework::ChangeScene() {
 	if (m_Scene[m_nowScene]->GetIsDestory()) {
 		if (SceneName::Login == m_Scene[m_nowScene]->m_nextScene) {
-			m_Scene[1] = new LoginScene(m_hwnd);
-			m_Scene[m_nowScene]->~Scene();
-			m_nowScene = 1;
+			if (m_nowScene == 2) {
+				PostQuitMessage(0);
+			}
+			else {
+				m_Scene[1] = new LoginScene(m_hwnd, &m_network);
+				m_Scene[m_nowScene]->~Scene();
+				m_nowScene = 1;
+			}
 		}
 		else if (SceneName::Lobby == m_Scene[m_nowScene]->m_nextScene) {
-			m_Scene[2] = new LobbyScene(m_hwnd);
+			m_Scene[2] = new LobbyScene(m_hwnd, &m_network);
+
 			m_Scene[m_nowScene]->~Scene();
 			m_nowScene = 2;
 		}

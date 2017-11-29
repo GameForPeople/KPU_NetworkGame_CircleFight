@@ -36,6 +36,8 @@ using namespace FMOD;
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
 
+#define SERVERPORT 9000
+
 #define ARCHER_BASE_SPEED 6.0f
 #define ZOMBIE_BASE_SPEED 5.98f
 #define KNIGHT_BASE_SPEED 5.96f
@@ -83,8 +85,6 @@ enum class MapName{
 		Sea
 	,	Forest
 };
-
-
 
 
 

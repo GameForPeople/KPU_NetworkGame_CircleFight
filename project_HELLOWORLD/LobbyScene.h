@@ -1,6 +1,13 @@
 #pragma once
 #include "Scene.h"
-#define BUF_SIZE 30
+
+#define BUF_MAX_SIZE 30
+#define BUF_SIZE 20
+
+struct RoomData {
+	int playersNumber{};
+	int mapNumber{};
+};
 
 class LobbyScene :
 	public Scene
@@ -8,6 +15,9 @@ class LobbyScene :
 public:
 	LobbyScene();
 	LobbyScene(HWND);
+	LobbyScene(HWND, Network&);
+	LobbyScene(HWND, Network*);
+
 	~LobbyScene();
 
 public:
@@ -23,9 +33,15 @@ public:
 
 
 private:
-	CImage m_backImg;
-	TCHAR	m_chatBuf[5][BUF_SIZE] = { NULL };
-	TCHAR	m_chat[BUF_SIZE] = { NULL };
-	size_t	m_Len = 0;
+	CImage		m_backImg;
+
+	CImage		m_roomImg[4];
+
+	TCHAR		m_chatBuf[5][BUF_MAX_SIZE] = { NULL };
+	TCHAR		m_chat[BUF_SIZE] = { NULL };
+	size_t		m_Len = 0;
+
+public:
+	RoomData	m_roomData[8];
 };
 

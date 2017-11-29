@@ -1,11 +1,16 @@
 #pragma once
+
 #include "Scene.h"
+
 class LoginScene :
 	public Scene
 {
 public:
 	LoginScene();
 	LoginScene(HWND);
+	LoginScene(HWND, Network *network);
+	//LoginScene(HWND, Network &network);
+
 	~LoginScene();
 
 public:
@@ -14,12 +19,13 @@ public:
 
 	virtual bool KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
 	virtual bool MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam);
+	
+	//DWORD WINAPI ThreadFunction(LPVOID arg);
 
 public:
 	void LoadCImage();
-
+	int ChangeNumberCharToInt(TCHAR* oldPw);
 private:
-
 	CImage m_backImg;
 	CImage m_logoImg;
 	CImage m_pawnImg;

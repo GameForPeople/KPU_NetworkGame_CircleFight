@@ -5,14 +5,22 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
-#include <Windows.h>
 #include <fstream>
+#include <Windows.h>
+#include <thread>
 
-#include "GameCommuniCationProtocol.h"
+//#include "GameCommuniCationProtocol.h"
+
 
 #pragma region [Create Static]
 #define SERVERIP			"127.0.0.1"
 #define SERVERPORT			9000
+
+#define CHAT_BUF_SIZE		30
+#define CHAT_MAX_LINE		5
+
+#define MAX_ROOM_COUNT		8
+
 
 struct ThreadStruct {
 	SOCKET					sock;
@@ -44,62 +52,101 @@ public:
 	void	PrintUserData() { std::cout << m_id << "  " << m_pw << "  " << m_winCount << "  " << m_loseCount << std::endl; }
 	char*	GetID() { return m_id; }
 	int		GetPW() { return m_pw; }
+	int		GetWinCount() { return m_winCount; }
+	int		GetLoseCount() { return m_loseCount; }
+
 	bool	GetIsLogin() { return m_isLogin; }
+	void	SetIsLogin(bool bValue) { m_isLogin = bValue; }
 };
 
 class RoomData {
+	bool m_isCreate{false};
 	int m_playersNumber{};
 	int m_mapNumber{}; // 맵넘버 1 - 바다, 2 - 숲
 	IN_ADDR m_hostAddr{};
 
 public:
-	RoomData() {};
+	RoomData() { m_isCreate = false; }
 	RoomData(IN_ADDR& inputAddr) { m_hostAddr = inputAddr; m_playersNumber = 1; m_mapNumber = 1; }
 
-	void SetRoomState(int inputPlayerNumber, int inputMapNumber) { m_playersNumber = inputPlayerNumber; m_mapNumber = inputMapNumber; }
+	void Create(IN_ADDR& inputAddr) { m_hostAddr = inputAddr; m_playersNumber = 1; m_mapNumber = 1; m_isCreate = true; }
+	bool Destory() { if (m_isCreate) { m_isCreate = false; return true; } else return false; }
+	bool Join() { if (m_isCreate && m_playersNumber < 4) { return true; m_playersNumber++; } else return false; }
+
 	void AddPlayer() { m_playersNumber++; }
+	void SetRoomState(int inputPlayerNumber, int inputMapNumber) { m_playersNumber = inputPlayerNumber; m_mapNumber = inputMapNumber; }
+	
+	int GetPlayersNumber() { return m_playersNumber; }
+	int GetMapNumber() { return m_mapNumber; }
+
+	bool GetIsCreate() { return m_isCreate; }
+	IN_ADDR& GetHostAddr() { return m_hostAddr; }
+};
+
+class LobbyInfo {
+private:
+	//std::vector<RoomData>	m_roomArr;
+	RoomData					m_roomArr[MAX_ROOM_COUNT];
+
+	int							m_roomCount{};
+
+public:
+	TCHAR	m_chatBuf[5][CHAT_BUF_SIZE] = { NULL };
+	TCHAR	m_chat[CHAT_BUF_SIZE] = { NULL };
+
+	LobbyInfo() = default;
+	~LobbyInfo() = default;
+
+	int CreateRoom(IN_ADDR& hostAddr){
+		if (m_roomCount < 8) {
+			for (int i = 0; i < MAX_ROOM_COUNT; i++) {
+				if (!m_roomArr[i].GetIsCreate()) {
+					m_roomArr[i].Create(hostAddr);
+					m_roomCount++;
+					return (i+1);
+				}
+			}
+		}
+		else if (m_roomCount >= 8) return 0;
+	}
+
+	bool ExitRoom(int roomIndex) {
+		m_roomCount--;
+		return m_roomArr[roomIndex - 1].Destory();
+	}
+
+	bool JoinRoom(int roomIndex, IN_ADDR& outAddr) {
+		outAddr = m_roomArr[roomIndex - 1].GetHostAddr();
+		return(m_roomArr[roomIndex - 1].Join());
+	}
+
+	void PushChat() {
+		for (int i = 1; i < CHAT_MAX_LINE; i++) {
+		    for ( int j = 0; j < CHAT_BUF_SIZE ; j++)
+				m_chatBuf[i - 1][j] =  m_chatBuf[i][j];
+			//std::cout << m_chatBuf[i - 1] << std::endl;
+		}
+	}
+	void Chat(char* recvChat) {
+		for (int i = 1; i < CHAT_MAX_LINE; i++) {
+			memcpy(m_chatBuf[i - 1], m_chatBuf[i], sizeof(CHAT_BUF_SIZE));
+			std::cout << m_chatBuf[i - 1] << std::endl;
+		}
+
+		memcpy(m_chatBuf[CHAT_MAX_LINE - 1], recvChat, sizeof(CHAT_BUF_SIZE));
+		std::cout << m_chatBuf[CHAT_MAX_LINE - 1] << std::endl;
+
+	}
+	char* GetChatBuf(int index) { return &(m_chat[index]); };
+
+	int	GetRoomPlayersNumber(int index) {
+		return m_roomArr[index].GetPlayersNumber();
+	}
+	int	GetRoomMapNumber(int index) {
+		return m_roomArr[index].GetMapNumber();
+	}
+	//int GetRoomCount
 };
 
 #pragma endregion
-
-#pragma region [Error Function]
-
-// 소켓 함수 오류 출력 후 종료
-void err_quit(char *msg)
-{
-	LPVOID lpMsgBuf;
-	FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL, WSAGetLastError(),
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(LPTSTR)&lpMsgBuf, 0, NULL);
-	MessageBox(NULL, (LPCTSTR)lpMsgBuf, msg, MB_ICONERROR);
-	LocalFree(lpMsgBuf);
-	exit(1);
-}
-
-// 소켓 함수 오류 출력
-void err_display(char *msg)
-{
-	LPVOID lpMsgBuf;
-	FormatMessage(
-		FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM,
-		NULL, WSAGetLastError(),
-		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
-		(LPTSTR)&lpMsgBuf, 0, NULL);
-	printf("[%s] %s", msg, (char *)lpMsgBuf);
-	LocalFree(lpMsgBuf);
-}
-
-void ErrorFunction(int value, int type) {
-	if (type == 0) {
-		if (value == SOCKET_ERROR) { err_quit("recv()"); }
-		else if (!value) return;
-	}
-	else if (type == 1) {
-		if (value == SOCKET_ERROR) { err_quit("send()"); }
-		else if (!value) return;
-	}
-}
-#pragma endregion 
 

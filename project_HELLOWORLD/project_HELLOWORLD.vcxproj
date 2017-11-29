@@ -88,10 +88,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>false</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\STAR\Documents\NetworkGame_CircleFight\project_HELLOWORLD\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -154,6 +156,7 @@
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="LogInScene.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Network.cpp" />
     <ClCompile Include="NewMain_Backup.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -195,6 +198,7 @@
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="LogInScene.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="Network.h" />
     <ClInclude Include="Pawn.h" />
     <ClInclude Include="RoomScene.h" />
     <ClInclude Include="Scene.h" />

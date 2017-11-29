@@ -8,6 +8,7 @@
 #include "LoginScene.h"
 #include "LobbyScene.h"
 #include "RoomScene.h"
+#include "Network.h"
 
 #define MAX_FPS  1.0 / 60.0
 #define MAX_UPDATE_FPS  1.0 / 3.0
@@ -17,7 +18,9 @@
 class Framework
 {
 private:
+	Network			m_network;
 
+private:
 	HWND			m_hwnd;
 	RECT			m_rect{ 0,0,0,0 };
 
@@ -30,7 +33,6 @@ private:
 	MSG				m_msg;
 
 	static int		GAME_MODE;
-
 
 	std::chrono::system_clock::time_point m_current_time;
 	std::chrono::duration<double> m_timeElapsed; // 시간이 얼마나 지났나
@@ -68,7 +70,6 @@ public:
 	void Destory();
 
 	void ChangeScene();
-
 
 	void CreatebackBuffer();
 };
