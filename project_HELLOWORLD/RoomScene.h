@@ -1,11 +1,6 @@
 #pragma once
 
 #include "Scene.h"
-#include "NetworkFunc.h"
-
-static int numPlayer = 0;
-static RoomInfo roomInfo;
-static atomic<int> readyPlayer;
 
 class RoomScene : public Scene
 {
@@ -35,6 +30,6 @@ private:
 	CImage			m_ImgWicher;
 
 public:
-	virtual MapName		GetMapName() { return roomInfo.mapInfo; }
-	virtual CharacterName* GetCharacterName() { return roomInfo.charInfo; }
+	virtual MapName		GetMapName() { return roomInfo.m_mapInfo; }
+	virtual CharacterName* GetCharacterName() { return roomInfo.m_charInfo; }
 };

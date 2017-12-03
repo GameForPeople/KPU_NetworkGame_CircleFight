@@ -2,17 +2,6 @@
 
 #include "Scene.h"
 #include "InGameSceneUI.h"
-#include "NetworkFunc.h"
-
-#include <vector>
-
-#define PLAT_MAX_NUMBER 200
-#define PLAT_WIDTH 100
-#define PLAT_HEIGHT 50
-#define PLAT_LOW_HEIGHT 600
-
-#define PLAT_SHOWN_CNT 16
-
 
 class InGameSceneGuest :
 	public Scene
@@ -21,17 +10,18 @@ private:
 
 	//std::vector<BaseObject>	m_platArr;
 	BaseObject*					m_platArr;
+	BaseObject*					m_itemArr;
+
 	Pawn						m_characterArr[MAX_PLAYER];
 	Map*						m_map;
 
 	CImage*						m_platImg[2];
+	CImage*						m_itemImg;
 
 	InGameSceneUI*				m_inGameUI;
 
 	int	m_emotionNumber[MAX_PLAYER];
 	int m_emotionTimer[MAX_PLAYER];
-
-	int							m_numPlat;
 
 public:
 	InGameSceneGuest();

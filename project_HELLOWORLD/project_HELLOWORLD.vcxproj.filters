@@ -73,6 +73,9 @@
     <Filter Include="소스 파일\Scene\RoomScene">
       <UniqueIdentifier>{10862ca2-9d0e-4aaf-bbc8-5c0dcf0f612a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Network">
+      <UniqueIdentifier>{bf7a1ace-4b07-4a2b-8245-a997478e3e19}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NewMain.cpp">
@@ -150,11 +153,17 @@
     <ClCompile Include="RoomSceneGuest.cpp">
       <Filter>소스 파일\Scene\RoomScene</Filter>
     </ClCompile>
-    <ClCompile Include="NetworkFunc.cpp">
-      <Filter>헤더 파일</Filter>
-    </ClCompile>
     <ClCompile Include="InGameSceneGuest.cpp">
       <Filter>소스 파일\Scene\InGameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemTimer.cpp">
+      <Filter>소스 파일\Function</Filter>
+    </ClCompile>
+    <ClCompile Include="RandClass.cpp">
+      <Filter>소스 파일\Function</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -224,11 +233,17 @@
     <ClInclude Include="RoomSceneGuest.h">
       <Filter>소스 파일\Scene\RoomScene</Filter>
     </ClInclude>
-    <ClInclude Include="NetworkFunc.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="InGameSceneGuest.h">
       <Filter>소스 파일\Scene\InGameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>소스 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemTimer.h">
+      <Filter>소스 파일\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="RandClass.h">
+      <Filter>소스 파일\Function</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -56,11 +56,8 @@ void Pawn::Draw(HDC hdc, State state) {
 	m_unit->Draw(hdc, m_pos.x, m_pos.y, m_size.x, m_size.y, state);
 }
 
-void Pawn::ComputeTotalDistance(float speed) {
-	if(speed==0)
-		m_totalDistance += m_speed;
-	else
-		m_totalDistance += speed;
+void Pawn::ComputeTotalDistance() {
+	m_totalDistance += m_speed * m_bufSpeed;
 }
 
 void Pawn::ProcessCombo() {
@@ -108,6 +105,9 @@ void Pawn::ProcessGravity() {
 		m_pos.y += m_fallSpeed;
 		//m_fallSpeed *= 1.05;
 		m_fallSpeed *= 1.1;
+
+		if (m_fallSpeed >= 15.0f)
+			m_fallSpeed = 14.9f;
 	}
 }
 
@@ -158,7 +158,7 @@ void Pawn::NetworkDrawCharacter(HDC hdc, float playerDisX, float thisDisX, float
 
 	if (thisDisX - playerDisX > 1100)
 		return;
-	else if (playerDisX - thisDisX > 300)
+	else if (playerDisX - thisDisX > 400)
 		return;
 
 	float newPosX = playerDisX - thisDisX;
@@ -168,4 +168,55 @@ void Pawn::NetworkDrawCharacter(HDC hdc, float playerDisX, float thisDisX, float
 	m_unit->SetImageCount(cImageIndex);
 
 	Draw(hdc, state);
+}
+
+void Pawn::FaintCountUp(bool init)
+{
+	m_preState = m_state;
+	m_state = State::Stun;
+
+	if (init)
+	{
+		SetCombo();
+		ResetBaseSpeed();
+	}
+	m_bufSpeed = 0.0f;
+	m_stackFaint++;
+}
+
+void Pawn::FaintCountDown()
+{
+	m_stackFaint--;
+	if (m_stackFaint <= 0)
+	{
+		m_bufSpeed = 1.0f;
+		m_state = m_preState;
+	}
+}
+
+void Pawn::FaintReset()
+{
+	m_stackFaint = 0;
+	m_bufSpeed = 1.0f;
+	m_state = State::Run;
+}
+
+void Pawn::SpeedUpCountUp(bool boost)
+{
+	m_stackSpeedUp++;
+	if (boost)
+	{
+		m_bufSpeed = SPEED_BUFF_VAL_B;
+	}
+	else
+	{
+		m_bufSpeed = SPEED_BUFF_VAL;
+	}
+}
+
+void Pawn::SpeedUpCountDown()
+{
+	m_stackSpeedUp--;
+	if (m_stackSpeedUp <= 0)
+		m_bufSpeed = 1.0f;
 }

@@ -1,7 +1,11 @@
 #pragma once
-#include "stdafx.h"
+
 #include <windows.h>
 
+struct Pos2d {
+	float x;
+	float y;
+};
 
 
 class BaseObject
@@ -25,4 +29,5 @@ public:
 	void SetXPos(const float x) { m_pos.x = x; }
 
 	Pos2d GetPos() const;
+	float GetYPos() { return m_pos.y; }
 };

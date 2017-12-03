@@ -40,11 +40,18 @@ InGameSceneGuest::InGameSceneGuest(HWND hwnd) : Scene(hwnd)
 	m_platImg[0] = new CImage;
 	m_platImg[1] = new CImage;
 
+	m_itemImg = new CImage;
+
 	m_platImg[0]->Load("Resource/Image/Plat/Plat_2.png");
 	m_platImg[1]->Load("Resource/Image/Plat/Plat_1.png");
 
-	m_numPlat = PLAT_MAX_NUMBER;
-	m_platArr = new BaseObject[m_numPlat];
+	m_itemImg->Load("Resource/Image/UI/item_Random_2.png");
+
+	int numItem = (PLAT_MAX_NUMBER - ITEM_FIRST_IMPACT) / ITEM_INTERVAL + 1;
+
+	m_platArr = new BaseObject[PLAT_MAX_NUMBER];
+	m_itemArr = new BaseObject[numItem];
+
 	LoadPlat();
 
 	m_inGameUI = new InGameSceneUI;
@@ -76,18 +83,24 @@ InGameSceneGuest::InGameSceneGuest(HWND hwnd, MapName insertMap, CharacterName* 
 	m_platImg[0] = new CImage;
 	m_platImg[1] = new CImage;
 
+	m_itemImg = new CImage;
+
 	m_platImg[0]->Load("Resource/Image/Plat/Plat_2.png");
 	m_platImg[1]->Load("Resource/Image/Plat/Plat_1.png");
 
-	m_numPlat = PLAT_MAX_NUMBER;
-	m_platArr = new BaseObject[m_numPlat];
+	m_itemImg->Load("Resource/Image/UI/item_Random_2.png");
+
+	int numItem = (PLAT_MAX_NUMBER - ITEM_FIRST_IMPACT) / ITEM_INTERVAL + 1;
+
+	m_platArr = new BaseObject[PLAT_MAX_NUMBER];
+	m_itemArr = new BaseObject[numItem];
+
 	LoadPlat();
 
 	m_inGameUI = new InGameSceneUI;
 
 	emotionNum = m_emotionNumber;
-
-	sendQueueGuest.push_back(NOTIFYSTART);
+	sendQueueGuest.push_back(NOTIFY_START);
 }
 
 InGameSceneGuest::InGameSceneGuest()
@@ -103,40 +116,47 @@ InGameSceneGuest::~InGameSceneGuest()
 void InGameSceneGuest::Draw(HDC hdc) {
 	m_map->Draw(hdc);
 	
-	float xPos = basicInfo.platInfo[m_idx].xPos;
-	for (int i = basicInfo.platInfo[m_idx].idx, j=0; j < PLAT_SHOWN_CNT; ++i, ++j) {
+	float xPos = basicInfo.m_firstPlat[m_idx].xPos;
+	for (int i = basicInfo.m_firstPlat[m_idx].idx, j=0; j < PLAT_SHOWN_CNT; ++i, ++j) {
 		if (m_platArr[i].GetPos().y != PLAT_LOW_HEIGHT)
 			m_platImg[0]->TransparentBlt(hdc, xPos + PLAT_WIDTH * j, m_platArr[i].GetPos().y, PLAT_WIDTH, PLAT_HEIGHT, RGB(255, 255, 255));
 		else
 			m_platImg[1]->TransparentBlt(hdc, xPos + PLAT_WIDTH * j, m_platArr[i].GetPos().y, PLAT_WIDTH, m_platImg[1]->GetHeight(), RGB(255, 255, 255));
 	}
 
+	m_itemImg->TransparentBlt(hdc, basicInfo.m_firstItem[m_idx].xPos, m_itemArr[basicInfo.m_firstItem[m_idx].idx].GetPos().y, ITEM_SIZE, ITEM_SIZE, RGB(255, 255, 255));
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
 		if (i == m_idx) continue;
-		m_characterArr[i].NetworkDrawCharacter(hdc, basicInfo.totalDis[m_idx], basicInfo.totalDis[i], basicInfo.position[i].y,
-			basicInfo.imgCnt[i], basicInfo.state[i]);
+		m_characterArr[i].NetworkDrawCharacter(hdc, basicInfo.m_totalDis[m_idx], basicInfo.m_totalDis[i], basicInfo.m_yPos[i],
+			basicInfo.m_imgCnt[i], basicInfo.m_state[i]);
 	}
-	m_characterArr[m_idx].NetworkDrawCharacter(hdc, 0, 0, basicInfo.position[m_idx].y,
-		basicInfo.imgCnt[m_idx], basicInfo.state[m_idx]);
+	m_characterArr[m_idx].NetworkDrawCharacter(hdc, 0, 0, basicInfo.m_yPos[m_idx],
+		basicInfo.m_imgCnt[m_idx], basicInfo.m_state[m_idx]);
 
-	m_inGameUI->DrawComboUI(hdc, basicInfo.combo[m_idx]);
-	m_inGameUI->DrawBarUI(hdc, m_characterArr[m_idx].GetTotalDistance() / 100);
-	m_inGameUI->DrawInventoryUI(hdc, 0, 0);
+	m_inGameUI->DrawComboUI(hdc, basicInfo.m_combo[m_idx]);
+	m_inGameUI->DrawInventoryUI(hdc, basicInfo.m_itemInfo[m_idx][0], basicInfo.m_itemInfo[m_idx][1]);
 
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
-		if (basicInfo.emoticon[i])
-			m_inGameUI->DrawEmotionUI(hdc, basicInfo.emoticon[i], basicInfo.position[i].x, basicInfo.position[i].y);
+		if (i == m_idx) continue;
+		m_inGameUI->DrawBarUI(hdc, i, basicInfo.m_totalDis[i] / 100);
+		m_inGameUI->DrawPlayerMark(hdc, i, basicInfo.m_yPos[i], basicInfo.m_totalDis[m_idx], basicInfo.m_totalDis[i]);
+		if (basicInfo.m_emoticon[i])
+			m_inGameUI->DrawEmotionUI(hdc, basicInfo.m_emoticon[i], basicInfo.m_totalDis[m_idx], basicInfo.m_totalDis[i], basicInfo.m_yPos[i]);
 		else
-			m_inGameUI->DrawHeadUpUI(hdc, basicInfo.position[i].y);
+			m_inGameUI->DrawHeadUpUI(hdc, basicInfo.m_yPos[i], basicInfo.m_totalDis[m_idx], basicInfo.m_totalDis[i]);
 	}
-
-
+	m_inGameUI->DrawBarUI(hdc, m_idx, basicInfo.m_totalDis[m_idx] / 100);
+	m_inGameUI->DrawPlayerMark(hdc, m_idx, basicInfo.m_yPos[m_idx]);
+	if (basicInfo.m_emoticon[m_idx])
+		m_inGameUI->DrawEmotionUI(hdc, basicInfo.m_emoticon[m_idx], 0, 0, basicInfo.m_yPos[m_idx]);
+	else
+		m_inGameUI->DrawHeadUpUI(hdc, basicInfo.m_yPos[m_idx], 0, 0);
 }
 
 void InGameSceneGuest::Timer(const double time) {
-	m_map->Update(basicInfo.speed[m_idx], time);
+	m_map->Update(basicInfo.m_speed[m_idx], time);
 
 	//ShowPawnState();	//Debug
 }
@@ -179,7 +199,16 @@ bool InGameSceneGuest::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARA
 		case '6':
 			m_emotionNumber[m_idx] = 6;
 			sendQueueGuest.emplace_back(INPUT_EMOTION);
-
+			break;
+		case 'Q':
+		case 'q':
+			if(basicInfo.m_itemInfo[m_idx][0] != -1)
+				sendQueueGuest.emplace_back(INPUT_KEY_Q);
+			break;
+		case 'W':
+		case 'w':
+			if (basicInfo.m_itemInfo[m_idx][1] != -1)
+				sendQueueGuest.emplace_back(INPUT_KEY_W);
 			break;
 		}
 	}
@@ -213,16 +242,23 @@ void InGameSceneGuest::LoadPlat() {
 	int posX = 1;
 	int posY = 0;
 
-	for (int i = 0; i < m_numPlat; i++) {
+	for (int i = 0, j = 0; i < PLAT_MAX_NUMBER; i++) {
 
 		inFile >> posY;
 
 		m_platArr[i].SetPos(posX * i *  PLAT_WIDTH, (posY * (-100)) + PLAT_LOW_HEIGHT);
-
+		if (i % ITEM_INTERVAL == ITEM_FIRST_IMPACT)
+		{
+			m_itemArr[j].SetPos(3000, (posY * (-100)) + PLAT_LOW_HEIGHT - PLAT_ITEM_HEIGHT);
+			j++;
+		}
 		//to debug
 		//std::cout << i << "¹øÂ°  " << posY << "   " << m_platArr[i].GetPos().x << "   " << m_platArr[i].GetPos().y << std::endl;
 	}
 	inFile.close();
+
+	basicInfo.m_firstItem[m_idx].xPos = 3000;
+	basicInfo.m_itemInfo[m_idx][0] = basicInfo.m_itemInfo[m_idx][1] = -1;
 	/*
 	FILE *fp;
 

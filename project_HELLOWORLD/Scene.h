@@ -6,6 +6,7 @@
 #include "Map.h"
 #include "StaticActor.h"
 #include "BaseUI.h"
+#include "Network.h"
 
 class Scene
 {

@@ -40,14 +40,28 @@ InGameScene::InGameScene(HWND hwnd) : Scene(hwnd)
 	m_platImg[0] = new CImage;
 	m_platImg[1] = new CImage;
 
+	m_itemImg = new CImage;
+
 	m_platImg[0]->Load("Resource/Image/Plat/Plat_2.png");
 	m_platImg[1]->Load("Resource/Image/Plat/Plat_1.png");
 
-	m_numPlat = PLAT_MAX_NUMBER;
-	m_platArr = new BaseObject[m_numPlat];
+	m_itemImg->Load("Resource/Image/UI/item_Random_2.png");
+
+	int numItem = (PLAT_MAX_NUMBER - ITEM_FIRST_IMPACT) / ITEM_INTERVAL + 1;
+
+	m_platArr = new BaseObject[PLAT_MAX_NUMBER];
+	m_itemArr = new BaseObject[numItem];
+
+	m_stackSheild[0] = 0;
+	m_stackSheild[1] = 0;
+
 	LoadPlat();
 
 	m_inGameUI = new InGameSceneUI;
+
+	charArr = m_characterArr;
+	emotionNum = m_emotionNumber;
+	emotionTime = m_emotionTimer;
 }
 
 InGameScene::InGameScene(HWND hwnd, MapName insertMap, CharacterName* insertCharacter) : Scene(hwnd)
@@ -79,11 +93,21 @@ InGameScene::InGameScene(HWND hwnd, MapName insertMap, CharacterName* insertChar
 	m_platImg[0] = new CImage;
 	m_platImg[1] = new CImage;
 
+	m_itemImg = new CImage;
+
 	m_platImg[0]->Load("Resource/Image/Plat/Plat_2.png");
 	m_platImg[1]->Load("Resource/Image/Plat/Plat_1.png");
 
-	m_numPlat = PLAT_MAX_NUMBER;
-	m_platArr = new BaseObject[m_numPlat];
+	m_itemImg->Load("Resource/Image/UI/item_Random_2.png");
+
+	int numItem = (PLAT_MAX_NUMBER - ITEM_FIRST_IMPACT) / ITEM_INTERVAL + 1;
+
+	m_platArr = new BaseObject[PLAT_MAX_NUMBER];
+	m_itemArr = new BaseObject[numItem];
+
+	m_stackSheild[0] = 0;
+	m_stackSheild[1] = 0;
+
 	LoadPlat();
 
 	m_inGameUI = new InGameSceneUI;
@@ -106,75 +130,76 @@ InGameScene::~InGameScene()
 void InGameScene::Draw(HDC hdc) {
 	m_map->Draw(hdc);
 
-	//int platYBeg = m_platFirstIdx[0];
-	//for (int i = 0; i < PLAT_SHOWN_CNT; i++) {
-	//	if(m_platArr[platYBeg].GetPos().y != PLAT_LOW_HEIGHT)
-	//		m_platImg[0]->TransparentBlt(hdc, m_platXArr[0][i], m_platArr[platYBeg].GetPos().y, PLAT_WIDTH, PLAT_HEIGHT, RGB(255, 255, 255));
-	//	else
-	//		m_platImg[1]->TransparentBlt(hdc, m_platXArr[0][i], m_platArr[platYBeg].GetPos().y, PLAT_WIDTH, m_platImg[1]->GetHeight() , RGB(255,255,255));
-	//	platYBeg++;
-	//}
-
-	float firstPos = basicInfo.platInfo[0].xPos;
-	for (int i = basicInfo.platInfo[0].idx, j=0; j < PLAT_SHOWN_CNT; ++i, ++j) {
+	float firstPos = basicInfo.m_firstPlat[0].xPos;
+	for (int i = basicInfo.m_firstPlat[0].idx, j=0; j < PLAT_SHOWN_CNT; ++i, ++j) {
 		if (m_platArr[i].GetPos().y != PLAT_LOW_HEIGHT)
 			m_platImg[0]->TransparentBlt(hdc, firstPos + PLAT_WIDTH * j, m_platArr[i].GetPos().y, PLAT_WIDTH, PLAT_HEIGHT, RGB(255, 255, 255));
 		else
 			m_platImg[1]->TransparentBlt(hdc, firstPos + PLAT_WIDTH * j, m_platArr[i].GetPos().y, PLAT_WIDTH, m_platImg[1]->GetHeight(), RGB(255, 255, 255));
 	}
 
+	m_itemImg->TransparentBlt(hdc, basicInfo.m_firstItem[0].xPos, m_itemArr[basicInfo.m_firstItem[0].idx].GetPos().y, ITEM_SIZE, ITEM_SIZE, RGB(255, 255, 255));
+
 	for (int i = 1; i < MAX_PLAYER; ++i)
 	{
-		m_characterArr[i].NetworkDrawCharacter(hdc, basicInfo.totalDis[m_idx], basicInfo.totalDis[i], basicInfo.position[i].y,
-			basicInfo.imgCnt[i], basicInfo.state[i]);
+		m_characterArr[i].NetworkDrawCharacter(hdc, basicInfo.m_totalDis[0], basicInfo.m_totalDis[i], basicInfo.m_yPos[i],
+			basicInfo.m_imgCnt[i], basicInfo.m_state[i]);
 	}
-	m_characterArr[0].NetworkDrawCharacter(hdc, 0, 0, basicInfo.position[0].y,
-		basicInfo.imgCnt[0], basicInfo.state[0]);
+	m_characterArr[0].NetworkDrawCharacter(hdc, 0, 0, basicInfo.m_yPos[0],
+		basicInfo.m_imgCnt[0], basicInfo.m_state[0]);
 
 	m_inGameUI->DrawComboUI(hdc, m_characterArr[0].GetCombo());
-	m_inGameUI->DrawBarUI(hdc, m_characterArr[0].GetTotalDistance()/100);
-	m_inGameUI->DrawInventoryUI(hdc, 0, 0);
+	m_inGameUI->DrawInventoryUI(hdc, basicInfo.m_itemInfo[0][0], basicInfo.m_itemInfo[0][1]);
 
-	for (int i = 0; i < MAX_PLAYER; ++i)
-	{
-		if (m_emotionNumber)
-			m_inGameUI->DrawEmotionUI(hdc, m_emotionNumber[i], m_characterArr[i].GetPos().x, m_characterArr[i].GetPos().y);
+	for (int i = 1; i < MAX_PLAYER; ++i)
+	{	
+		m_inGameUI->DrawBarUI(hdc, i, m_characterArr[i].GetTotalDistance() / 100);
+		m_inGameUI->DrawPlayerMark(hdc, i, basicInfo.m_yPos[i], basicInfo.m_totalDis[0], basicInfo.m_totalDis[i]);
+		if (basicInfo.m_emoticon[i])
+			m_inGameUI->DrawEmotionUI(hdc, basicInfo.m_emoticon[i], basicInfo.m_totalDis[0], basicInfo.m_totalDis[i], basicInfo.m_yPos[i]);
 		else
-			m_inGameUI->DrawHeadUpUI(hdc, m_characterArr[i].GetPos().y);
+			m_inGameUI->DrawHeadUpUI(hdc, m_characterArr[i].GetPos().y, basicInfo.m_totalDis[0], basicInfo.m_totalDis[i]);
 	}
+	m_inGameUI->DrawBarUI(hdc, 0, m_characterArr[0].GetTotalDistance() / 100);
+	m_inGameUI->DrawPlayerMark(hdc, 0, basicInfo.m_yPos[0]);
+	if (basicInfo.m_emoticon[0])
+		m_inGameUI->DrawEmotionUI(hdc, basicInfo.m_emoticon[0], 0, 0, basicInfo.m_yPos[0]);
+	else
+		m_inGameUI->DrawHeadUpUI(hdc, m_characterArr[0].GetPos().y, 0, 0);
 }
 
 void InGameScene::Timer(const double time){
+
+	UpdateItemList(time);
+
+	while (!itemQueue.empty())
+	{
+		UseItem(itemQueue.front().itemNum, itemQueue.front().userIdx);
+		itemQueue.pop_front();
+	}
 
 	m_map->Update(m_characterArr[0].GetSpeed(), time);
 
 	for (int i = 0; i < MAX_PLAYER; ++i)
 		m_characterArr[i].Update(m_characterArr[i].GetState(), time);
 
-
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
-		int &first = basicInfo.platInfo[i].idx;
 		float spd = m_characterArr[i].GetSpeed();
 
-		basicInfo.platInfo[i].xPos -= spd;			
+		basicInfo.m_firstPlat[i].xPos -= spd;
+		basicInfo.m_firstItem[i].xPos -= spd;
 
-		if (basicInfo.platInfo[i].xPos < -PLAT_WIDTH)
+		if (basicInfo.m_firstPlat[i].xPos < -PLAT_WIDTH)
 		{
-			basicInfo.platInfo[i].xPos += PLAT_WIDTH;
-			first++;
+			basicInfo.m_firstPlat[i].xPos += PLAT_WIDTH;
+			basicInfo.m_firstPlat[i].idx++;
 		}
-
-		//for (int j = 0; j < PLAT_SHOWN_CNT; ++j)
-		//	m_platXArr[i][j] -= spd;
-		//if (m_platXArr[i][0] < -PLAT_WIDTH)
-		//{
-		//	m_platXArr[i].pop_front();
-		//	m_platXArr[i].emplace_back(m_platXArr[i].back() + PLAT_WIDTH);
-		//	first++;
-		//}
-		//platFirst[i].idx = first;
-		//platFirst[i].xPos = m_platXArr[i][0];
+		if (basicInfo.m_firstItem[i].xPos < -PLAT_WIDTH)
+		{
+			basicInfo.m_firstItem[i].xPos += ITEM_INTERVAL * PLAT_WIDTH;
+			basicInfo.m_firstItem[i].idx++;
+		}
 	}
 	
 	EmotionUIProc();
@@ -182,17 +207,18 @@ void InGameScene::Timer(const double time){
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
 		ComputePawn(i);
-		basicInfo.position[i] = m_characterArr[i].GetPos();
-		basicInfo.totalDis[i] = m_characterArr[i].GetTotalDistance();
-		basicInfo.speed[i] = m_characterArr[i].GetSpeed();
-		basicInfo.state[i] = m_characterArr[i].GetState();
-		basicInfo.imgCnt[i] = m_characterArr[i].GetUnit().GetImageCount();
-		basicInfo.combo[i] = m_characterArr[i].GetCombo();
+		CollideItem(i);
+		basicInfo.m_yPos[i] = m_characterArr[i].GetYPos();
+		basicInfo.m_totalDis[i] = m_characterArr[i].GetTotalDistance();
+		basicInfo.m_speed[i] = m_characterArr[i].GetSpeed();
+		basicInfo.m_state[i] = m_characterArr[i].GetState();
+		basicInfo.m_imgCnt[i] = m_characterArr[i].GetUnit().GetImageCount();
+		basicInfo.m_combo[i] = m_characterArr[i].GetCombo();
 	}
 
 	for (int i = 1; i < MAX_PLAYER; ++i)
 	{
-		sendQueue[i].emplace_back(BASICINFO, 0);
+		sendQueue[i].emplace_back(UPDATE_FRAME, 0);
 	}
 	//ShowPawnState();	//Debug
 }
@@ -236,6 +262,18 @@ bool InGameScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPa
 			m_emotionNumber[0] = 6;
 			m_emotionTimer[0] = 1;
 			break;
+		case 'Q':					//1번 아이템 사용
+		case 'q':
+			if (m_characterArr[0].GetFaint() > 0 &&  basicInfo.m_itemInfo[0][0] != WING) { break; }
+			UseItem(basicInfo.m_itemInfo[0][0], 0);
+			basicInfo.m_itemInfo[0][0] = -1;
+			break;
+		case 'W':					//2번 아이템 사용
+		case 'w':
+			if (m_characterArr[0].GetFaint() > 0 && basicInfo.m_itemInfo[0][1] != WING) { break; }
+			UseItem(basicInfo.m_itemInfo[0][1], 0);
+			basicInfo.m_itemInfo[0][1] = -1;
+			break;
 		}
 	}
 	case WM_KEYUP:
@@ -267,31 +305,34 @@ void InGameScene::LoadPlat() {
 	int posX = 1;
 	int posY = 0;
 	
-	for (int i = 0; i < m_numPlat; i++) {
+	for (int i = 0, j = 0; i < PLAT_MAX_NUMBER; i++) {
 		
 		inFile >> posY;
 		
-		m_platArr[i].SetPos(posX * i *  PLAT_WIDTH, (posY * (-100)) + PLAT_LOW_HEIGHT);
-	
+		m_platArr[i].SetPos(3000, (posY * (-100)) + PLAT_LOW_HEIGHT);
+		if (i % ITEM_INTERVAL == ITEM_FIRST_IMPACT)
+		{
+			m_itemArr[j].SetPos(3000, (posY * (-100)) + PLAT_LOW_HEIGHT - PLAT_ITEM_HEIGHT);
+			j++;
+		}
 		//to debug
 		//std::cout << i << "번째  " << posY << "   " << m_platArr[i].GetPos().x << "   " << m_platArr[i].GetPos().y << std::endl;
 	}
 	inFile.close();
 
-	for (int j = 0; j < MAX_PLAYER; ++j)
-	{
-		for (int i = 0; i < PLAT_SHOWN_CNT; ++i)
-		{
-			m_platXArr[j][i] = m_platArr[i].GetPos().x;
-			//m_platXArr[j].push_back(val);
-		}
-	}
-
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
-		basicInfo.platInfo[i].idx = 0;
-		basicInfo.platInfo[i].xPos = 0;
+		basicInfo.m_firstPlat[i].idx = 0;
+		basicInfo.m_firstPlat[i].xPos = 0;
+
+		basicInfo.m_firstItem[i].idx = 0;
+		basicInfo.m_firstItem[i].xPos = ITEM_FIRST_IMPACT * PLAT_WIDTH;
+
+		basicInfo.m_itemInfo[i][0] = basicInfo.m_itemInfo[i][1] = -1;
 	}
+
+	
+
 	/*
 	FILE *fp;
 
@@ -316,7 +357,7 @@ void InGameScene::ComputePawn(int idx) {
 
 //	int leftPlat = (int)(m_characterArr[idx].GetTotalDistance() / PLAT_WIDTH + 2);
 	//int rightPlat = (int)(m_characterArr[idx].GetTotalDistance() / PLAT_WIDTH + 3);
-	int rightPlat = basicInfo.platInfo[idx].idx + 4;
+	int rightPlat = basicInfo.m_firstPlat[idx].idx + 3;
 
 	float pawnPosY = m_characterArr[idx].GetPos().y + 185;
 
@@ -426,6 +467,201 @@ void InGameScene::EmotionUIProc() {
 				m_emotionNumber[i] = 0;
 			}
 		}
-		basicInfo.emoticon[i] = m_emotionNumber[i];
+		basicInfo.m_emoticon[i] = m_emotionNumber[i];
+	}
+}
+
+
+bool InGameScene::BoxBoxCol(float aMinX, float aMinY, float aMaxX, float aMaxY, float bMinX, float bMinY, float bMaxX, float bMaxY)
+{
+	if (aMinX > bMaxX)
+		return false;
+	if (aMaxX < bMinX)
+		return false;
+
+	if (aMinY > bMaxY)
+		return false;
+	if (aMaxY < bMinY)
+		return false;
+
+	return true;
+}
+
+void InGameScene::UseItem(int itemNum, int user)
+{
+	if (itemNum == -1) return;
+
+	static int b, e;
+	static int itemIdx;
+
+	if (itemNum == 0)		// 번개
+	{
+		//send()
+		ItemTimer elem(LIGHTNING_DELAY, LIGHTNING, user);
+		timerList.push_back(elem);
+		b = 2;	e = 4;
+		itemIdx = NOTIFY_ITEM_THUNDER;
+	}
+	else if (itemNum == 1)	// 숙면
+	{
+		ItemTimer elem(BED_DELAY, BED, user);
+		timerList.push_back(elem);
+		b = 2;	e = 4;
+		itemIdx = NOTIFY_ITEM_BED;
+	}
+	else if (itemNum == 2)	// 날개
+	{
+		ItemTimer elem(WING_DELAY, WING, user);
+		timerList.push_back(elem);
+		b = 0;	e = 2;
+		itemIdx = NOTIFY_ITEM_WING;
+	}
+	else if (itemNum == 3)	// 방패
+	{
+		ItemTimer elem(SHEILD_DELAY, SHEILD, user);
+		timerList.push_back(elem);
+		b = 0;	e = 2;
+		itemIdx = NOTIFY_ITEM_SHIELD;
+	}
+
+	for (; b < e; ++b)
+	{
+		if (b == 0) { /*소리 재생*/ }
+		else { sendQueue[b].emplace_back(itemIdx, 0); }
+	}
+}
+
+void InGameScene::CollideItem(int idx)
+{
+	Pos2d charPos = m_characterArr[idx].GetPos();
+
+	float charSize = 200;
+
+	float aMinX = charPos.x;
+	float aMinY = charPos.y;
+	float aMaxX = charPos.x + charSize;
+	float aMaxY = charPos.y + charSize;
+	
+	float itemX = basicInfo.m_firstItem[idx].xPos;
+	int itemIdx = basicInfo.m_firstItem[idx].idx;
+
+	float bMinX = itemX;
+	float bMinY = m_itemArr[itemIdx].GetPos().y;
+	float bMaxX = itemX + ITEM_SIZE;
+	float bMaxY = m_itemArr[itemIdx].GetPos().y + ITEM_SIZE;
+
+	if (BoxBoxCol(aMinX, aMinY, aMaxX, aMaxY, bMinX, bMinY, bMaxX, bMaxY))
+	{
+		if (m_isEatingItam) { return; }	//한번만 먹으라
+		int emptyIdx = (basicInfo.m_itemInfo[idx][0] == -1)?0: (basicInfo.m_itemInfo[idx][1] == -1)?1:-1;
+		if (emptyIdx != -1) basicInfo.m_itemInfo[idx][emptyIdx] = m_rand.getRandomNumber(0, 3);
+		m_isEatingItam = true;
+		return;							//하나 이상 충돌할일이 없음
+	}
+
+	m_isEatingItam = false;
+}
+
+void InGameScene::UpdateItemList(double time)
+{
+	if (timerList.empty()) return;
+
+	int b, e;
+	float duration;
+	list<ItemTimer>::iterator iter;
+
+	for (iter = timerList.begin(); iter != timerList.end();)
+	{
+		ItemTimer* elem;
+		int iterIdx = iter->getUserIdx();
+		switch (iter->update(time))
+		{
+		case LIGHTNING:																// 번개 - 선딜 1.5초, 기절 2초
+			if (iterIdx < 2 && m_stackSheild[0] > 0) { iter = timerList.erase(iter);  break; }
+			else if (m_stackSheild[1] > 0) { iter = timerList.erase(iter); break; }
+
+			if (m_characterArr[iterIdx].GetCharType() == CharacterName::Knight) { duration = LIGHTNING_DURATION_B; }
+			else { duration = LIGHTNING_DURATION; }
+
+			if (iterIdx < 2) { b = 2;	e = 4; }
+			else { b = 0;	e = 2; }
+
+			for (; b < e; ++b)
+			{
+				if (m_characterArr[b].GetCharType() == CharacterName::Zombie && m_rand.getRandomNumber(0, 1) == 0) { continue; }
+				m_characterArr[b].FaintCountUp(true);
+				timerList.push_back(ItemTimer(duration, TIMEOUT_FAINT, b));
+			}
+			iter = timerList.erase(iter);
+			break;
+		case BED:								// 침대 - 선딜 1초, 기절 3초
+			if (iterIdx < 2 && m_stackSheild[0] > 0) { iter = timerList.erase(iter);  break; }
+			else if (m_stackSheild[1] > 0) { iter = timerList.erase(iter); break; }
+
+			if (m_characterArr[iterIdx].GetCharType() == CharacterName::Knight) { duration = BED_DURATION_B; }
+			else { duration = BED_DURATION; }
+
+			if (iterIdx < 2) { b = 2;	e = 4; }
+			else { b = 0;	e = 2; }
+
+			for (; b < e; ++b)
+			{
+				if (m_characterArr[b].GetCharType() == CharacterName::Zombie && m_rand.getRandomNumber(0, 1) == 0) { continue; }
+				m_characterArr[b].FaintCountUp(false);
+				timerList.push_back(ItemTimer(duration, TIMEOUT_FAINT, b));
+			}
+			iter = timerList.erase(iter);
+			break;
+		case SHEILD:						// 방패 - 선딜 0초, 보호 3초
+			if (m_characterArr[iterIdx].GetCharType() == CharacterName::Wicher) { duration = SHEILD_DURATION_B; }
+			else { duration = SHEILD_DURATION; }
+
+			if (iterIdx < 2) { m_stackSheild[0]++; }
+			else { m_stackSheild[1]++; }
+
+
+			timerList.push_back(ItemTimer(duration, TIMEOUT_PROTECT, iterIdx));
+			iter = timerList.erase(iter);
+			break;
+		case WING:								// 날개 - 선딜 0초, 이속1.2 3초, 상태이상 해제
+			if (m_characterArr[iterIdx].GetCharType() == CharacterName::Wicher) { duration = WING_DURATION_B; }
+			else { duration = WING_DURATION; }
+
+			if (iterIdx < 2) { b = 0;	e = 2; }
+			else { b = 2;	e = 4; }
+
+			for (; b < e; ++b)
+			{
+				m_characterArr[b].FaintReset();
+				m_characterArr[b].SpeedUpCountUp(true);
+			}
+
+			timerList.push_back(ItemTimer(duration, TIMEOUT_SPEEDUP, iterIdx));
+			iter = timerList.erase(iter);
+			break;
+		case TIMEOUT_FAINT:
+			m_characterArr[iterIdx].FaintCountDown();
+			iter = timerList.erase(iter);
+			break;
+		case TIMEOUT_PROTECT:
+			if (iterIdx < 2) { m_stackSheild[0]--; }
+			else { m_stackSheild[1]--; }
+			iter = timerList.erase(iter);
+			break;
+		case TIMEOUT_SPEEDUP:
+			if (iterIdx < 2) { b = 0;	e = 2; }
+			else { b = 2;	e = 4; }
+
+			for (; b < e; ++b)
+			{
+				m_characterArr[b].SpeedUpCountDown();
+			}
+			
+			iter = timerList.erase(iter);
+			break;
+		default:
+			iter++;
+			break;
+		}
 	}
 }

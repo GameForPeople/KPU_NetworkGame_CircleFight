@@ -152,10 +152,11 @@
     <ClCompile Include="InGameScene.cpp" />
     <ClCompile Include="InGameSceneGuest.cpp" />
     <ClCompile Include="InGameSceneUI.cpp" />
+    <ClCompile Include="ItemTimer.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="LogInScene.cpp" />
     <ClCompile Include="Map.cpp" />
-    <ClCompile Include="NetworkFunc.cpp" />
+    <ClCompile Include="Network.cpp" />
     <ClCompile Include="NewMain_Backup.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -163,6 +164,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="Pawn.cpp" />
+    <ClCompile Include="RandClass.cpp" />
     <ClCompile Include="RoomScene.cpp" />
     <ClCompile Include="RoomSceneGuest.cpp" />
     <ClCompile Include="Scene.cpp" />
@@ -200,11 +202,13 @@
     <ClInclude Include="InGameScene.h" />
     <ClInclude Include="InGameSceneGuest.h" />
     <ClInclude Include="InGameSceneUI.h" />
+    <ClInclude Include="ItemTimer.h" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="LogInScene.h" />
     <ClInclude Include="Map.h" />
-    <ClInclude Include="NetworkFunc.h" />
+    <ClInclude Include="Network.h" />
     <ClInclude Include="Pawn.h" />
+    <ClInclude Include="RandClass.h" />
     <ClInclude Include="RoomScene.h" />
     <ClInclude Include="RoomSceneGuest.h" />
     <ClInclude Include="Scene.h" />

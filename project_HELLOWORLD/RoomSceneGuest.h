@@ -1,12 +1,6 @@
 #pragma once
 
 #include "Scene.h"
-#include "NetworkFunc.h"
-
-#define PLAT_MAX_NUMBER 150
-
-static RoomInfo roomInfoGuest;
-static bool gameStart;
 
 class RoomSceneGuest : public Scene
 {
@@ -36,6 +30,6 @@ private:
 	CImage			m_ImgWicher;
 
 public:
-	virtual MapName		GetMapName() { return roomInfoGuest.mapInfo; }
-	virtual CharacterName* GetCharacterName() { return roomInfoGuest.charInfo; }
+	virtual MapName		GetMapName() { return roomInfoGuest.m_mapInfo; }
+	virtual CharacterName* GetCharacterName() { return roomInfoGuest.m_charInfo; }
 };

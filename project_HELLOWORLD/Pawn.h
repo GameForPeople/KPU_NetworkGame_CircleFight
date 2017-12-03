@@ -9,6 +9,8 @@
 
 
 #define			INIT_PAWN_POS_X			200
+#define			SPEED_BUFF_VAL			1.2f
+#define			SPEED_BUFF_VAL_B		1.4f
 
 struct BoundingBox {
 	
@@ -23,15 +25,23 @@ private:
 	bool m_comboEffect = true;
 
 	float m_speed = 0;
+	float m_bufSpeed = 1.0f;
 	float m_baseSpeed = 0;
 	float m_totalDistance = 0;
 	
 	BaseCharacter* m_unit;
 	State m_state;
+	State m_preState;
 	//BoundingBox m_bb;
 
 	float m_fallSpeed = 0;
 	float m_jumpSpeed = 0;
+
+	CharacterName m_charType;
+
+	int m_stackFaint = 0;
+	int m_stackSheild = 0;
+	int m_stackSpeedUp = 0;
 
 public:
 	Pawn();
@@ -59,7 +69,7 @@ public:
 	}
 
 	float GetSpeed() {
-		return m_speed;
+		return m_speed * m_bufSpeed;
 	}
 
 	float GetBaseSpeed() {
@@ -82,7 +92,15 @@ public:
 		m_fallSpeed = 2.0;
 	} 
 
-	void ComputeTotalDistance(float speed = 0);
+	CharacterName GetCharType() {
+		return m_charType;
+	}
+
+	int GetFaint() {
+		return m_stackFaint;
+	}
+
+	void ComputeTotalDistance();
 	void ProcessCombo();
 	void ProcessGravity();
 	void ProcessJump();
@@ -94,5 +112,12 @@ public:
 
 	//for network
 	void NetworkDrawCharacter(HDC hdc, float playerDisX, float thisDisX, float thisY, int cImageIndex, State state);
+
+	void FaintCountUp(bool init);
+	void FaintCountDown();
+	void FaintReset();
+
+	void SpeedUpCountUp(bool boost);
+	void SpeedUpCountDown();
 };
 

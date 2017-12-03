@@ -38,14 +38,39 @@ using namespace FMOD;
 #define SCREEN_WIDTH 1280
 #define SCREEN_HEIGHT 720
 
+#define SERVERPORT 9000
+#define HOSTPORT 9001
+
 #define ARCHER_BASE_SPEED 6.0f
 #define ZOMBIE_BASE_SPEED 5.98f
 #define KNIGHT_BASE_SPEED 5.96f
 #define WICHER_BASE_SPEED 5.96f
 
-#define My_Map_Is ==
-#define Your_New_Map_Is =
+#define MAX_PLAYER 4
 
+#define PLAT_MAX_NUMBER 1015
+#define PLAT_WIDTH 100
+#define PLAT_HEIGHT 50
+#define PLAT_LOW_HEIGHT 600
+
+#define PLAT_SHOWN_CNT 16
+
+#define PLAT_ITEM_HEIGHT		100		//아이템 높이
+#define ITEM_INTERVAL			100		//아이템간 간격
+#define ITEM_FIRST_IMPACT		49		//아이템 처음 나오는 곳 - 1
+#define ITEM_SIZE				100		//아이템 그릴때 크기
+#define LIGHTNING_DELAY			1.5f
+#define LIGHTNING_DURATION		2.0F
+#define LIGHTNING_DURATION_B	4.0F
+#define BED_DELAY				1.0f
+#define BED_DURATION			3.0F
+#define BED_DURATION_B			5.0F
+#define SHEILD_DELAY			0.0f
+#define SHEILD_DURATION			3.0F
+#define SHEILD_DURATION_B		6.0F
+#define WING_DELAY				0.0f
+#define WING_DURATION			3.0F
+#define WING_DURATION_B			5.0F
 
 enum class State {
 		Run
@@ -89,64 +114,13 @@ enum class MapName{
 	,	Forest
 };
 
-
-
-//------------------------------------------- Room 통신용 -----------------------------------------------------
-#define MAX_PLAYER 4
-
-enum { ROOMCHNG = 301, CHACHNG, MAPCHNG, REQEXIT, NOTIFYEXIT, NOTIFYSTART };
-
-struct RoomConnect {
-	int idx;
-	SOCKET sock;
-
-	RoomConnect(){}
-	RoomConnect(int idx, SOCKET sock) :idx(idx), sock(sock) {}
-};
-
-struct QueueData {
-	int op;
-	int fromIdx;
-
-	QueueData(int op = NULL, int fromIdx = NULL)
-		:op(op), fromIdx(fromIdx) {}
-};
-
-struct RoomInfo {
-	CharacterName charInfo[4];
-	MapName mapInfo;
-};
-
-struct ChaChng {
-	int idx;
-	CharacterName charInfo;
-
-	ChaChng() {}
-	ChaChng(int idx, CharacterName charInfo) : idx(idx), charInfo(charInfo) {}
-};
-
-
-//------------------------------------------- InGame 통신용 -----------------------------------------------------
-
-enum { BASICINFO = 401, INPUT_JUMP, INPUT_EMOTION };
-
-struct Pos2d {
-	float x;
-	float y;
-};
-
-struct FirstPlatInfo {
-	int idx;
-	float xPos;
-};
-
-struct BasicInfo {
-	Pos2d position[MAX_PLAYER];		// 캐릭터 위치
-	float totalDis[MAX_PLAYER];			// 캐릭터 속도
-	float speed[MAX_PLAYER];			// 캐릭터 속도
-	State state[MAX_PLAYER];			// 캐릭터 현재 상태
-	int imgCnt[MAX_PLAYER];			// 애니메이션 이미지 카운트
-	float combo[MAX_PLAYER];			// 캐릭터 콤보 상태
-	int emoticon[MAX_PLAYER];		// 캐릭터 감정 표현
-	FirstPlatInfo platInfo[MAX_PLAYER];					// 첫 발판 정보
+enum item			//아이템 이넘
+{
+	LIGHTNING,		//번개
+	BED,			//침대
+	WING,			//날개
+	SHEILD,			//방패
+	TIMEOUT_FAINT,	//기절 해제
+	TIMEOUT_PROTECT,//방어 해제
+	TIMEOUT_SPEEDUP	//속도 상승 해제
 };

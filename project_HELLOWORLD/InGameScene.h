@@ -1,17 +1,11 @@
 #pragma once
 
+#include <list>
+
 #include "Scene.h"
 #include "InGameSceneUI.h"
-#include "NetworkFunc.h"
-
-//#include <vector>
-
-#define PLAT_MAX_NUMBER 200
-#define PLAT_WIDTH 100
-#define PLAT_HEIGHT 50
-#define PLAT_LOW_HEIGHT 600
-
-#define PLAT_SHOWN_CNT 16
+#include "ItemTimer.h"
+#include "RandClass.h"
 
 class InGameScene :
 	public Scene
@@ -19,21 +13,24 @@ class InGameScene :
 private:
 	//std::vector<BaseObject>	m_platArr;
 	BaseObject*					m_platArr;
+	BaseObject*					m_itemArr;
+
 	Pawn						m_characterArr[MAX_PLAYER];
 	Map*						m_map;
 
 	CImage*						m_platImg[2];
-	
-	int	m_platFirstIdx[MAX_PLAYER]{};
-	int	m_platXArr[MAX_PLAYER][PLAT_MAX_NUMBER]{};
-	//deque<int>	m_platXArr[MAX_PLAYER];
+	CImage*						m_itemImg;
 
 	int	m_emotionNumber[MAX_PLAYER];
 	int    m_emotionTimer[MAX_PLAYER];
 
 	InGameSceneUI*				m_inGameUI;
-		
-	int							m_numPlat;
+
+	bool						m_isEatingItam;
+	list<ItemTimer>				timerList;
+	int							m_stackSheild[2];
+
+	RandClass					m_rand;
 
 public:
 	InGameScene();
@@ -53,6 +50,22 @@ public:
 	void LoadPlat();
 	void ComputePawn(int idx);
 	void EmotionUIProc();
+
+	bool	BoxBoxCol(float aMinX, float aMinY, float aMaxX, float aMaxY, float bMinX, float bMinY, float bMaxX, float bMaxY);
+	void	UseItem(int itemNum, int user);
+
+	void CollideItem(int idx);
+
+	void UpdateItemList(double time);
+
+	void SheildCountUp(int team)
+	{
+		m_stackSheild[team]++;
+	}
+	void SheildCountDown(int team)
+	{
+		m_stackSheild[team]--;
+	}
 
 public:
 	//for network

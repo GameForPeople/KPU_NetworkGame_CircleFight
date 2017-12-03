@@ -35,6 +35,11 @@ void InGameSceneUI::LoadUI() {
 
 	InventoryUI.Load("Resource/Image/UI/InventoryUI_type_4.png");
 
+	ItemUI[0].Load("Resource/Image/UI/item_attack_1_only.png");
+	ItemUI[1].Load("Resource/Image/UI/item_attack_2_only.png");
+	ItemUI[2].Load("Resource/Image/UI/item_support_1_only.png");
+	ItemUI[3].Load("Resource/Image/UI/item_support_2_only.png");
+
 	HeadUpUI[0].Load("Resource/Image/UI/SpeedUpUI.png");
 
 	EmotionUI.Load("Resource/Image/UI/EmotionUI.png");
@@ -65,26 +70,49 @@ void InGameSceneUI::DrawComboUI(HDC hdc, int combo) {
 	ComboTextUI.TransparentBlt(hdc, 160 + sizeBuffer, 140 - sizeBuffer / 2, ComboTextUI.GetWidth() + sizeBuffer, ComboTextUI.GetHeight() + sizeBuffer, RGB(255,255,255));
 }
 
-void InGameSceneUI::DrawBarUI(HDC hdc, float mark1PosX) {
+void InGameSceneUI::DrawBarUI(HDC hdc, int idx, float markPosX) {
 	BarUI.TransparentBlt(hdc, 200, 10, BarUI.GetWidth() - 50, BarUI.GetHeight(), RGB(255, 255, 255));
 
-	BarMarkUI[0].TransparentBlt(hdc, mark1PosX + 200 , 20, BarMarkUI[0].GetWidth() - 20, BarMarkUI[0].GetHeight() - 20, RGB(255, 255, 255));
+	BarMarkUI[idx].TransparentBlt(hdc, markPosX + 200 , 20, BarMarkUI[idx].GetWidth() - 20, BarMarkUI[idx].GetHeight() - 20, RGB(255, 255, 255));
 }
 
 void InGameSceneUI::DrawInventoryUI(HDC hdc, int item1Num, int item2Num) {
 	InventoryUI.TransparentBlt(hdc, 10, 550, 220, 120, RGB(255, 255, 255));
+	if (item1Num != -1)
+	{
+		ItemUI[item1Num].TransparentBlt(hdc, 20, 560, 90, 90, RGB(255, 255, 255));
+	}
+	if (item2Num != -1)
+	{
+		ItemUI[item2Num].TransparentBlt(hdc, 130, 560, 90, 90, RGB(255, 255, 255));
+	}
 }
 
-void InGameSceneUI::DrawHeadUpUI(HDC hdc, float posY) {
+void InGameSceneUI::DrawHeadUpUI(HDC hdc, float posY, float playerDisX, float thisDisX) {
+	if (thisDisX - playerDisX > 1100) return;
+	if (playerDisX - thisDisX > 400) return;
+
+	float newPosX = thisDisX - playerDisX;
+
 	if (m_headUpUIIndex) {
 		m_headUpUICount++;
 
-		HeadUpUI[m_headUpUIIndex - 1].TransparentBlt(hdc, 310, posY - 70, 120, 70, RGB(255, 255, 255));
+		HeadUpUI[m_headUpUIIndex - 1].TransparentBlt(hdc, newPosX + 310, posY - 70, 120, 70, RGB(255, 255, 255));
 		if (m_headUpUICount == 80) {
 			m_headUpUICount = 0;
 			m_headUpUIIndex = 0;
 		}
 	}
+}
+
+void InGameSceneUI::DrawPlayerMark(HDC hdc, int idx, float posY, float playerDisX, float thisDisX)
+{
+	if (thisDisX - playerDisX > 1100) return;
+	if (playerDisX - thisDisX > 400) return;
+
+	float newPosX = thisDisX - playerDisX;
+
+	BarMarkUI[idx].TransparentBlt(hdc, newPosX + 365, posY - 10, BarMarkUI[idx].GetWidth() - 40, BarMarkUI[idx].GetHeight() - 40, RGB(255, 255, 255));
 }
 
 void InGameSceneUI::DrawEmotionUI(HDC hdc, const int keyNumber, float posX, float posY) {
@@ -101,4 +129,26 @@ void InGameSceneUI::DrawEmotionUI(HDC hdc, const int keyNumber, float posX, floa
 			EmotionUI.GetHeight(), 
 			RGB(255, 255, 255)
 		);
+}
+
+void InGameSceneUI::DrawEmotionUI(HDC hdc, const int keyNumber, float playerDisX, float thisDisX, float posY)
+{
+	if (thisDisX - playerDisX > 1100) return;
+	if (playerDisX - thisDisX > 400) return;
+
+	float newPosX = thisDisX - playerDisX;
+
+	EmotionUI.TransparentBlt(
+		hdc,
+		newPosX +320,
+		posY - 90,
+		EmotionUI.GetWidth() / 6,
+		EmotionUI.GetHeight(),
+
+		(EmotionUI.GetWidth()* (keyNumber - 1)) / 6,
+		0,
+		EmotionUI.GetWidth() / 6,
+		EmotionUI.GetHeight(),
+		RGB(255, 255, 255)
+	);
 }
