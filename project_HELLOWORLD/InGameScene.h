@@ -5,7 +5,7 @@
 
 #include <vector>
 
-#define PLAT_MAX_NUMBER 150
+#define PLAT_MAX_NUMBER 1015
 #define PLAT_WIDTH 100
 #define PLAT_HEIGHT 50
 #define PLAT_LOW_HEIGHT 600

@@ -1,0 +1,248 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="미리 컴파일된 파일">
+      <UniqueIdentifier>{4d9af1af-893e-4c54-abcf-ca29d785589f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\CharacterClass">
+      <UniqueIdentifier>{16110952-c7d6-45bd-aa4a-95cf1747e4b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Framework">
+      <UniqueIdentifier>{c00a27b5-0bb6-405f-8b51-c391ff304de3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Scene">
+      <UniqueIdentifier>{ee90b031-87ae-4f83-966a-cc054b18621d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\ObjectClass">
+      <UniqueIdentifier>{2e605943-fdce-4156-a785-395fad110d16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\SaveCode">
+      <UniqueIdentifier>{0eaafc2f-85fa-4d86-a7f9-69c6444ccebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Map">
+      <UniqueIdentifier>{a34b53fe-0eaf-477c-a969-c098870753ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Function">
+      <UniqueIdentifier>{b50f3b50-ad13-4f72-b870-af2896436148}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\UI">
+      <UniqueIdentifier>{08d31b9e-f18a-40b7-a903-11eab6346247}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Scene\InGameScene">
+      <UniqueIdentifier>{20c12261-7ec0-466b-a808-8bdc97f5772e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Scene\LoginScene">
+      <UniqueIdentifier>{f058d564-2c92-4b9c-b61b-91ee595c5710}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Scene\Scene">
+      <UniqueIdentifier>{c6bd4f18-e342-4383-aaec-4c6120f748fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Scene\TitleScene">
+      <UniqueIdentifier>{a014ffa9-11a6-4a5a-a75c-884dfd5e5a0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\CharacterClass\BaseCharacter">
+      <UniqueIdentifier>{d02221a0-ce2c-4c4b-b6a1-a98343f76ff5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\CharacterClass\Archer">
+      <UniqueIdentifier>{4ba63be7-3bd0-4d71-9852-19cab0bc395a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\CharacterClass\Knight">
+      <UniqueIdentifier>{cb5d056a-a7bc-41a9-93f6-73050401ad44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\CharacterClass\Wicher">
+      <UniqueIdentifier>{e79f2252-086c-436e-a22a-f8ad813196dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\CharacterClass\Zombie">
+      <UniqueIdentifier>{5b20523f-62f3-4516-814a-7b595397f8a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Scene\LobbyScene">
+      <UniqueIdentifier>{296b1a8d-a42d-404c-9a78-2ec9d32d70ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Scene\RoomScene">
+      <UniqueIdentifier>{10862ca2-9d0e-4aaf-bbc8-5c0dcf0f612a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Network">
+      <UniqueIdentifier>{af8e3c43-d809-4cce-9235-f2e3a096c9d2}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>미리 컴파일된 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseObject.cpp">
+      <Filter>소스 파일\ObjectClass</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework.cpp">
+      <Filter>소스 파일\Framework</Filter>
+    </ClCompile>
+    <ClCompile Include="StaticActor.cpp">
+      <Filter>소스 파일\ObjectClass</Filter>
+    </ClCompile>
+    <ClCompile Include="NoEdit.cpp">
+      <Filter>소스 파일\SaveCode</Filter>
+    </ClCompile>
+    <ClCompile Include="NewMain_Backup.cpp">
+      <Filter>소스 파일\SaveCode</Filter>
+    </ClCompile>
+    <ClCompile Include="Main.cpp">
+      <Filter>소스 파일\SaveCode</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>소스 파일\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="InGameSceneUI.cpp">
+      <Filter>소스 파일\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseUI.cpp">
+      <Filter>소스 파일\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="Pawn.cpp">
+      <Filter>소스 파일\ObjectClass</Filter>
+    </ClCompile>
+    <ClCompile Include="InGameScene.cpp">
+      <Filter>소스 파일\Scene\InGameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="LogInScene.cpp">
+      <Filter>소스 파일\Scene\LoginScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Scene.cpp">
+      <Filter>소스 파일\Scene\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="TitleScene.cpp">
+      <Filter>소스 파일\Scene\TitleScene</Filter>
+    </ClCompile>
+    <ClCompile Include="BaseCharacter.cpp">
+      <Filter>소스 파일\CharacterClass\BaseCharacter</Filter>
+    </ClCompile>
+    <ClCompile Include="CArcher.cpp">
+      <Filter>소스 파일\CharacterClass\Archer</Filter>
+    </ClCompile>
+    <ClCompile Include="CKnight.cpp">
+      <Filter>소스 파일\CharacterClass\Knight</Filter>
+    </ClCompile>
+    <ClCompile Include="CWicher.cpp">
+      <Filter>소스 파일\CharacterClass\Wicher</Filter>
+    </ClCompile>
+    <ClCompile Include="CZombie.cpp">
+      <Filter>소스 파일\CharacterClass\Zombie</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyScene.cpp">
+      <Filter>소스 파일\Scene\LobbyScene</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomScene.cpp">
+      <Filter>소스 파일\Scene\RoomScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>소스 파일\Network</Filter>
+    </ClCompile>
+    <ClCompile Include="NewMain.cpp">
+      <Filter>헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="InGameSceneGuest.cpp">
+      <Filter>소스 파일\Scene\InGameScene</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomSceneGuest.cpp">
+      <Filter>소스 파일\Scene\RoomScene</Filter>
+    </ClCompile>
+    <ClCompile Include="RandClass.cpp">
+      <Filter>소스 파일\Function</Filter>
+    </ClCompile>
+    <ClCompile Include="ItemTimer.cpp">
+      <Filter>소스 파일\Function</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="NewMain.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>미리 컴파일된 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseObject.h">
+      <Filter>소스 파일\ObjectClass</Filter>
+    </ClInclude>
+    <ClInclude Include="Framework.h">
+      <Filter>소스 파일\Framework</Filter>
+    </ClInclude>
+    <ClInclude Include="StaticActor.h">
+      <Filter>소스 파일\ObjectClass</Filter>
+    </ClInclude>
+    <ClInclude Include="Map.h">
+      <Filter>소스 파일\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="InGameSceneUI.h">
+      <Filter>소스 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseUI.h">
+      <Filter>소스 파일\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="Pawn.h">
+      <Filter>소스 파일\ObjectClass</Filter>
+    </ClInclude>
+    <ClInclude Include="InGameScene.h">
+      <Filter>소스 파일\Scene\InGameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="LogInScene.h">
+      <Filter>소스 파일\Scene\LoginScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Scene.h">
+      <Filter>소스 파일\Scene\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="TitleScene.h">
+      <Filter>소스 파일\Scene\TitleScene</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseCharacter.h">
+      <Filter>소스 파일\CharacterClass\BaseCharacter</Filter>
+    </ClInclude>
+    <ClInclude Include="CArcher.h">
+      <Filter>소스 파일\CharacterClass\Archer</Filter>
+    </ClInclude>
+    <ClInclude Include="CKnight.h">
+      <Filter>소스 파일\CharacterClass\Knight</Filter>
+    </ClInclude>
+    <ClInclude Include="CWicher.h">
+      <Filter>소스 파일\CharacterClass\Wicher</Filter>
+    </ClInclude>
+    <ClInclude Include="CZombie.h">
+      <Filter>소스 파일\CharacterClass\Zombie</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyScene.h">
+      <Filter>소스 파일\Scene\LobbyScene</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomScene.h">
+      <Filter>소스 파일\Scene\RoomScene</Filter>
+    </ClInclude>
+    <ClInclude Include="Network.h">
+      <Filter>소스 파일\Network</Filter>
+    </ClInclude>
+    <ClInclude Include="InGameSceneGuest.h">
+      <Filter>소스 파일\Scene\InGameScene</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomSceneGuest.h">
+      <Filter>소스 파일\Scene\RoomScene</Filter>
+    </ClInclude>
+    <ClInclude Include="RandClass.h">
+      <Filter>소스 파일\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="ItemTimer.h">
+      <Filter>소스 파일\Function</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="PlayerData.replay">
+      <Filter>리소스 파일</Filter>
+    </None>
+  </ItemGroup>
+</Project>

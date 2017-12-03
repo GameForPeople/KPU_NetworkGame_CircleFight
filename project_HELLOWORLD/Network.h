@@ -247,8 +247,10 @@ public:
 	DemandChatStruct* m_demandChat = NULL;
 	PermitChatStruct* m_permitChat = NULL;
 
+	//InGameScene
 	PermitCreateRoomStruct *m_permitCreateRoom = NULL;
-	
+	DemandJoinRoomStruct *m_demandJoinRoom = NULL;
+	PermitJoinRoomStruct *m_permitJoinRoom = NULL;
 	UpdateLobbyInfoStruct* m_updateLobbyInfo = NULL;
 };
 

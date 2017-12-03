@@ -116,6 +116,22 @@ void Network::NetworkThreadFunction() {
 						m_sendType = 0;
 					}
 				}
+				else if (m_sendType == DEMAND_JOINROOM) {
+					retVal = send(m_sock, (char*)m_demandJoinRoom, sizeof(m_demandJoinRoom), 0);
+					if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
+
+					retVal = recv(m_sock, (char*)&m_recvType, sizeof(m_recvType), 0);
+					if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
+
+					if (m_recvType == PERMIT_JOINROOM) {
+						m_permitJoinRoom = new PermitJoinRoomStruct;
+
+						retVal = recv(m_sock, (char*)m_permitJoinRoom, sizeof(m_permitJoinRoom), 0);
+						if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
+
+						m_sendType = 0;
+					}
+				}
 			}
 			else {
 				EnterCriticalSection(&LOBBY_UPDATE_SECTION);

@@ -100,6 +100,9 @@ void Pawn::ProcessGravity() {
 		m_pos.y += m_fallSpeed;
 		//m_fallSpeed *= 1.05;
 		m_fallSpeed *= 1.1;
+
+		if (m_fallSpeed >= 15.0f)
+			m_fallSpeed = 14.9f;
 	}
 }
 

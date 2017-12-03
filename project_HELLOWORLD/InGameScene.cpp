@@ -1,13 +1,13 @@
 #include "InGameScene.h"
 #include <fstream>
 
-#define TO_DEBUG_ARCHER
-//#define TO_DEBUG_ZOMBIE
+//#define TO_DEBUG_ARCHER
+#define TO_DEBUG_ZOMBIE
 //#define TO_DEBUG_KNIGHT
 //#define TO_DEBUG_WICHER
 
-//#define TO_DEBUG_MAP_SEA
-#define TO_DEBUG_MAP_FOREST
+#define TO_DEBUG_MAP_SEA
+//#define TO_DEBUG_MAP_FOREST
 
 
 InGameScene::InGameScene(HWND hwnd) : Scene(hwnd)

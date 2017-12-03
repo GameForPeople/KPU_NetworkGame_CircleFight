@@ -124,8 +124,37 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 		mouseX = LOWORD(lParam);
 
 		std::cout << mouseX << "  " << mouseY << std::endl;
+		if (mouseX > 45 && mouseX < 1225 && mouseY > 100 && mouseY < 460) {
+			int roomIndexBuf{};
 
-		if (mouseY > 580 && mouseY < 670 && mouseX > 740 && mouseX < 845) {
+			if (mouseX > 45 && mouseX < 335 && mouseY > 100 && mouseY < 275) roomIndexBuf = 1;
+			else if (mouseX > 340 && mouseX < 625 && mouseY > 100 && mouseY < 275)  roomIndexBuf = 2;
+			else if (mouseX > 630 && mouseX < 925 && mouseY > 100 && mouseY < 275)  roomIndexBuf = 3;
+			else if (mouseX > 930 && mouseX < 1225 && mouseY > 100 && mouseY < 275)  roomIndexBuf = 4;
+			else if (mouseX > 45 && mouseX < 335 && mouseY > 278 && mouseY < 460)  roomIndexBuf = 5;
+			else if (mouseX > 340 && mouseX < 625 && mouseY > 278 && mouseY < 460)  roomIndexBuf = 6;
+			else if (mouseX > 630 && mouseX < 925 && mouseY > 278 && mouseY < 460)  roomIndexBuf = 7;
+			else if (mouseX > 930 && mouseX < 1225 && mouseY > 278 && mouseY < 460)  roomIndexBuf = 8;
+
+			m_network->m_demandJoinRoom = new DemandJoinRoomStruct;
+			m_network->m_demandJoinRoom->roomIndex = roomIndexBuf;
+			m_network->SetSendType(DEMAND_JOINROOM);
+
+			while (7) {
+				_sleep(100);
+				std::cout << ".";
+				if (m_network->GetRecvType() && m_network->GetSendType() == 0)
+					break;
+			}
+			if (m_network->GetRecvType() == PERMIT_JOINROOM) {
+				//m_network->m_permitJoinRoom->hostAddr
+
+				std::cout << "방들어갑니다.!! " << std::endl;
+				m_isDestory = true;
+				m_nextScene = SceneName::Room;
+			}
+		}
+		else if (mouseY > 580 && mouseY < 670 && mouseX > 740 && mouseX < 845) {
 			// 나가기
 			std::cout << "나갑니다!! " << std::endl;
 			m_isDestory = true;
