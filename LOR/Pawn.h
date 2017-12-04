@@ -71,7 +71,7 @@ public:
 	}
 
 	float GetSpeed() {
-		return m_speed;
+		return m_speed * m_bufSpeed;
 	}
 
 	float GetBaseSpeed() {

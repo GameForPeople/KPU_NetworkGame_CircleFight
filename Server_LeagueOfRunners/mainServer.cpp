@@ -387,10 +387,11 @@ int main(int argc, char *argv[])
 	inFile.close();
 
 	std::cout << "	- UserData Load Complete! " << std::endl;
-
+	
 	InitializeCriticalSection(&ACCEPT_SECTION);
 	InitializeCriticalSection(&SIGNUP_SECTION);
 	InitializeCriticalSection(&SIGNIN_SECTION);
+	InitializeCriticalSection(&IN_OUT_ROOM_SECTION);
 	InitializeCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
 	InitializeCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
 	InitializeCriticalSection(&UserDataAccess_SECTION);

@@ -18,7 +18,8 @@ InGameScene::InGameScene(HWND hwnd, Network* network) : Scene(hwnd)
 	m_network->m_system->playSound(FMOD_CHANNEL_REUSE, m_network->m_sound[1], false, &(m_network->m_channel[0]));
 
 	for (int i = 1; i<MAX_PLAYER; ++i) sendQueue[i].clear();
-	memset(m_emotionNumber, 0, sizeof(m_emotionNumber));
+	memset(emotionNum, 0, sizeof(emotionNum));
+	memset(emotionTime, 0, sizeof(emotionTime));
 	memset(&basicInfo, 0, sizeof(basicInfo));
 
 	for (int i = 0; i < MAX_PLAYER; ++i)
@@ -64,8 +65,6 @@ InGameScene::InGameScene(HWND hwnd, Network* network) : Scene(hwnd)
 	m_inGameUI = new InGameSceneUI;
 
 	charArr = m_characterArr;
-	emotionNum = m_emotionNumber;
-	emotionTime = m_emotionTimer;
 }
 
 InGameScene::InGameScene()
@@ -106,15 +105,15 @@ void InGameScene::Draw(HDC hdc) {
 	{
 		m_inGameUI->DrawBarUI(hdc, i, m_characterArr[i].GetTotalDistance() / 100);
 		m_inGameUI->DrawPlayerMark(hdc, i, basicInfo.m_yPos[i], basicInfo.m_totalDis[0], basicInfo.m_totalDis[i]);
-		if (basicInfo.m_emoticon[i])
-			m_inGameUI->DrawEmotionUI(hdc, basicInfo.m_emoticon[i], basicInfo.m_totalDis[0], basicInfo.m_totalDis[i], basicInfo.m_yPos[i]);
+		if (emotionNum[i])
+			m_inGameUI->DrawEmotionUI(hdc, emotionNum[i], basicInfo.m_totalDis[0], basicInfo.m_totalDis[i], basicInfo.m_yPos[i]);
 		else
 			m_inGameUI->DrawHeadUpUI(hdc, m_characterArr[i].GetPos().y, basicInfo.m_totalDis[0], basicInfo.m_totalDis[i]);
 	}
 	m_inGameUI->DrawBarUI(hdc, 0, m_characterArr[0].GetTotalDistance() / 100);
 	m_inGameUI->DrawPlayerMark(hdc, 0, basicInfo.m_yPos[0]);
-	if (basicInfo.m_emoticon[0])
-		m_inGameUI->DrawEmotionUI(hdc, basicInfo.m_emoticon[0], 0, 0, basicInfo.m_yPos[0]);
+	if (emotionNum[0])
+		m_inGameUI->DrawEmotionUI(hdc, emotionNum[0], 0, 0, basicInfo.m_yPos[0]);
 	else
 		m_inGameUI->DrawHeadUpUI(hdc, m_characterArr[0].GetPos().y, 0, 0);
 }
@@ -190,28 +189,34 @@ bool InGameScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPa
 
 			break;
 		case '1':
-			m_emotionNumber[0] = 1;
-			m_emotionTimer[0] = 1;
+			emotionNum[0] = 1;
+			emotionTime[0] = 1;
+			for (int i = 1; i < MAX_PLAYER; ++i) { 	sendQueue[i].emplace_back(CHANGE_EMOTION, 0); }
 			break;
 		case '2':
-			m_emotionNumber[0] = 2;
-			m_emotionTimer[0] = 1;
+			emotionNum[0] = 2;
+			emotionTime[0] = 1;
+			for (int i = 1; i < MAX_PLAYER; ++i) { sendQueue[i].emplace_back(CHANGE_EMOTION, 0); }
 			break;
 		case '3':
-			m_emotionNumber[0] = 3;
-			m_emotionTimer[0] = 1;
+			emotionNum[0] = 3;
+			emotionTime[0] = 1;
+			for (int i = 1; i < MAX_PLAYER; ++i) { sendQueue[i].emplace_back(CHANGE_EMOTION, 0); }
 			break;
 		case '4':
-			m_emotionNumber[0] = 4;
-			m_emotionTimer[0] = 1;
+			emotionNum[0] = 4;
+			emotionTime[0] = 1;
+			for (int i = 1; i < MAX_PLAYER; ++i) { sendQueue[i].emplace_back(CHANGE_EMOTION, 0); }
 			break;
 		case '5':
-			m_emotionNumber[0] = 5;
-			m_emotionTimer[0] = 1;
+			emotionNum[0] = 5;
+			emotionTime[0] = 1;
+			for (int i = 1; i < MAX_PLAYER; ++i) { sendQueue[i].emplace_back(CHANGE_EMOTION, 0); }
 			break;
 		case '6':
-			m_emotionNumber[0] = 6;
-			m_emotionTimer[0] = 1;
+			emotionNum[0] = 6;
+			emotionTime[0] = 1;
+			for (int i = 1; i < MAX_PLAYER; ++i) { sendQueue[i].emplace_back(CHANGE_EMOTION, 0); }
 			break;
 		case 'Q':					//1번 아이템 사용
 		case 'q':
@@ -410,15 +415,18 @@ void InGameScene::ShowPawnState() {
 void InGameScene::EmotionUIProc() {
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
-		if (m_emotionNumber[i]) {
-			m_emotionTimer[i]++;
+		if (emotionNum[i]) {
+			emotionTime[i]++;
 
-			if (m_emotionTimer[i] >= 90) {
-				m_emotionTimer[i] = 0;
-				m_emotionNumber[i] = 0;
+			if (emotionTime[i] >= 90) {
+				emotionTime[i] = 0;
+				emotionNum[i] = 0;
+				for (int j = 1; j < MAX_PLAYER; ++j) 
+				{ 
+					if (j == m_idx) continue;
+					sendQueue[j].emplace_back(CHANGE_EMOTION, i); }
 			}
 		}
-		basicInfo.m_emoticon[i] = m_emotionNumber[i];
 	}
 }
 

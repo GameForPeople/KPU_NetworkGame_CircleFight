@@ -20,9 +20,6 @@ private:
 
 	InGameSceneUI*				m_inGameUI;
 
-	int	m_emotionNumber[MAX_PLAYER];
-	int m_emotionTimer[MAX_PLAYER];
-
 public:
 	InGameSceneGuest();
 	InGameSceneGuest(HWND, Network *network);

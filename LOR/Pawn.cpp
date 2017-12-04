@@ -57,7 +57,7 @@ void Pawn::Draw(HDC hdc, State state) {
 }
 
 void Pawn::ComputeTotalDistance() {
-	m_totalDistance += m_speed;
+	m_totalDistance += m_speed * m_bufSpeed;
 }
 
 void Pawn::ProcessCombo() {
@@ -72,7 +72,7 @@ void Pawn::ProcessCombo() {
 		m_comboEffect = true;
 
 	if (m_comboEffect) {
-		if (m_combo != 0 && m_combo % 50 == 0) {
+		if (m_combo != 0 && m_combo % 50 == 0 && m_bufSpeed != 0) {
 			m_speed = m_speed + m_baseSpeed / 5;
 			m_comboEffect = false;
 		}

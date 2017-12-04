@@ -76,13 +76,14 @@ enum Protocol {
 	, UPDATE_FRAME = 401
 	, INPUT_JUMP = 402
 	, INPUT_EMOTION = 403
-	, NOTIFY_ITEM_THUNDER = 404
-	, NOTIFY_ITEM_BED = 405
-	, NOTIFY_ITEM_SHIELD = 406
-	, NOTIFY_ITEM_WING = 407
-	, INPUT_KEY_Q = 408
-	, INPUT_KEY_W = 409
-
+	, CHANGE_EMOTION = 404
+	, NOTIFY_ITEM_THUNDER = 405
+	, NOTIFY_ITEM_BED = 406
+	, NOTIFY_ITEM_SHIELD = 407
+	, NOTIFY_ITEM_WING = 408
+	, INPUT_KEY_Q = 409
+	, INPUT_KEY_W = 410
+	
 	, SUPPLY_GAMEEND = 499	//HOST	-> Server
 };
 
@@ -278,7 +279,6 @@ struct UpdateFrameStruct {
 	State m_state[MAX_PLAYER];			// 캐릭터 현재 상태
 	int m_imgCnt[MAX_PLAYER];			// 애니메이션 이미지 카운트
 	float m_combo[MAX_PLAYER];			// 캐릭터 콤보 상태
-	int m_emoticon[MAX_PLAYER];		// 캐릭터 감정 표현
 	FirstPlatInfo m_firstPlat[MAX_PLAYER];					// 첫 발판 정보
 	FirstItemInfo m_firstItem[MAX_PLAYER];	// 화면보다 오른쪽에 있는 첫 아이템
 	int m_itemInfo[MAX_PLAYER][2];		// 보유 아이템 목록
@@ -292,6 +292,15 @@ struct InputJumpStruct {
 //type 403
 struct InputEmotionStruct {
 
+};
+
+//type 404
+struct ChangeEmotionStruct {
+	int emotionNum;
+	int userIdx;
+
+	ChangeEmotionStruct(int emotionNum = NULL, int userIdx = NULL)
+		:emotionNum(emotionNum), userIdx(userIdx) {}
 };
 
 //type 499
@@ -395,8 +404,8 @@ extern deque<int> sendQueueGuest;
 extern int m_idx;
 extern UpdateFrameStruct basicInfo;
 extern Pawn* charArr;
-extern int	*emotionNum;
-extern int  *emotionTime;
+extern int	emotionNum[MAX_PLAYER];
+extern int  emotionTime[MAX_PLAYER];
 
 extern int numPlayer;
 extern UpdateRoomStruct roomInfo;

@@ -19,9 +19,6 @@ private:
 	CImage*						m_platImg[2];
 	CImage*						m_itemImg;
 
-	int							m_emotionNumber[MAX_PLAYER];
-	int							m_emotionTimer[MAX_PLAYER];
-
 	InGameSceneUI*				m_inGameUI;
 
 	bool						m_isEatingItam;

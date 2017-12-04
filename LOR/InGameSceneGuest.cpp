@@ -19,7 +19,7 @@ InGameSceneGuest::InGameSceneGuest(HWND hwnd, Network *network) : Scene(hwnd)
 	m_network->m_system->playSound(FMOD_CHANNEL_REUSE, m_network->m_sound[1], false, &(m_network->m_channel[0]));
 
 	sendQueueGuest.clear();
-	memset(m_emotionNumber, 0, sizeof(m_emotionNumber));
+	memset(emotionNum, 0, sizeof(emotionNum));
 	memset(&basicInfo, 0, sizeof(basicInfo));
 
 	for (int i = 0; i < MAX_PLAYER; ++i)
@@ -58,7 +58,6 @@ InGameSceneGuest::InGameSceneGuest(HWND hwnd, Network *network) : Scene(hwnd)
 
 	m_inGameUI = new InGameSceneUI;
 
-	emotionNum = m_emotionNumber;
 	sendQueueGuest.push_back(NOTIFY_START);
 }
 
@@ -101,15 +100,15 @@ void InGameSceneGuest::Draw(HDC hdc) {
 		if (i == m_idx) continue;
 		m_inGameUI->DrawBarUI(hdc, i, basicInfo.m_totalDis[i] / 100);
 		m_inGameUI->DrawPlayerMark(hdc, i, basicInfo.m_yPos[i], basicInfo.m_totalDis[m_idx], basicInfo.m_totalDis[i]);
-		if (basicInfo.m_emoticon[i])
-			m_inGameUI->DrawEmotionUI(hdc, basicInfo.m_emoticon[i], basicInfo.m_totalDis[m_idx], basicInfo.m_totalDis[i], basicInfo.m_yPos[i]);
+		if (emotionNum[i])
+			m_inGameUI->DrawEmotionUI(hdc, emotionNum[i], basicInfo.m_totalDis[m_idx], basicInfo.m_totalDis[i], basicInfo.m_yPos[i]);
 		else
 			m_inGameUI->DrawHeadUpUI(hdc, basicInfo.m_yPos[i], basicInfo.m_totalDis[m_idx], basicInfo.m_totalDis[i]);
 	}
 	m_inGameUI->DrawBarUI(hdc, m_idx, basicInfo.m_totalDis[m_idx] / 100);
 	m_inGameUI->DrawPlayerMark(hdc, m_idx, basicInfo.m_yPos[m_idx]);
-	if (basicInfo.m_emoticon[m_idx])
-		m_inGameUI->DrawEmotionUI(hdc, basicInfo.m_emoticon[m_idx], 0, 0, basicInfo.m_yPos[m_idx]);
+	if (emotionNum[m_idx])
+		m_inGameUI->DrawEmotionUI(hdc, emotionNum[m_idx], 0, 0, basicInfo.m_yPos[m_idx]);
 	else
 		m_inGameUI->DrawHeadUpUI(hdc, basicInfo.m_yPos[m_idx], 0, 0);
 }
@@ -136,27 +135,27 @@ bool InGameSceneGuest::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARA
 
 			break;
 		case '1':
-			m_emotionNumber[m_idx] = 1;
+			emotionNum[m_idx] = 1;
 			sendQueueGuest.emplace_back(INPUT_EMOTION);
 			break;
 		case '2':
-			m_emotionNumber[m_idx] = 2;
+			emotionNum[m_idx] = 2;
 			sendQueueGuest.emplace_back(INPUT_EMOTION);
 			break;
 		case '3':
-			m_emotionNumber[m_idx] = 3;
+			emotionNum[m_idx] = 3;
 			sendQueueGuest.emplace_back(INPUT_EMOTION);
 			break;
 		case '4':
-			m_emotionNumber[m_idx] = 4;
+			emotionNum[m_idx] = 4;
 			sendQueueGuest.emplace_back(INPUT_EMOTION);
 			break;
 		case '5':
-			m_emotionNumber[m_idx] = 5;
+			emotionNum[m_idx] = 5;
 			sendQueueGuest.emplace_back(INPUT_EMOTION);
 			break;
 		case '6':
-			m_emotionNumber[m_idx] = 6;
+			emotionNum[m_idx] = 6;
 			sendQueueGuest.emplace_back(INPUT_EMOTION);
 			break;
 		case 'Q':

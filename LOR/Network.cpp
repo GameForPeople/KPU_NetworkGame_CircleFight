@@ -299,8 +299,8 @@ deque<int> sendQueueGuest;
 int m_idx;
 UpdateFrameStruct basicInfo;
 Pawn* charArr;
-int	*emotionNum;
-int  *emotionTime;
+int	emotionNum[MAX_PLAYER];
+int  emotionTime[MAX_PLAYER];
 
 int numPlayer = 0;
 UpdateRoomStruct roomInfo;
@@ -373,6 +373,9 @@ DWORD WINAPI SendData(LPVOID arg)
 			case UPDATE_FRAME:
 				send(sock_info.sock, (char*)&basicInfo, sizeof(basicInfo), 0);
 				break;
+			case CHANGE_EMOTION:
+				send(sock_info.sock, (char*)&ChangeEmotionStruct(emotionNum[sendOp.fromIdx], sendOp.fromIdx), sizeof(ChangeEmotionStruct), 0);
+				break;
 			}
 		}
 	}
@@ -428,6 +431,11 @@ DWORD WINAPI RecvData(LPVOID arg)
 			case INPUT_EMOTION:
 				emotionTime[sock_info.idx] = 1;
 				recvn(sock_info.sock, (char*)&emotionNum[sock_info.idx], sizeof(emotionNum[0]), 0);
+				for (int i = 1; i < MAX_PLAYER; ++i)
+				{
+					if (i == sock_info.idx)continue;
+					sendQueue[i].emplace_back(CHANGE_EMOTION, sock_info.idx);
+				}
 				break;
 			case INPUT_KEY_Q:
 				itemQueue.emplace_back(basicInfo.m_itemInfo[sock_info.idx][0], sock_info.idx);
@@ -551,6 +559,11 @@ DWORD WINAPI RecvDataGuest(LPVOID arg)
 			break;
 		case NOTIFY_ITEM_WING:
 			// 소리 재생
+			break;
+		case CHANGE_EMOTION:
+			ChangeEmotionStruct ces;
+			recvn(sock_info.sock, (char*)&ces, sizeof(ces), 0);
+			emotionNum[ces.userIdx] = ces.emotionNum;
 			break;
 		}
 	}
