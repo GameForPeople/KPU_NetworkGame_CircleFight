@@ -1,10 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="소스 파일">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="헤더 파일">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
@@ -16,41 +12,12 @@
     <Filter Include="미리 컴파일된 파일">
       <UniqueIdentifier>{4d9af1af-893e-4c54-abcf-ca29d785589f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
     <Filter Include="소스 파일\CharacterClass">
       <UniqueIdentifier>{16110952-c7d6-45bd-aa4a-95cf1747e4b2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Framework">
-      <UniqueIdentifier>{c00a27b5-0bb6-405f-8b51-c391ff304de3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Scene">
-      <UniqueIdentifier>{ee90b031-87ae-4f83-966a-cc054b18621d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\ObjectClass">
-      <UniqueIdentifier>{2e605943-fdce-4156-a785-395fad110d16}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\SaveCode">
-      <UniqueIdentifier>{0eaafc2f-85fa-4d86-a7f9-69c6444ccebe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Map">
-      <UniqueIdentifier>{a34b53fe-0eaf-477c-a969-c098870753ab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Function">
-      <UniqueIdentifier>{b50f3b50-ad13-4f72-b870-af2896436148}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\UI">
-      <UniqueIdentifier>{08d31b9e-f18a-40b7-a903-11eab6346247}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Scene\InGameScene">
-      <UniqueIdentifier>{20c12261-7ec0-466b-a808-8bdc97f5772e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Scene\LoginScene">
-      <UniqueIdentifier>{f058d564-2c92-4b9c-b61b-91ee595c5710}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Scene\Scene">
-      <UniqueIdentifier>{c6bd4f18-e342-4383-aaec-4c6120f748fc}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="소스 파일\Scene\TitleScene">
-      <UniqueIdentifier>{a014ffa9-11a6-4a5a-a75c-884dfd5e5a0c}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\CharacterClass\BaseCharacter">
       <UniqueIdentifier>{d02221a0-ce2c-4c4b-b6a1-a98343f76ff5}</UniqueIdentifier>
@@ -67,11 +34,44 @@
     <Filter Include="소스 파일\CharacterClass\Zombie">
       <UniqueIdentifier>{5b20523f-62f3-4516-814a-7b595397f8a2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="소스 파일\Framework">
+      <UniqueIdentifier>{c00a27b5-0bb6-405f-8b51-c391ff304de3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Scene">
+      <UniqueIdentifier>{ee90b031-87ae-4f83-966a-cc054b18621d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Scene\InGameScene">
+      <UniqueIdentifier>{20c12261-7ec0-466b-a808-8bdc97f5772e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Scene\LoginScene">
+      <UniqueIdentifier>{f058d564-2c92-4b9c-b61b-91ee595c5710}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Scene\Scene">
+      <UniqueIdentifier>{c6bd4f18-e342-4383-aaec-4c6120f748fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Scene\TitleScene">
+      <UniqueIdentifier>{a014ffa9-11a6-4a5a-a75c-884dfd5e5a0c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="소스 파일\Scene\LobbyScene">
       <UniqueIdentifier>{296b1a8d-a42d-404c-9a78-2ec9d32d70ea}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\Scene\RoomScene">
       <UniqueIdentifier>{10862ca2-9d0e-4aaf-bbc8-5c0dcf0f612a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\ObjectClass">
+      <UniqueIdentifier>{2e605943-fdce-4156-a785-395fad110d16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\SaveCode">
+      <UniqueIdentifier>{0eaafc2f-85fa-4d86-a7f9-69c6444ccebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Map">
+      <UniqueIdentifier>{a34b53fe-0eaf-477c-a969-c098870753ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\Function">
+      <UniqueIdentifier>{b50f3b50-ad13-4f72-b870-af2896436148}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="소스 파일\UI">
+      <UniqueIdentifier>{08d31b9e-f18a-40b7-a903-11eab6346247}</UniqueIdentifier>
     </Filter>
     <Filter Include="소스 파일\Network">
       <UniqueIdentifier>{af8e3c43-d809-4cce-9235-f2e3a096c9d2}</UniqueIdentifier>

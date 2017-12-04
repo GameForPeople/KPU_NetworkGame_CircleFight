@@ -30,6 +30,13 @@ LoginScene::LoginScene(HWND hWnd) : Scene(hWnd)
 LoginScene::LoginScene(HWND hWnd, Network* network) : Scene(hWnd)
 {
 	m_network = network;
+
+	//BGM재생
+	m_network->m_nowBgmNumber = 0;
+	m_network->m_system->playSound(FMOD_CHANNEL_REUSE, m_network->m_sound[0], false, &(m_network->m_channel[0]));
+
+	//효과음 재생
+	//PlaySound("Resource\\sound\\디딩.wav", NULL, SND_ASYNC);
 	//m_network.Connect(m_network);
 	//m_network->Connect();
 	m_network->ChageSceneName(SceneName::Login);

@@ -29,6 +29,10 @@ Framework::Framework()
 	m_grid = new StaticActor(0, 0, "Resource/Image/grid.png");
 
 	m_network.Connect();
+	m_network.InitSound();
+
+
+
 	HANDLE hThread = CreateThread(NULL, 0, ThreadFunction, &m_network, 0, NULL);
 
 	if (hThread == NULL) { closesocket(m_network.GetSocket()); }

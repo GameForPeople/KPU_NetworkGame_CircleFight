@@ -2,6 +2,11 @@
 
 #pragma comment(lib, "ws2_32")
 
+#pragma comment(lib, "winmm.lib" )
+#include "fmod.hpp"
+#pragma	comment (lib, "fmodex_vc.lib")
+using namespace FMOD;
+
 #include "stdafx.h"
 #include "Pawn.h"
 #include <WS2tcpip.h>
@@ -359,6 +364,25 @@ public:
 	DemandJoinRoomStruct *m_demandJoinRoom = NULL;
 	PermitJoinRoomStruct *m_permitJoinRoom = NULL;
 	UpdateLobbyInfoStruct* m_updateLobbyInfo = NULL;
+
+public:
+#pragma region [SoundManger]
+	System*			m_system;
+
+	//	사운드의 개수만큼 필요
+	Sound*			m_sound[2];
+
+	//	동시에 출력될 사운드 만큼 필요
+	Channel*		m_channel[1];
+
+	//static bool	bPlay = true;				// 플레이 관련 변수 건들지 말기 
+	//static bool	IsBGPlaying = false;		// BGM 관련 재생 변수
+	bool	bPlay = true;				// 플레이 관련 변수 건들지 말기 
+	bool	IsBGPlaying = false;		// BGM 관련 재생 변수
+
+	int		m_nowBgmNumber{};
+	void InitSound();
+#pragma endregion
 };
 
 struct ThreadStruct {

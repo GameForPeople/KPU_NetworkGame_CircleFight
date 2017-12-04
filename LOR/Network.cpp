@@ -242,6 +242,30 @@ int  Network::ReturnTypeNumber() {
 	return type;
 }
 
+void Network::InitSound() {
+	System_Create(&m_system); //	사운드 시스템 기본 세팅
+	m_system->init(1, FMOD_INIT_NORMAL, NULL); //	음악파일 생성
+
+	m_system->createSound(
+		"Resource//Sound//bgm1.mp3",	//	사운드파일경로
+		FMOD_HARDWARE | FMOD_LOOP_NORMAL,	//	사운드파일옵션
+		NULL,			//	확장데이터(쓰지않음)
+		&m_sound[0]);	//	저장할 사운드 포인터
+
+	m_system->createSound(
+		"Resource//Sound//bgm2.mp3",
+		FMOD_HARDWARE | FMOD_LOOP_NORMAL,
+		NULL,
+		&m_sound[1]);
+
+	m_channel[0]->isPlaying(&IsBGPlaying);
+
+	//BGM재생
+	//pSystem->playSound(FMOD_CHANNEL_REUSE, pSound[1], false, &pChannel[0]);
+
+	//효과음 재생
+	//PlaySound("Resource\\sound\\디딩.wav", NULL, SND_ASYNC);
+}
 // 소켓 함수 오류 출력 후 종료
 void Network::err_quit(char *msg)
 {

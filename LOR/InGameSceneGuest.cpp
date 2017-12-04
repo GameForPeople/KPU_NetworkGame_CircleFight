@@ -13,6 +13,11 @@ InGameSceneGuest::InGameSceneGuest(HWND hwnd, Network *network) : Scene(hwnd)
 {
 	m_network = network;
 
+	//BGMÀç»ý
+	m_network->m_nowBgmNumber = 1;
+
+	m_network->m_system->playSound(FMOD_CHANNEL_REUSE, m_network->m_sound[1], false, &(m_network->m_channel[0]));
+
 	sendQueueGuest.clear();
 	memset(m_emotionNumber, 0, sizeof(m_emotionNumber));
 	memset(&basicInfo, 0, sizeof(basicInfo));

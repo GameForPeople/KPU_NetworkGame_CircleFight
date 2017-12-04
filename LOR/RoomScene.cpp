@@ -7,6 +7,12 @@ RoomScene::RoomScene()
 RoomScene::RoomScene(HWND hWnd, Network* network) : Scene(hWnd)
 {
 	m_network = network;
+
+	if (m_network->m_nowBgmNumber == 1) {
+		m_network->m_nowBgmNumber = 0;
+		m_network->m_system->playSound(FMOD_CHANNEL_REUSE, m_network->m_sound[0], false, &(m_network->m_channel[0]));
+	}
+
 	readyPlayer = 0;
 
 	CreateThread(NULL, 0, ListenThread, NULL, NULL, NULL);
