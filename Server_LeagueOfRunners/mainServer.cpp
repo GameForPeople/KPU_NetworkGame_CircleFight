@@ -3,7 +3,13 @@
 #include "mainServer.h"
 #include "GameCommuniCationProtocol.h"
 
-CRITICAL_SECTION ACCEPT_SECTION, SIGNUP_SECTION, SIGNIN_SECTION, CREATE_DESTROY_ROOM_SECTION, UserDataAccess_SECTION, CHAT_SECTION;
+CRITICAL_SECTION ACCEPT_SECTION, 
+SIGNUP_SECTION, 
+SIGNIN_SECTION, 
+CREATE_DESTROY_ROOM_SECTION, 
+IN_OUT_ROOM_SECTION,
+UserDataAccess_SECTION, 
+CHAT_SECTION;
 //---------- 동기화에 관해서
 // ACCEPT_SECTION :
 // SIGNUP_SECTION : 회원가입부분에서, 동시에 회원가입을 하는 경우를 제한
@@ -202,12 +208,14 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
 			IN_ADDR hostAddrBuffer{};
+			EnterCriticalSection(&IN_OUT_ROOM_SECTION);
 			if(lobbyData.JoinRoom(demandJoinRoom.roomIndex, hostAddrBuffer)){
 				sendType = PERMIT_JOINROOM;
 			}
 			else {
 				sendType = FAIL_JOINROOM;
 			}
+			LeaveCriticalSection(&IN_OUT_ROOM_SECTION);
 
 			retVal = send(clientSock, (char*)&sendType, sizeof(sendType), 0);
 			if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
@@ -384,6 +392,7 @@ int main(int argc, char *argv[])
 	InitializeCriticalSection(&SIGNUP_SECTION);
 	InitializeCriticalSection(&SIGNIN_SECTION);
 	InitializeCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
+	InitializeCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
 	InitializeCriticalSection(&UserDataAccess_SECTION);
 
 	std::cout << "	- Init Critical Section Complete! " << std::endl;
@@ -444,6 +453,7 @@ int main(int argc, char *argv[])
 	DeleteCriticalSection(&SIGNUP_SECTION);
 	DeleteCriticalSection(&SIGNIN_SECTION);
 	DeleteCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
+	DeleteCriticalSection(&IN_OUT_ROOM_SECTION);
 	DeleteCriticalSection(&UserDataAccess_SECTION);
 
 	// closesocket()

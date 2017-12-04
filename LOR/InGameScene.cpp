@@ -118,7 +118,7 @@ void InGameScene::Draw(HDC hdc) {
 void InGameScene::Timer(const double time) {
 
 	UpdateItemList(time);
-
+	
 	while (!itemQueue.empty())
 	{
 		UseItem(itemQueue.front().itemNum, itemQueue.front().userIdx);

@@ -111,8 +111,9 @@ void LobbyScene::Timer(const double count) {
 		}
 
 		m_network->SetRecvType(0);
+		m_network->SetSendType(0);
 
-		LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
+	LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 	}
 }
 
@@ -125,6 +126,8 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 
 		std::cout << mouseX << "  " << mouseY << std::endl;
 		if (mouseX > 45 && mouseX < 1225 && mouseY > 100 && mouseY < 460) {
+			EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
+
 			int roomIndexBuf{};
 
 			if (mouseX > 45 && mouseX < 335 && mouseY > 100 && mouseY < 275) roomIndexBuf = 1;
@@ -136,7 +139,9 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 			else if (mouseX > 630 && mouseX < 925 && mouseY > 278 && mouseY < 460)  roomIndexBuf = 7;
 			else if (mouseX > 930 && mouseX < 1225 && mouseY > 278 && mouseY < 460)  roomIndexBuf = 8;
 
-			m_network->m_demandJoinRoom = new DemandJoinRoomStruct;
+			if(m_network->m_demandJoinRoom == NULL)
+				m_network->m_demandJoinRoom = new DemandJoinRoomStruct;
+
 			m_network->m_demandJoinRoom->roomIndex = roomIndexBuf;
 			m_network->SetSendType(DEMAND_JOINROOM);
 
@@ -150,17 +155,56 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 				//m_network->m_permitJoinRoom->hostAddr
 
 				std::cout << "방들어갑니다.!! " << std::endl;
+				m_network->SetRecvType(0);
+				m_network->SetSendType(0);
+				//if (m_network->m_demandChat != NULL)
+				//	delete (m_network->m_demandChat);
+				//
+				//if (m_network->m_demandJoinRoom != NULL)
+				//	delete (m_network->m_demandJoinRoom);
+				//
+				//if (m_network->m_permitChat != NULL)
+				//	delete (m_network->m_permitChat);
+				//
+				////if (m_network->m_permitCreateRoom )
+				//if (m_network->m_updateLobbyInfo != NULL)
+				//	delete (m_network->m_updateLobbyInfo);
+
+				m_network->ChageSceneName(SceneName::RoomGuest);
 				m_isDestory = true;
 				m_nextScene = SceneName::RoomGuest;
 			}
+			LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 		}
 		else if (mouseY > 580 && mouseY < 670 && mouseX > 740 && mouseX < 845) {
+			EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
+
+			m_network->SetRecvType(0);
+			m_network->SetSendType(0);
+			
+			//if (m_network->m_demandChat != NULL)
+			//	delete (m_network->m_demandChat);
+			//
+			//if (m_network->m_demandJoinRoom != NULL)
+			//	delete (m_network->m_demandJoinRoom);
+			//
+			//if (m_network->m_permitChat != NULL)
+			//	delete (m_network->m_permitChat);
+			//
+			////if (m_network->m_permitCreateRoom )
+			//if (m_network->m_updateLobbyInfo != NULL)
+			//	delete (m_network->m_updateLobbyInfo);
+
+			m_network->ChageSceneName(SceneName::Login);
+
 			// 나가기
 			std::cout << "나갑니다!! " << std::endl;
 			m_isDestory = true;
 			m_nextScene = SceneName::Login;
+			LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 		}
 		else if (mouseY > 465 && mouseY < 560 && mouseX > 740 && mouseX < 845) {
+			EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 			// 방생성
 			std::cout << "방생성합니다!! " << std::endl;
 			m_network->SetSendType(DEMAND_CREATEROOM);
@@ -174,14 +218,35 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 
 			if (m_network->GetRecvType() == PERMIT_CREATEROOM) {
 				//m_network->m_permitCreateRoom->roomIndex;
+
+				m_network->SetRecvType(0);
+				m_network->SetSendType(0);
+
+				//if (m_network->m_demandChat != NULL)
+				//	delete (m_network->m_demandChat);
+				//
+				//if (m_network->m_demandJoinRoom != NULL)
+				//	delete (m_network->m_demandJoinRoom);
+				//
+				//if (m_network->m_permitChat != NULL)
+				//	delete (m_network->m_permitChat);
+				//
+				////if (m_network->m_permitCreateRoom )
+				//if (m_network->m_updateLobbyInfo != NULL)
+				//	delete (m_network->m_updateLobbyInfo);
+
+				m_network->ChageSceneName(SceneName::Room);
+
 				m_isDestory = true;
 				m_nextScene = SceneName::Room;
 			}
+			LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 		}
 		else if (mouseY > 630 && mouseY < 670 && mouseX > 640 && mouseX < 725) {
 			EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 
-			m_network->m_demandChat = new DemandChatStruct;
+			if(m_network->m_demandChat == NULL)
+				m_network->m_demandChat = new DemandChatStruct;
 
 			::memcpy(m_network->m_demandChat->chat, m_chat, sizeof(m_chat));
 			
@@ -248,12 +313,10 @@ bool LobbyScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 			else if (wParam == VK_RETURN) {
 				EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 
-				//std::cout << "1" << std::endl;
-				m_network->m_demandChat = new DemandChatStruct;
-				//std::cout << "2" << std::endl;
+				if(m_network->m_demandChat == NULL)
+					m_network->m_demandChat = new DemandChatStruct;
 
 				::memcpy(m_network->m_demandChat->chat, m_chat, sizeof(m_chat));
-				//std::cout << "3" << std::endl;
 
 				//EnterCriticalSection(&m_network->SEND_SECTION);
 				m_network->SetSendType(DEMAND_CHAT);

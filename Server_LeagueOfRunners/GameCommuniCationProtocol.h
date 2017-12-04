@@ -51,11 +51,11 @@ bool ErrorFunction(int value, int type) //type = 0 recv, type = 1send
 int ReturnTypeNumber(SOCKET& clientSock) {
 	int type, retVal;
 
-	std::cout << "   ToDebug : 데이터를 받으려고합니다." << std::endl;
+	//std::cout << "   ToDebug : 데이터를 받으려고합니다." << std::endl;
 	retVal = recv(clientSock, (char*)&type, sizeof(type), 0);
 	if (!ErrorFunction(retVal, 0))
 		return 0;
-	std::cout << "   ToDebug : 데이터를 전송받았습니다.." << std::endl;
+	//std::cout << "   ToDebug : 데이터를 전송받았습니다.." << std::endl;
 
 	return type;
 }

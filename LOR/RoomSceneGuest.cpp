@@ -7,20 +7,28 @@ RoomSceneGuest::RoomSceneGuest()
 RoomSceneGuest::RoomSceneGuest(HWND hWnd, Network* network) : Scene(hWnd)
 {
 	m_network = network;
+	m_network->ChageSceneName(SceneName::RoomGuest);
 
 	sendQueueGuest.clear();
 
 	SOCKADDR_IN serveraddr;
 	ZeroMemory(&serveraddr, sizeof(serveraddr));
+	
 	serveraddr.sin_family = AF_INET;
-	inet_pton(AF_INET, "127.0.0.1", (PVOID *)(&serveraddr.sin_addr.s_addr));
+	//inet_pton(AF_INET, "127.0.0.1", (PVOID *)(&serveraddr.sin_addr.s_addr));
 	serveraddr.sin_port = htons(HOSTPORT);
+	
+	serveraddr.sin_addr = m_network->m_permitJoinRoom->hostAddr;
+
+	std::cout << "ip : " << inet_ntoa(serveraddr.sin_addr) << std::endl;
 
 	int retval;
 	// recv소켓 연결 시도
 	SOCKET newSock = socket(AF_INET, SOCK_STREAM, 0);
 	connect(newSock, (SOCKADDR *)&serveraddr, sizeof(serveraddr));
 	retval = recvn(newSock, (char*)&m_idx, sizeof(m_idx), 0);
+
+	std::cout << "ip : " << inet_ntoa(serveraddr.sin_addr) << std::endl;
 
 	if (retval > 0)
 	{

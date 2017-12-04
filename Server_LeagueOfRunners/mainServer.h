@@ -71,7 +71,7 @@ public:
 
 	void Create(IN_ADDR& inputAddr) { m_hostAddr = inputAddr; m_playersNumber = 1; m_mapNumber = 1; m_isCreate = true; }
 	bool Destory() { if (m_isCreate) { m_isCreate = false; return true; } else return false; }
-	bool Join() { if (m_isCreate && m_playersNumber < 4) { return true; m_playersNumber++; } else return false; }
+	bool Join() { if (m_isCreate && m_playersNumber < 4) { m_playersNumber++; return true;  } else return false; }
 
 	void AddPlayer() { m_playersNumber++; }
 	void SetRoomState(int inputPlayerNumber, int inputMapNumber) { m_playersNumber = inputPlayerNumber; m_mapNumber = inputMapNumber; }

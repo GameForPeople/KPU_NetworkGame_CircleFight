@@ -69,7 +69,8 @@ void Network::NetworkThreadFunction() {
 				m_sendType = 0;
 
 				if (m_recvType == PERMIT_LOGIN) {
-					m_permitLogin = new PermitLoginStruct;
+					if(m_permitLogin == NULL)
+						m_permitLogin = new PermitLoginStruct;
 
 					retVal = recv(m_sock, (char*)m_permitLogin, sizeof(*m_permitLogin), 0);
 					if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
@@ -83,10 +84,10 @@ void Network::NetworkThreadFunction() {
 		}
 		if (m_sceneName == SceneName::Lobby) {
 			//EnterCriticalSection(&SEND_SECTION);
-			_sleep(100);
+			_sleep(200);
 			//std::cout << "server : "<< m_sendType << " ";
 				
-			if (m_sendType) {
+			if (m_sendType > 0) {
 				//LeaveCriticalSection(&SEND_SECTION);
 
 				std::cout << "로비입니다. 요구할게요 서버님!" << std::endl;
@@ -96,16 +97,12 @@ void Network::NetworkThreadFunction() {
 				std::cout << " " << m_sendType << std::endl;
 				
 				if (m_sendType == DEMAND_CHAT) {
-					//std::cout << "5" << std::endl;
 
 					retVal = send(m_sock, (char*)m_demandChat, sizeof(*m_demandChat), 0);
 					if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 
-					//std::cout << "6" << std::endl;
-					
-
-					//std::cout << "7 : " << sizeof(*m_permitChat) << std::endl;
-					m_permitChat = new PermitChatStruct;
+					if(m_permitChat == NULL)
+						m_permitChat = new PermitChatStruct;
 					
 					retVal = recv(m_sock, (char*)m_permitChat, sizeof(*m_permitChat), 0);
 					if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
@@ -116,9 +113,6 @@ void Network::NetworkThreadFunction() {
 					//std::cout << m_permitChat->chat[3] << std::endl;
 					//std::cout << m_permitChat->chat[4] << std::endl;
 
-
-					//std::cout << "8" << std::endl;
-
 					m_sendType = 0;
 					m_recvType = 1;
 				}
@@ -128,7 +122,8 @@ void Network::NetworkThreadFunction() {
 
 					if (m_recvType == PERMIT_CREATEROOM) {
 
-						m_permitCreateRoom = new PermitCreateRoomStruct;
+						if(m_permitCreateRoom == NULL)
+							m_permitCreateRoom = new PermitCreateRoomStruct;
 
 						retVal = recv(m_sock, (char*)m_permitCreateRoom, sizeof(*m_permitCreateRoom), 0);
 						if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
@@ -144,7 +139,8 @@ void Network::NetworkThreadFunction() {
 					if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
 					if (m_recvType == PERMIT_JOINROOM) {
-						m_permitJoinRoom = new PermitJoinRoomStruct;
+						if(m_permitJoinRoom == NULL)
+							m_permitJoinRoom = new PermitJoinRoomStruct;
 
 						retVal = recv(m_sock, (char*)m_permitJoinRoom, sizeof(m_permitJoinRoom), 0);
 						if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
@@ -153,14 +149,15 @@ void Network::NetworkThreadFunction() {
 					}
 				}
 			}
-			else {
+			else if(m_sendType == 0){
 				EnterCriticalSection(&LOBBY_UPDATE_SECTION);
 					m_sendType = UPDATE_LOBBY;
 
 					retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
 					if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 
-					m_permitChat = new PermitChatStruct;
+					if(m_permitChat == NULL)
+						m_permitChat = new PermitChatStruct;
 
 					retVal = recv(m_sock, (char*)m_permitChat, sizeof(*m_permitChat), 0);
 					if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
@@ -171,17 +168,19 @@ void Network::NetworkThreadFunction() {
 					//std::cout << m_permitChat->chat[3] << std::endl;
 					//std::cout << m_permitChat->chat[4] << std::endl;
 
-					m_updateLobbyInfo = new UpdateLobbyInfoStruct;
+					if (m_updateLobbyInfo == NULL)
+						m_updateLobbyInfo = new UpdateLobbyInfoStruct;
 
 					retVal = recv(m_sock, (char*)m_updateLobbyInfo, sizeof(*m_updateLobbyInfo), 0);
 					if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 
-					m_sendType = 0;
+					m_sendType = -1;
 					m_recvType = 2;
 
 				LeaveCriticalSection(&LOBBY_UPDATE_SECTION);
 			}
 		}
+		else _sleep(1000);
 	}
 
 END_CONNECT:
@@ -200,12 +199,17 @@ bool Network::Connect() {
 	m_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (m_sock == INVALID_SOCKET) err_quit("socket()");
 #pragma endregion
+	std::cout << " League Of Runners 서버에 접속합니다. " << std::endl;
+	std::cout << " 서버의 IP를 입력해주세요 : ";
+	char ipBuffer[20]{};
+	ipBuffer[0] = '\0';
+	std::cin >> ipBuffer;
 
 #pragma region [ connect() ]
 	static SOCKADDR_IN serverAddr;
 	ZeroMemory(&serverAddr, sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+	serverAddr.sin_addr.s_addr = inet_addr(ipBuffer);
 	serverAddr.sin_port = htons(SERVERPORT);
 	int retVal = connect(m_sock, (SOCKADDR *)&serverAddr, sizeof(serverAddr));
 	if (retVal == SOCKET_ERROR) err_quit("bind()");
