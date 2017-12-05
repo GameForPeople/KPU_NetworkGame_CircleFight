@@ -135,33 +135,36 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 				while (7) {
 					std::cout << ".";
 					_sleep(100);
-					if (m_network->GetRecvType())
-						break;
-				}
 
-				if (m_network->GetRecvType() == FAIL_LOGIN)
-					return true;
-				else if (m_network->GetRecvType() == PERMIT_LOGIN) {
-					memcpy(m_network->myData.id, m_network->m_demandLogin->ID, sizeof(5));
-					m_network->myData.pw = m_network->m_demandLogin->PW;
-					m_network->myData.winCount = m_network->m_permitLogin->winCount;
-					m_network->myData.loseCount = m_network->m_permitLogin->loseCount;
+					if (m_network->GetRecvType() && !(m_network->GetSendType())) {
+						if (m_network->GetRecvType() == FAIL_LOGIN) {
+							m_network->SetRecvType(0);
+							return true;
+						}
+						else if (m_network->GetRecvType() == PERMIT_LOGIN) {
+								memcpy(m_network->myData.id, m_network->m_demandLogin->ID, sizeof(5));
+								m_network->myData.pw = m_network->m_demandLogin->PW;
+								m_network->myData.winCount = m_network->m_permitLogin->winCount;
+								m_network->myData.loseCount = m_network->m_permitLogin->loseCount;
 
-					m_isDestory = true;
-					m_nextScene = SceneName::Lobby;
-					m_network->SetRecvType();
-					m_network->ChageSceneName(SceneName::Lobby);
+								m_network->SetRecvType(0);
+								m_network->ChageSceneName(SceneName::Lobby);
+								m_nextScene = SceneName::Lobby;
+								m_isDestory = true;
 
-					delete (m_network->m_demandLogin);
-					delete (m_network->m_permitLogin);
+								delete (m_network->m_demandLogin);
+								delete (m_network->m_permitLogin);
 
-					return true;
+								return true;
+						}
+					}
+
 				}
 			}
 		}
 		else if (mouseY > 600 && mouseX > 550 && mouseX < 750) {
 			if (m_idLen == 4 && m_pwLen == 4) {
-				std::cout << "로그인합니다!! " << std::endl;
+				//std::cout << "로그인합니다!! " << std::endl;
 
 				if (m_network->m_demandLogin == NULL)
 					m_network->m_demandLogin = new DemandLoginStruct;
@@ -170,40 +173,38 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 				memcpy(m_network->m_demandLogin->ID, m_id, sizeof(m_id));
 				m_network->m_demandLogin->PW = ChangeNumberCharToInt(m_pw);
 
-				//std::cout << "1.로그인 또는  회원가입 정보 보내요!" << std::endl;
-				//std::cout << "1.보내는 타입은  " << m_network->m_demandLogin->type << std::endl;
-				std::cout << "	1.입력된 ID는  " << m_network->m_demandLogin->ID << std::endl;
-				std::cout << "	2.입력된 PW는  " << m_network->m_demandLogin->PW << std::endl;
+				//std::cout << "	1.입력된 ID는  " << m_network->m_demandLogin->ID << std::endl;
+				//std::cout << "	2.입력된 PW는  " << m_network->m_demandLogin->PW << std::endl;
 
 				m_network->SetSendType(DEMAND_LOGIN);
-
 				while (7) {
 					std::cout << ".";
 					_sleep(100);
-					if (m_network->GetRecvType())
-						break;
-				}
+					if (m_network->GetRecvType() && !(m_network->GetSendType())) {
+						if (m_network->GetRecvType() == FAIL_LOGIN) {
+							m_network->SetRecvType(0);
 
+							return true;
+						}
+						else if (m_network->GetRecvType() == PERMIT_LOGIN) {
+							memcpy(m_network->myData.id, m_network->m_demandLogin->ID, sizeof(5));
+							m_network->myData.pw = m_network->m_demandLogin->PW;
+							m_network->myData.winCount = m_network->m_permitLogin->winCount;
+							m_network->myData.loseCount = m_network->m_permitLogin->loseCount;
+
+							m_nextScene = SceneName::Lobby;
+							m_network->SetRecvType(0);
+							m_network->ChageSceneName(SceneName::Lobby);
+							m_isDestory = true;
+
+							delete (m_network->m_demandLogin);
+							delete (m_network->m_permitLogin);
+
+							return true;
+						}
+					}
+				}
 				//std::cout << "받은 번호는 " << m_network->GetRecvType() << std::endl;
-
-				if (m_network->GetRecvType() == FAIL_LOGIN)
-					return true;
-				else if (m_network->GetRecvType() == PERMIT_LOGIN) {
-					memcpy(m_network->myData.id, m_network->m_demandLogin->ID, sizeof(5));
-					m_network->myData.pw = m_network->m_demandLogin->PW;
-					m_network->myData.winCount = m_network->m_permitLogin->winCount;
-					m_network->myData.loseCount = m_network->m_permitLogin->loseCount;
-
-					m_isDestory = true;
-					m_nextScene = SceneName::Lobby;
-					m_network->SetRecvType();
-					m_network->ChageSceneName(SceneName::Lobby);
-
-					delete (m_network->m_demandLogin);
-					delete (m_network->m_permitLogin);
-
-					return true;
-				}
 			}
 		}
 		else if (mouseY > 430 && mouseY < 500 && mouseX > 450 && mouseX < 825) {
@@ -260,7 +261,7 @@ bool LoginScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 			}
 			else if (wParam == VK_RETURN) {
 				if (m_idLen == 4 && m_pwLen == 4) {
-					std::cout << "	로그인합니다!! " << std::endl;
+					std::cout << "로그인합니다!! " << std::endl;
 
 					if (m_network->m_demandLogin == NULL)
 						m_network->m_demandLogin = new DemandLoginStruct;
@@ -269,8 +270,6 @@ bool LoginScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 					memcpy(m_network->m_demandLogin->ID, m_id, sizeof(m_id));
 					m_network->m_demandLogin->PW = ChangeNumberCharToInt(m_pw);
 
-					//std::cout << "1.로그인 또는  회원가입 정보 보내요!" << std::endl;
-					//std::cout << "1.보내는 타입은  " << m_network->m_demandLogin->type << std::endl;
 					std::cout << "	1.입력된 ID는  " << m_network->m_demandLogin->ID << std::endl;
 					std::cout << "	2.입력된 PW는  " << m_network->m_demandLogin->PW << std::endl;
 
@@ -279,30 +278,31 @@ bool LoginScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 					while (7) {
 						std::cout << ".";
 						_sleep(100);
-						if (m_network->GetRecvType())
-							break;
-					}
+						if (m_network->GetRecvType() && !(m_network->GetSendType())) {
+							if (m_network->GetRecvType() == FAIL_LOGIN) {
+								m_network->SetRecvType(0);
 
+								return true;
+							}
+							else if (m_network->GetRecvType() == PERMIT_LOGIN) {
+								memcpy(m_network->myData.id, m_network->m_demandLogin->ID, sizeof(5));
+								m_network->myData.pw = m_network->m_demandLogin->PW;
+								m_network->myData.winCount = m_network->m_permitLogin->winCount;
+								m_network->myData.loseCount = m_network->m_permitLogin->loseCount;
+
+								m_nextScene = SceneName::Lobby;
+								m_network->SetRecvType(0);
+								m_network->ChageSceneName(SceneName::Lobby);
+								m_isDestory = true;
+
+								delete (m_network->m_demandLogin);
+								delete (m_network->m_permitLogin);
+
+								return true;
+							}
+						}
+					}
 					//std::cout << "받은 번호는 " << m_network->GetRecvType() << std::endl;
-
-					if (m_network->GetRecvType() == FAIL_LOGIN)
-						return true;
-					else if (m_network->GetRecvType() == PERMIT_LOGIN) {
-						memcpy(m_network->myData.id, m_network->m_demandLogin->ID, sizeof(5));
-						m_network->myData.pw = m_network->m_demandLogin->PW;
-						m_network->myData.winCount = m_network->m_permitLogin->winCount;
-						m_network->myData.loseCount = m_network->m_permitLogin->loseCount;
-
-						m_isDestory = true;
-						m_nextScene = SceneName::Lobby;
-						m_network->SetRecvType();
-						m_network->ChageSceneName(SceneName::Lobby);
-
-						delete (m_network->m_demandLogin);
-						delete (m_network->m_permitLogin);
-
-						return true;
-					}
 				}
 			}
 		}

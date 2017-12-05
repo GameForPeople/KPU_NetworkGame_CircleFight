@@ -41,30 +41,36 @@ Network::~Network()
 void Network::NetworkThreadFunction() {
 	std::cout << "hello World! i'm Thread " << std::endl;
 	while (7) {
+
 		if (m_sceneName == SceneName::Login) {
 			if (m_sendType) {
-				std::cout << "타입 100번 보내요" << std::endl;
+				//std::cout << "타입 100번 보내요" << std::endl;
+
 				retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 
-				if (m_sendType == DEMAND_LOGIN) {
-				std::cout << "로그인 또는  회원가입 정보 보내요!" << std::endl;
-				std::cout << "보내는 타입은  " << m_demandLogin->type << std::endl;
-				std::cout << "보내는 ID는  " << m_demandLogin->ID << std::endl;
-				std::cout << "보내는 PW는  " << m_demandLogin->PW<< std::endl;
-				std::cout << "보내는 SIZE는 *m_demandLogin " << sizeof(*m_demandLogin) << std::endl;
-				std::cout << "보내는 SIZE는 m_demandLogin " << sizeof(m_demandLogin) << std::endl;
-				std::cout << "보내는 SIZE는 &m_demandLogin " << sizeof(&m_demandLogin) << std::endl;
 
-				std::cout << "로그인 실패 또는 성공보냅니다.!" << std::endl;
+				if (m_sendType == DEMAND_LOGIN) {
+
+				//std::cout << "로그인 또는  회원가입 시도!" << std::endl;
+				//std::cout << "보내는 타입은  " << m_demandLogin->type << std::endl;
+				//std::cout << "보내는 ID는  " << m_demandLogin->ID << std::endl;
+				//std::cout << "보내는 PW는  " << m_demandLogin->PW<< std::endl;
+				//std::cout << "보내는 SIZE는 *m_demandLogin " << sizeof(*m_demandLogin) << std::endl;
+				//std::cout << "보내는 SIZE는 m_demandLogin " << sizeof(m_demandLogin) << std::endl;
+				//std::cout << "보내는 SIZE는 &m_demandLogin " << sizeof(&m_demandLogin) << std::endl;
+
+				//std::cout << "로그인 실패 또는 성공보냅니다.!" << std::endl;
 				retVal = send(m_sock, (char*)m_demandLogin, sizeof(*m_demandLogin), 0);
 
 				//retVal = send(m_sock, (char*)&m_demandLogin, sizeof(m_demandLogin), 0);
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 
-				std::cout << "로그인 실패 또는 성공 보냈어요!" << std::endl;
+
+				//std::cout << "로그인 실패 또는 성공 보냈어요!" << std::endl;
 				retVal = recv(m_sock, (char*)&m_recvType, sizeof(m_recvType), 0);
 				if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
+
 
 				m_sendType = 0;
 
@@ -75,60 +81,82 @@ void Network::NetworkThreadFunction() {
 					retVal = recv(m_sock, (char*)m_permitLogin, sizeof(*m_permitLogin), 0);
 					if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
-					std::cout << "받은 승리 횟수는 " << m_permitLogin->winCount << std::endl;
-					std::cout << "받은 패배 횟수는 " << m_permitLogin->loseCount << std::endl;
-					std::cout << "받은 사이즈의 크기는 " << sizeof(*m_permitLogin) << std::endl;
+					//std::cout << "받은 승리 횟수는 " << m_permitLogin->winCount << std::endl;
+					//std::cout << "받은 패배 횟수는 " << m_permitLogin->loseCount << std::endl;
+					//std::cout << "받은 사이즈의 크기는 " << sizeof(*m_permitLogin) << std::endl;
 				}
 			}
 			}
 		}
-		if (m_sceneName == SceneName::Lobby) {
+		else if (m_sceneName == SceneName::Lobby) {
 			//EnterCriticalSection(&SEND_SECTION);
 			_sleep(200);
 			//std::cout << "server : "<< m_sendType << " ";
 				
 			if (m_sendType > 0) {
 				//LeaveCriticalSection(&SEND_SECTION);
+				//EnterCriticalSection(&LOBBY_UPDATE_SECTION);
 
-				std::cout << "로비입니다. 요구할게요 서버님!" << std::endl;
+				std::cout << "로비에서. 요구할게요 서버님!" << std::endl;
 				retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 				
-				std::cout << " " << m_sendType << std::endl;
-				
+				//std::cout << " " << m_sendType << std::endl;
+				//std::cout << " 1 ";
 				if (m_sendType == DEMAND_CHAT) {
+					//std::cout << " 2 ";
 
 					retVal = send(m_sock, (char*)m_demandChat, sizeof(*m_demandChat), 0);
 					if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
+					//std::cout << " 3 ";
 
-					if(m_permitChat == NULL)
-						m_permitChat = new PermitChatStruct;
-					
-					retVal = recv(m_sock, (char*)m_permitChat, sizeof(*m_permitChat), 0);
-					if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
-					
-					//std::cout << m_permitChat->chat[0] << std::endl;
+					//if(m_permitChat == NULL)
+					//	m_permitChat = new PermitChatStruct;
+					//
+					//retVal = recv(m_sock, (char*)m_permitChat, sizeof(*m_permitChat), 0);
+					//if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
+					//std::cout << " 4 ";
+					//
+					////std::cout << m_permitChat->chat[0] << std::endl;
 					//std::cout << m_permitChat->chat[1] << std::endl;
 					//std::cout << m_permitChat->chat[2] << std::endl;
 					//std::cout << m_permitChat->chat[3] << std::endl;
 					//std::cout << m_permitChat->chat[4] << std::endl;
-
+					//
+					////m_sendType = 0;
+					//m_recvType = 1;
+					//std::cout << " 5 " << m_sendType << "  " << m_recvType;
+					//
 					m_sendType = 0;
 					m_recvType = 1;
 				}
 				else if (m_sendType == DEMAND_CREATEROOM) {
+
+					std::cout << " 1 " << m_recvType << std::endl;
+
 					retVal = recv(m_sock, (char*)&m_recvType, sizeof(m_recvType), 0);
 					if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
+					std::cout << " 2 " << m_recvType << std::endl;
+
 					if (m_recvType == PERMIT_CREATEROOM) {
+
+						std::cout << " 3 " << m_recvType << std::endl;
 
 						if(m_permitCreateRoom == NULL)
 							m_permitCreateRoom = new PermitCreateRoomStruct;
 
+						std::cout << " 4 " << m_recvType << std::endl;
+
 						retVal = recv(m_sock, (char*)m_permitCreateRoom, sizeof(*m_permitCreateRoom), 0);
 						if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
-						m_sendType = 0;
+						std::cout << " 5 " << m_recvType << std::endl;
+
+					}
+					else if (m_recvType == FAIL_CREATEROOM) { 
+						std::cout << " 6 " << m_recvType << std::endl;
+						m_sendType = 0; 
 					}
 				}
 				else if (m_sendType == DEMAND_JOINROOM) {
@@ -145,13 +173,16 @@ void Network::NetworkThreadFunction() {
 						retVal = recv(m_sock, (char*)m_permitJoinRoom, sizeof(m_permitJoinRoom), 0);
 						if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
-						m_sendType = 0;
 					}
+					else if (m_recvType == FAIL_JOINROOM) { m_sendType = 0; }
 				}
+				//LeaveCriticalSection(&LOBBY_UPDATE_SECTION);
 			}
-			else if(m_sendType == 0){
+			else if(m_sendType == 10000 && m_recvType == 100000){
 				EnterCriticalSection(&LOBBY_UPDATE_SECTION);
 					m_sendType = UPDATE_LOBBY;
+					
+					//std::cout << " 6 ";
 
 					retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
 					if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
@@ -159,28 +190,37 @@ void Network::NetworkThreadFunction() {
 					if(m_permitChat == NULL)
 						m_permitChat = new PermitChatStruct;
 
+					//std::cout << " 7 ";
+
+
 					retVal = recv(m_sock, (char*)m_permitChat, sizeof(*m_permitChat), 0);
 					if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 
-					//std::cout << m_permitChat->chat[0] << std::endl;
-					//std::cout << m_permitChat->chat[1] << std::endl;
-					//std::cout << m_permitChat->chat[2] << std::endl;
-					//std::cout << m_permitChat->chat[3] << std::endl;
-					//std::cout << m_permitChat->chat[4] << std::endl;
+					std::cout << m_permitChat->chat[0] << std::endl;
+					std::cout << m_permitChat->chat[1] << std::endl;
+					std::cout << m_permitChat->chat[2] << std::endl;
+					std::cout << m_permitChat->chat[3] << std::endl;
+					std::cout << m_permitChat->chat[4] << std::endl;
 
 					if (m_updateLobbyInfo == NULL)
 						m_updateLobbyInfo = new UpdateLobbyInfoStruct;
 
+					//std::cout << " 8 ";
+
 					retVal = recv(m_sock, (char*)m_updateLobbyInfo, sizeof(*m_updateLobbyInfo), 0);
 					if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 
-					m_sendType = -1;
+					m_sendType = 2;
 					m_recvType = 2;
+
+					//std::cout << " 9 ";
 
 				LeaveCriticalSection(&LOBBY_UPDATE_SECTION);
 			}
 		}
-		else _sleep(1000);
+		else {
+			_sleep(1000);
+		}
 	}
 
 END_CONNECT:
