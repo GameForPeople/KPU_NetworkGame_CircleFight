@@ -11,6 +11,7 @@
 
 //#include "GameCommuniCationProtocol.h"
 
+//#define DEBUG_MODE //print Debug Message! 
 
 #pragma region [Create Static]
 #define SERVERIP			"127.0.0.1"
@@ -70,7 +71,20 @@ public:
 	RoomData(IN_ADDR& inputAddr) { m_hostAddr = inputAddr; m_playersNumber = 1; m_mapNumber = 1; }
 
 	void Create(IN_ADDR& inputAddr) { m_hostAddr = inputAddr; m_playersNumber = 1; m_mapNumber = 1; m_isCreate = true; }
-	bool Destory() { if (m_isCreate) { m_isCreate = false; return true; } else return false; }
+	bool Destory() { if (m_isCreate) { m_isCreate = false; m_playersNumber = 0; return true; } else return false; }
+	bool Exit() { 
+		if (m_isCreate) {
+			m_playersNumber--; 
+
+			if (m_playersNumber == 0)
+				m_isCreate = false;
+
+			return true; 
+		} 
+		else 
+			return false; 
+	}
+
 	bool Join() { if (m_isCreate && m_playersNumber < 4) { m_playersNumber++; return true;  } else return false; }
 
 	void AddPlayer() { m_playersNumber++; }
@@ -103,21 +117,26 @@ public:
 				if (!m_roomArr[i].GetIsCreate()) {
 					m_roomArr[i].Create(hostAddr);
 					m_roomCount++;
-					return (i+1);
+					//std::cout << i << "번방시도" << std::endl;
+					return i;
 				}
 			}
 		}
-		else if (m_roomCount >= 8) return 0;
+		else if (m_roomCount >= 8) return -1;
 	}
 
 	bool ExitRoom(int roomIndex) {
-		m_roomCount--;
-		return m_roomArr[roomIndex - 1].Destory();
+		//m_roomCount--;
+		return m_roomArr[roomIndex].Exit();
+	}
+
+	bool DestoryRoom(int roomIndex) {
+		return m_roomArr[roomIndex].Destory();
 	}
 
 	bool JoinRoom(int roomIndex, IN_ADDR& outAddr) {
-		outAddr = m_roomArr[roomIndex - 1].GetHostAddr();
-		return(m_roomArr[roomIndex - 1].Join());
+		outAddr = m_roomArr[roomIndex].GetHostAddr();
+		return(m_roomArr[roomIndex].Join());
 	}
 
 	void PushChat() {
@@ -130,12 +149,17 @@ public:
 	void Chat(char* recvChat) {
 		for (int i = 1; i < CHAT_MAX_LINE; i++) {
 			memcpy(m_chatBuf[i - 1], m_chatBuf[i], sizeof(CHAT_BUF_SIZE));
+			
+			#ifdef DEBUG_MODE
 			std::cout << m_chatBuf[i - 1] << std::endl;
+			#endif
 		}
 
 		memcpy(m_chatBuf[CHAT_MAX_LINE - 1], recvChat, sizeof(CHAT_BUF_SIZE));
+		
+		#ifdef DEBUG_MODE
 		std::cout << m_chatBuf[CHAT_MAX_LINE - 1] << std::endl;
-
+		#endif		
 	}
 	char* GetChatBuf(int index) { return &(m_chat[index]); };
 

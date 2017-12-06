@@ -39,15 +39,18 @@ Network::~Network()
 
 
 void Network::NetworkThreadFunction() {
-	std::cout << "hello World! i'm Thread " << std::endl;
+	std::cout << "Hello League of Runners! I'm your New Thread!" << std::endl;
 	while (7) {
 		if (m_sceneName == SceneName::Login) {
 			if (m_sendType) {
+				#ifdef DEBUG_MODE
 				std::cout << "타입 100번 보내요" << std::endl;
+				#endif
 				retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 
 				if (m_sendType == DEMAND_LOGIN) {
+				#ifdef DEBUG_MODE
 				std::cout << "로그인 또는  회원가입 정보 보내요!" << std::endl;
 				std::cout << "보내는 타입은  " << m_demandLogin->type << std::endl;
 				std::cout << "보내는 ID는  " << m_demandLogin->ID << std::endl;
@@ -57,12 +60,15 @@ void Network::NetworkThreadFunction() {
 				std::cout << "보내는 SIZE는 &m_demandLogin " << sizeof(&m_demandLogin) << std::endl;
 
 				std::cout << "로그인 실패 또는 성공보냅니다.!" << std::endl;
+				#endif
 				retVal = send(m_sock, (char*)m_demandLogin, sizeof(*m_demandLogin), 0);
 
 				//retVal = send(m_sock, (char*)&m_demandLogin, sizeof(m_demandLogin), 0);
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 
+				#ifdef DEBUG_MODE
 				std::cout << "로그인 실패 또는 성공 보냈어요!" << std::endl;
+				#endif
 				retVal = recv(m_sock, (char*)&m_recvType, sizeof(m_recvType), 0);
 				if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
@@ -75,37 +81,44 @@ void Network::NetworkThreadFunction() {
 					retVal = recv(m_sock, (char*)m_permitLogin, sizeof(*m_permitLogin), 0);
 					if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
+					#ifdef DEBUG_MODE
 					std::cout << "받은 승리 횟수는 " << m_permitLogin->winCount << std::endl;
 					std::cout << "받은 패배 횟수는 " << m_permitLogin->loseCount << std::endl;
 					std::cout << "받은 사이즈의 크기는 " << sizeof(*m_permitLogin) << std::endl;
+					#endif
 				}
 			}
 			}
 		}
-		if (m_sceneName == SceneName::Lobby) {
+		else if (m_sceneName == SceneName::Lobby) {
 			//EnterCriticalSection(&SEND_SECTION);
-			_sleep(200);
+			_sleep(100);
 			//std::cout << "server : "<< m_sendType << " ";
 				
 			if (m_sendType > 0) {
 				//LeaveCriticalSection(&SEND_SECTION);
 
+				#ifdef DEBUG_MODE
 				std::cout << "로비입니다. 요구할게요 서버님!" << std::endl;
+				#endif
 				retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 				
+				#ifdef DEBUG_MODE
 				std::cout << " " << m_sendType << std::endl;
-				
+				#endif
+
 				if (m_sendType == DEMAND_CHAT) {
 
 					retVal = send(m_sock, (char*)m_demandChat, sizeof(*m_demandChat), 0);
 					if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 
-					if(m_permitChat == NULL)
-						m_permitChat = new PermitChatStruct;
-					
-					retVal = recv(m_sock, (char*)m_permitChat, sizeof(*m_permitChat), 0);
-					if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
+					// 채팅 로직 수정 -> 보내기만 함!
+					//if(m_permitChat == NULL)
+					//	m_permitChat = new PermitChatStruct;
+					//
+					//retVal = recv(m_sock, (char*)m_permitChat, sizeof(*m_permitChat), 0);
+					//if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 					
 					//std::cout << m_permitChat->chat[0] << std::endl;
 					//std::cout << m_permitChat->chat[1] << std::endl;
@@ -138,6 +151,8 @@ void Network::NetworkThreadFunction() {
 					retVal = recv(m_sock, (char*)&m_recvType, sizeof(m_recvType), 0);
 					if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
+					//std::cout << "전달받은 타입은 " << m_recvType << std::endl;
+
 					if (m_recvType == PERMIT_JOINROOM) {
 						if(m_permitJoinRoom == NULL)
 							m_permitJoinRoom = new PermitJoinRoomStruct;
@@ -146,6 +161,10 @@ void Network::NetworkThreadFunction() {
 						if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
 						m_sendType = 0;
+					}
+					else {
+						m_sendType = 0;
+						m_recvType = 0;
 					}
 				}
 			}
@@ -233,11 +252,17 @@ bool Network::ErrorFunction(int value, int type) //type = 0 recv, type = 1send
 int  Network::ReturnTypeNumber() {
 	int type, retVal;
 
+#ifdef DEBUG_MODE
 	std::cout << "   ToDebug : 데이터를 받으려고합니다." << std::endl;
+#endif
+
 	retVal = recv(m_sock, (char*)&type, sizeof(type), 0);
 	if (!ErrorFunction(retVal, 0))
 		return 0;
+
+#ifdef DEBUG_MODE
 	std::cout << "   ToDebug : 데이터를 전송받았습니다.." << std::endl;
+#endif
 
 	return type;
 }
@@ -540,7 +565,10 @@ DWORD WINAPI RecvDataGuest(LPVOID arg)
 			break;
 		case NOTIFY_START:
 			// 게임시작
+			#ifdef DEBUG_MODE
 			std::cout << "게임을 시작합니다" << std::endl;
+			#endif
+
 			gameStart = true;
 			break;
 

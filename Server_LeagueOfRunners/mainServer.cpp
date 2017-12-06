@@ -22,7 +22,7 @@ static std::vector<UserData> userData;	//쓰레드에서도 사용해di하는데 메모리가 크
 static LobbyInfo lobbyData;// 전체 로비 데이타.
 static PermitChatStruct permitChatData;
 
-static bool ChatFlag{ false };
+//static bool ChatFlag{ false };
 static bool IsSaveOn{ false };
 
 #pragma region [THREAD FUNCTION]
@@ -71,6 +71,9 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 
 	int recvType{};
 	int sendType{};
+	int roomIndex = -1;
+
+	SceneName nowScene = SceneName::Login;
 
 	while (7) {
 		recvType = ReturnTypeNumber(clientSock);	// 클라이언트로부터 타입값을 받습니다.
@@ -83,11 +86,11 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			retVal = recv(clientSock, (char*)&demandLogin, sizeof(demandLogin), 0);
 			if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
-			std::cout << "로그인 또는  회원가입 정보 받았어요!" << std::endl;
-			std::cout << "받은 타입은  " << demandLogin.type << std::endl;
-			std::cout << "받은 ID는  " << demandLogin.ID << std::endl;
-			std::cout << "받은 PW는  " << demandLogin.PW << std::endl;
-			std::cout << "받은 사이즈는  " << sizeof(demandLogin) << std::endl;
+			//std::cout << "로그인 또는  회원가입 정보 받았어요!" << std::endl;
+			//std::cout << "받은 타입은  " << demandLogin.type << std::endl;
+			//std::cout << "받은 ID는  " << demandLogin.ID << std::endl;
+			//std::cout << "받은 PW는  " << demandLogin.PW << std::endl;
+			//std::cout << "받은 사이즈는  " << sizeof(demandLogin) << std::endl;
 
 			bool isLoginSuccess{ false };
 			int winBuffer, loseBuffer{};
@@ -137,13 +140,18 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			}
 
 			if (isLoginSuccess) {
-				std::cout << "[ 클라이언트 로그인 성공 IP : " << inet_ntoa(clientAddr.sin_addr) << "  PORT : " << ntohs(clientAddr.sin_port) << "  ] " << std::endl;
+				#ifdef DEBUG_MODE
+				std::cout << "[ 클라이언트 로그인 성공  받은 ID는  " << demandLogin.ID << " 받은 PW는  " << demandLogin.PW <<" IP : " << inet_ntoa(clientAddr.sin_addr) << "  PORT : " << ntohs(clientAddr.sin_port) << "  ] " << std::endl;
+				#endif			
 				sendType = PERMIT_LOGIN;
 				memcpy(ID, demandLogin.ID, sizeof(demandLogin.ID));
 				PW = demandLogin.PW;
+				nowScene = SceneName::Lobby;
 			}
 			else if (!isLoginSuccess) {
-				std::cout << "[ 클라이언트 로그인 실패 IP : " << inet_ntoa(clientAddr.sin_addr) << "  PORT : " << ntohs(clientAddr.sin_port) << "  ] " << std::endl;
+				#ifdef DEBUG_MODE
+				std::cout << "[ 클라이언트 로그인 실패  받은 ID는  " << demandLogin.ID << " 받은 PW는  " << demandLogin.PW << " IP : " << inet_ntoa(clientAddr.sin_addr) << "  PORT : " << ntohs(clientAddr.sin_port) << "  ] " << std::endl;
+				#endif
 				sendType = FAIL_LOGIN;
 			}
 
@@ -159,8 +167,10 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 
 				retVal = send(clientSock, (char*)&permitLogin, sizeof(permitLogin), 0);
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
-				std::cout << "[ 클라이언트 로비 접속 IP : " << inet_ntoa(clientAddr.sin_addr) << "  PORT : " << ntohs(clientAddr.sin_port) << "  ] " << std::endl;
-
+				
+				#ifdef DEBUG_MODE
+				std::cout << "[ 클라이언트 로비 접속  ID는  " << demandLogin.ID << " IP : " << inet_ntoa(clientAddr.sin_addr) << "  PORT : " << ntohs(clientAddr.sin_port) << "  ] " << std::endl;
+				#endif
 			}
 		}
 #pragma endregion
@@ -170,12 +180,15 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			int roomIndexBuffer{};
 
 			EnterCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
-			if (roomIndexBuffer = lobbyData.CreateRoom(clientAddr.sin_addr)) {
+			if ((roomIndexBuffer = lobbyData.CreateRoom(clientAddr.sin_addr)) >= 0) {
 				sendType = PERMIT_CREATEROOM;
 			}
-			else
+			else {
 				sendType = FAIL_CREATEROOM;
-
+				#ifdef DEBUG_MODE
+				std::cout << "[ 방생성 실패 ID : " << ID << " IP : " << inet_ntoa(clientAddr.sin_addr) << std::endl;
+				#endif
+			}
 			LeaveCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
 
 			retVal = send(clientSock, (char*)&sendType, sizeof(sendType), 0); 
@@ -184,9 +197,16 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			if (sendType == PERMIT_CREATEROOM) {
 				PermitCreateRoomStruct permitCreateRoom;
 				permitCreateRoom.roomIndex = roomIndexBuffer;
-				
+				roomIndex = roomIndexBuffer;
+
 				retVal = send(clientSock, (char*)&permitCreateRoom, sizeof(permitCreateRoom), 0); 
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
+
+				nowScene = SceneName::Room;
+
+				#ifdef DEBUG_MODE
+				std::cout << "[ "<< roomIndexBuffer <<" 번 방생성 성공 ID : " << ID  << " IP : " << inet_ntoa(clientAddr.sin_addr) << std::endl;
+				#endif
 			}
 		}
 		else if (recvType == DEMAND_EXITROOM) {
@@ -201,6 +221,8 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 			}
 			LeaveCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
+
+			nowScene = SceneName::Lobby;
 		}
 		else if (recvType == DEMAND_JOINROOM) {
 			DemandJoinRoomStruct demandJoinRoom;
@@ -211,6 +233,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			EnterCriticalSection(&IN_OUT_ROOM_SECTION);
 			if(lobbyData.JoinRoom(demandJoinRoom.roomIndex, hostAddrBuffer)){
 				sendType = PERMIT_JOINROOM;
+				roomIndex = demandJoinRoom.roomIndex;
 			}
 			else {
 				sendType = FAIL_JOINROOM;
@@ -226,6 +249,12 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 
 				retVal = send(clientSock, (char*)&permitJoinRoom, sizeof(permitJoinRoom), 0);
 					if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
+
+				nowScene = SceneName::RoomGuest;
+
+				#ifdef DEBUG_MODE
+				std::cout << "[ " << roomIndex << " 번 방 접속 성공 ID : " << ID << " IP : " << inet_ntoa(clientAddr.sin_addr) << std::endl;
+				#endif
 			}
 		}
 		else if (recvType == DEMAND_CHAT) {
@@ -237,19 +266,19 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 
 			char buf[CHAT_BUF_SIZE]{};
 			
-			std::cout << "받은 채팅 내용은 : " << demandChat.chat << std::endl;
+			//std::cout << "받은 채팅 내용은 : " << demandChat.chat << std::endl;
 			memcpy(buf, ID, sizeof(ID));
 			strcat(buf, " : ");
 			strcat(buf, demandChat.chat);
-			std::cout << "변환된 채팅 내용은 : " << buf << std::endl;
+			//std::cout << "변환된 채팅 내용은 : " << buf << std::endl;
 
 			//strncpy(lobbyData.m_chatBuf[4], buf, sizeof(CHAT_BUF_SIZE));
 			for (int i = 0; i < CHAT_BUF_SIZE; i++)
 				lobbyData.m_chatBuf[4][i] = buf[i];
 
-
-			std::cout << "복사된 채팅 내용은 : " << lobbyData.m_chatBuf[4] << std::endl;
-
+			#ifdef DEBUG_MODE
+			std::cout << "[ 채팅이 입력되었습니다.  : " << lobbyData.m_chatBuf[4] << " ] "<< std::endl;
+			#endif
 			//for (int i = 0; i < CHAT_MAX_LINE; i++) {
 			//	for (int j = 0; j < CHAT_BUF_SIZE; j++) {
 			//		permitChatData.chat[i][j] = lobbyData.m_chatBuf[i][j];
@@ -258,10 +287,10 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			//	//std::cout << permitChatData.chat[i] << std::endl;
 			//}
 
-			ChatFlag = true;
-			retVal = send(clientSock, (char*)&lobbyData.m_chatBuf, sizeof(permitChatData), 0);
-			//retVal = send(clientSock, (char*)&permitChatData, sizeof(permitChatData), 0);
-			if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
+			//ChatFlag = true;
+			//retVal = send(clientSock, (char*)&lobbyData.m_chatBuf, sizeof(permitChatData), 0);
+			////retVal = send(clientSock, (char*)&permitChatData, sizeof(permitChatData), 0);
+			//if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 		}
 		else if (recvType == UPDATE_LOBBY) {
 
@@ -300,8 +329,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 	}
 
 END_CONNECT:
-	std::cout << "[ 클라이언트 종료 IP : " << inet_ntoa(clientAddr.sin_addr) << "  PORT : " << ntohs(clientAddr.sin_port) << "  ] " << std::endl;
-	std::cout << "[ 클라이언트 종료 ID : " << ID  << std::endl;
+	std::cout << "[ 클라이언트 종료 ID : " << ID  << " 클라이언트 종료 IP : " << inet_ntoa(clientAddr.sin_addr) << "  PORT : " << ntohs(clientAddr.sin_port) << "  ] " << std::endl;
 
 	EnterCriticalSection(&UserDataAccess_SECTION);
 	for (auto &i : userData) {
@@ -313,6 +341,11 @@ END_CONNECT:
 	}
 	LeaveCriticalSection(&UserDataAccess_SECTION);
 	
+	if (nowScene == SceneName::RoomGuest)
+		lobbyData.ExitRoom(roomIndex);
+	else if (nowScene == SceneName::Room)
+		lobbyData.DestoryRoom(roomIndex);
+
 	closesocket(clientSock);
 	return 0;
 }
@@ -387,13 +420,12 @@ int main(int argc, char *argv[])
 	inFile.close();
 
 	std::cout << "	- UserData Load Complete! " << std::endl;
-	
+
 	InitializeCriticalSection(&ACCEPT_SECTION);
 	InitializeCriticalSection(&SIGNUP_SECTION);
 	InitializeCriticalSection(&SIGNIN_SECTION);
+	InitializeCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
 	InitializeCriticalSection(&IN_OUT_ROOM_SECTION);
-	InitializeCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
-	InitializeCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
 	InitializeCriticalSection(&UserDataAccess_SECTION);
 
 	std::cout << "	- Init Critical Section Complete! " << std::endl;

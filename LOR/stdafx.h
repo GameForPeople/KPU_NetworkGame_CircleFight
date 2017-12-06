@@ -32,6 +32,8 @@
 #include <deque>
 #include <list>
 
+//#define DEBUG_MODE // to print log message
+
 using namespace std;
 
 //#include"Sound.h"

@@ -100,6 +100,16 @@ enum Protocol{
 	,	SUPPLY_GAMEEND		=	499	//HOST	-> Server
 };
 
+enum class SceneName {
+	Title
+	, Login
+	, Lobby
+	, Room
+	, RoomGuest
+	, InGame
+	, InGameGuest
+};
+
 #pragma endregion
 
 #pragma region [ LoginScene 100 ~ 199 ]

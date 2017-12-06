@@ -354,6 +354,7 @@ public:
 
 public:
 	UserData myData;
+	int      m_roomIndex;
 
 public:
 	CRITICAL_SECTION SEND_SECTION;

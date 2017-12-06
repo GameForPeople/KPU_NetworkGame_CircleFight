@@ -123,7 +123,9 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 		if (mouseY < 100 && mouseX > 1130) {
 			if (m_idLen == 4 && m_pwLen == 4) {
 			// Sign In
+				#ifdef DEBUG_MODE
 				std::cout << "회원가입합니다!! " << std::endl;
+				#endif 
 				m_network->m_demandLogin = new DemandLoginStruct;
 
 				m_network->m_demandLogin->type = 2;
@@ -161,8 +163,9 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 		}
 		else if (mouseY > 600 && mouseX > 550 && mouseX < 750) {
 			if (m_idLen == 4 && m_pwLen == 4) {
+				#ifdef DEBUG_MODE
 				std::cout << "로그인합니다!! " << std::endl;
-
+				#endif
 				if (m_network->m_demandLogin == NULL)
 					m_network->m_demandLogin = new DemandLoginStruct;
 
@@ -172,9 +175,11 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 
 				//std::cout << "1.로그인 또는  회원가입 정보 보내요!" << std::endl;
 				//std::cout << "1.보내는 타입은  " << m_network->m_demandLogin->type << std::endl;
+				#ifdef DEBUG_MODE
 				std::cout << "	1.입력된 ID는  " << m_network->m_demandLogin->ID << std::endl;
 				std::cout << "	2.입력된 PW는  " << m_network->m_demandLogin->PW << std::endl;
-
+				#endif
+				
 				m_network->SetSendType(DEMAND_LOGIN);
 
 				while (7) {
@@ -208,13 +213,17 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 		}
 		else if (mouseY > 430 && mouseY < 500 && mouseX > 450 && mouseX < 825) {
 			//550 750 630
+			#ifdef DEBUG_MODE
 			std::cout << "	아이디를 입력합니다!! " << std::endl;
+			#endif
 			m_userInsertType = 1;
 
 		}
 		else if (mouseY > 505 && mouseY < 580 && mouseX > 450 && mouseX < 825) {
 			//550 750 630
+			#ifdef DEBUG_MODE
 			std::cout << "	비밀번호를 입력합니다!! " << std::endl;
+			#endif
 			m_userInsertType = 2;
 		}
 		return true;
@@ -260,8 +269,9 @@ bool LoginScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 			}
 			else if (wParam == VK_RETURN) {
 				if (m_idLen == 4 && m_pwLen == 4) {
+					#ifdef DEBUG_MODE
 					std::cout << "	로그인합니다!! " << std::endl;
-
+					#endif
 					if (m_network->m_demandLogin == NULL)
 						m_network->m_demandLogin = new DemandLoginStruct;
 
@@ -271,8 +281,10 @@ bool LoginScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 
 					//std::cout << "1.로그인 또는  회원가입 정보 보내요!" << std::endl;
 					//std::cout << "1.보내는 타입은  " << m_network->m_demandLogin->type << std::endl;
+					#ifdef DEBUG_MODE
 					std::cout << "	1.입력된 ID는  " << m_network->m_demandLogin->ID << std::endl;
 					std::cout << "	2.입력된 PW는  " << m_network->m_demandLogin->PW << std::endl;
+					#endif
 
 					m_network->SetSendType(DEMAND_LOGIN);
 

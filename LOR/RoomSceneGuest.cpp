@@ -25,7 +25,9 @@ RoomSceneGuest::RoomSceneGuest(HWND hWnd, Network* network) : Scene(hWnd)
 	
 	serveraddr.sin_addr = m_network->m_permitJoinRoom->hostAddr;
 
+	#ifdef DEBUG_MODE
 	std::cout << "ip : " << inet_ntoa(serveraddr.sin_addr) << std::endl;
+	#endif
 
 	int retval;
 	// recv소켓 연결 시도
@@ -33,7 +35,9 @@ RoomSceneGuest::RoomSceneGuest(HWND hWnd, Network* network) : Scene(hWnd)
 	connect(newSock, (SOCKADDR *)&serveraddr, sizeof(serveraddr));
 	retval = recvn(newSock, (char*)&m_idx, sizeof(m_idx), 0);
 
+	#ifdef DEBUG_MODE
 	std::cout << "ip : " << inet_ntoa(serveraddr.sin_addr) << std::endl;
+	#endif
 
 	if (retval > 0)
 	{
@@ -47,7 +51,10 @@ RoomSceneGuest::RoomSceneGuest(HWND hWnd, Network* network) : Scene(hWnd)
 	if (retval <= 0)
 	{
 		// 방 입장 불가능
+		#ifdef DEBUG_MODE
 		cout << "방 입장 불가능" << endl;
+		#endif
+
 		m_isDestory = true;
 		m_nextScene = SceneName::Lobby;
 	}
@@ -119,31 +126,43 @@ bool RoomSceneGuest::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARA
 		mouseX = LOWORD(lParam);
 
 		if (mouseY > 80 && mouseY < 195 && mouseX > 1020 && mouseX < 1129) {
+			#ifdef DEBUG_MODE
 			std::cout << "나는 아처 골랐습니다." << std::endl;
+			#endif
 			reqChar = CharacterName::Archer;
 			sendQueueGuest.push_back(REQUEST_CHANGECHAR);
 		}
 		else if (mouseY > 80 && mouseY < 195 && mouseX > 1130 && mouseX < 1270) {
+			#ifdef DEBUG_MODE
 			std::cout << "나는 위쳐 골랐습니다." << std::endl;
+			#endif
 			reqChar = CharacterName::Wicher;
 			sendQueueGuest.push_back(REQUEST_CHANGECHAR);
 		}
 		else if (mouseY > 200 && mouseY < 320 && mouseX > 1020 && mouseX < 1129) {
+			#ifdef DEBUG_MODE
 			std::cout << "나는 기사 골랐습니다." << std::endl;
+			#endif
 			reqChar = CharacterName::Knight;
 			sendQueueGuest.push_back(REQUEST_CHANGECHAR);
 		}
 		else if (mouseY > 200 && mouseY < 320 && mouseX > 1130 && mouseX < 1270) {
+			#ifdef DEBUG_MODE
 			std::cout << "나는 좀비 골랐습니다." << std::endl;
+			#endif
 			reqChar = CharacterName::Zombie;
 			sendQueueGuest.push_back(REQUEST_CHANGECHAR);
 		}
 
 		else if (mouseY > 610 && mouseY < 650 && mouseX > 1135 && mouseX < 1246) {
 			// 나가기
+			#ifdef DEBUG_MODE
 			std::cout << "나가요!! 로비로!!!! " << std::endl;
+			#endif
+
 			sendQueueGuest.push_back(REQUEST_EXIT);
 			WaitForMultipleObjects(2, hThreadGuest, TRUE, INFINITE);
+			m_network->ChageSceneName(SceneName::Lobby);
 			m_isDestory = true;
 			m_nextScene = SceneName::Lobby;
 		}
