@@ -23,7 +23,6 @@ class Pawn :
 private:
 	BaseCharacter* m_unit;
 	State m_state;
-	State m_preState;
 	//BoundingBox m_bb;
 	CharacterName m_charType;
 

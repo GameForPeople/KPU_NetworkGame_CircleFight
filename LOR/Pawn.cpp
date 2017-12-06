@@ -172,14 +172,11 @@ void Pawn::NetworkDrawCharacter(HDC hdc, float playerDisX, float thisDisX, float
 
 void Pawn::FaintCountUp(bool init)
 {
-	m_preState = m_state;
-	m_state = State::Stun;
-
 	if (init)
 	{
-		SetCombo();
-		ResetBaseSpeed();
+		ResetCombo();
 	}
+	m_state = State::Stun;
 	m_bufSpeed = 0.0f;
 	m_stackFaint++;
 }
@@ -190,7 +187,7 @@ void Pawn::FaintCountDown()
 	if (m_stackFaint <= 0)
 	{
 		m_bufSpeed = 1.0f;
-		m_state = m_preState;
+		m_state = State::JumpEnd;
 	}
 }
 

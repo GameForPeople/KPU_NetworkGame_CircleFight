@@ -492,6 +492,7 @@ void InGameScene::UseItem(int itemNum, int user)
 
 void InGameScene::CollideItem(int idx)
 {
+	static float itemHalfSize = ITEM_SIZE / 2;
 	Pos2d charPos = m_characterArr[idx].GetPos();
 
 	float charSize = 200;
@@ -504,9 +505,9 @@ void InGameScene::CollideItem(int idx)
 	float itemX = basicInfo.m_firstItem[idx].xPos;
 	int itemIdx = basicInfo.m_firstItem[idx].idx;
 
-	float bMinX = itemX;
+	float bMinX = itemX - itemHalfSize;
 	float bMinY = m_itemArr[itemIdx].GetPos().y;
-	float bMaxX = itemX + ITEM_SIZE;
+	float bMaxX = itemX + itemHalfSize;
 	float bMaxY = m_itemArr[itemIdx].GetPos().y + ITEM_SIZE;
 
 	if (BoxBoxCol(aMinX, aMinY, aMaxX, aMaxY, bMinX, bMinY, bMaxX, bMaxY))
@@ -527,6 +528,7 @@ void InGameScene::UpdateItemList(double time)
 
 	int b, e;
 	float duration;
+	bool wingBoost = false;
 	list<ItemTimer>::iterator iter;
 
 	for (iter = timerList.begin(); iter != timerList.end();)
@@ -583,7 +585,7 @@ void InGameScene::UpdateItemList(double time)
 			iter = timerList.erase(iter);
 			break;
 		case WING:								// 날개 - 선딜 0초, 이속1.2 3초, 상태이상 해제
-			if (m_characterArr[iterIdx].GetCharType() == CharacterName::Wicher) { duration = WING_DURATION_B; }
+			if (m_characterArr[iterIdx].GetCharType() == CharacterName::Wicher) { wingBoost = true; duration = WING_DURATION_B; }
 			else { duration = WING_DURATION; }
 
 			if (iterIdx < 2) { b = 0;	e = 2; }
@@ -592,7 +594,7 @@ void InGameScene::UpdateItemList(double time)
 			for (; b < e; ++b)
 			{
 				m_characterArr[b].FaintReset();
-				m_characterArr[b].SpeedUpCountUp(true);
+				m_characterArr[b].SpeedUpCountUp(wingBoost);
 			}
 
 			timerList.push_back(ItemTimer(duration, TIMEOUT_SPEEDUP, iterIdx));
