@@ -161,8 +161,9 @@ bool RoomSceneGuest::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARA
 			#endif
 
 			sendQueueGuest.push_back(REQUEST_EXIT);
+			m_network->SetSendType(DEMAND_EXITROOM);
 			WaitForMultipleObjects(2, hThreadGuest, TRUE, INFINITE);
-			m_network->ChageSceneName(SceneName::Lobby);
+			//m_network->ChageSceneName(SceneName::Lobby);
 			m_isDestory = true;
 			m_nextScene = SceneName::Lobby;
 		}
@@ -174,6 +175,7 @@ bool RoomSceneGuest::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARA
 void RoomSceneGuest::Timer(const double count) {
 	if (!hThreadGuest[0])
 	{
+		m_network->SetSendType(DEMAND_EXITROOM);
 		m_isDestory = true;
 		m_nextScene = SceneName::Lobby;
 	}

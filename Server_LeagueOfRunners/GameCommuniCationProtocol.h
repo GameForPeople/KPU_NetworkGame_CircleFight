@@ -97,6 +97,18 @@ enum Protocol{
 		
 
 	//INGAMESCENE
+	, UPDATE_FRAME = 401
+	, INPUT_JUMP = 402
+	, INPUT_EMOTION = 403
+	, CHANGE_EMOTION = 404
+	, NOTIFY_ITEM_THUNDER = 405
+	, NOTIFY_ITEM_BED = 406
+	, NOTIFY_ITEM_SHIELD = 407
+	, NOTIFY_ITEM_WING = 408
+	, INPUT_KEY_Q = 409
+	, INPUT_KEY_W = 410
+
+	,   DEMAND_SENDRESULT   =   498
 	,	SUPPLY_GAMEEND		=	499	//HOST	-> Server
 };
 
@@ -240,7 +252,7 @@ struct PermitReLoginStruct {
 };
 #pragma endregion
 
-#pragma region [ RoomScene 400 ~ 499 ]
+#pragma region [ InGameScene 400 ~ 499 ]
 
 //type 499
 struct SupplyGameEndStruct {

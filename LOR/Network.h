@@ -84,6 +84,7 @@ enum Protocol {
 	, INPUT_KEY_Q = 409
 	, INPUT_KEY_W = 410
 	
+	, DEMAND_SENDRESULT = 498
 	, SUPPLY_GAMEEND = 499	//HOST	-> Server
 };
 
@@ -252,7 +253,7 @@ struct PermitReLoginStruct {
 };
 #pragma endregion
 
-#pragma region [ RoomScene 400 ~ 499 ]
+#pragma region [ InGameScene 400 ~ 499 ]
 struct FirstPlatInfo {
 	int idx;
 	float xPos;
@@ -355,7 +356,7 @@ public:
 public:
 	UserData myData;
 	int      m_roomIndex;
-
+	int		 m_gameResult;
 public:
 	CRITICAL_SECTION SEND_SECTION;
 	CRITICAL_SECTION LOBBY_UPDATE_SECTION;

@@ -92,9 +92,9 @@ void Network::NetworkThreadFunction() {
 		}
 		else if (m_sceneName == SceneName::Lobby) {
 			//EnterCriticalSection(&SEND_SECTION);
-			_sleep(100);
 			//std::cout << "server : "<< m_sendType << " ";
-				
+			_sleep(100);
+
 			if (m_sendType > 0) {
 				//LeaveCriticalSection(&SEND_SECTION);
 
@@ -169,6 +169,7 @@ void Network::NetworkThreadFunction() {
 				}
 			}
 			else if(m_sendType == 0){
+				//_sleep(100);
 				EnterCriticalSection(&LOBBY_UPDATE_SECTION);
 					m_sendType = UPDATE_LOBBY;
 
@@ -199,7 +200,50 @@ void Network::NetworkThreadFunction() {
 				LeaveCriticalSection(&LOBBY_UPDATE_SECTION);
 			}
 		}
-		else _sleep(1000);
+		else if (m_sceneName == SceneName::RoomGuest) {
+			if (m_sendType == DEMAND_EXITROOM) {
+				retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
+				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
+
+				//std::cout << " RG ";
+				m_sceneName = SceneName::Lobby;
+				m_sendType = 0;
+			}
+			if (m_gameResult) {
+				int sendTypeBuffer = DEMAND_SENDRESULT;
+				retVal = send(m_sock, (char*)&sendTypeBuffer, sizeof(sendTypeBuffer), 0);
+				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
+
+				retVal = send(m_sock, (char*)&m_gameResult, sizeof(m_gameResult), 0);
+				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
+
+				m_gameResult = 0;
+			}
+		}
+		else if (m_sceneName == SceneName::Room) {
+			if (m_sendType == DEMAND_EXITROOM) {
+				retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
+				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
+				//std::cout << " R ";
+
+
+				m_sceneName = SceneName::Lobby;
+				m_sendType = 0;
+			}
+			if (m_gameResult) {
+				int sendTypeBuffer = DEMAND_SENDRESULT;
+				retVal = send(m_sock, (char*)&sendTypeBuffer, sizeof(sendTypeBuffer), 0);
+				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
+
+				retVal = send(m_sock, (char*)&m_gameResult, sizeof(m_gameResult), 0);
+				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
+
+				m_gameResult = 0;
+			}
+		}
+		else {
+			_sleep(1000);
+		}
 	}
 
 END_CONNECT:

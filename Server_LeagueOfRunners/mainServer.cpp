@@ -24,6 +24,7 @@ static PermitChatStruct permitChatData;
 
 //static bool ChatFlag{ false };
 static bool IsSaveOn{ false };
+static std::atomic<int> playersNumber;
 
 #pragma region [THREAD FUNCTION]
 
@@ -32,6 +33,7 @@ DWORD WINAPI SaveUserDate(LPVOID arg) {
 		_sleep(10000);
 
 		if (IsSaveOn) {
+			_sleep(1000);
 			std::ofstream outFile("UserData.txt", std::ios::out);
 			char ID[5];
 			int PW, winCount, loseCount;
@@ -147,6 +149,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 				memcpy(ID, demandLogin.ID, sizeof(demandLogin.ID));
 				PW = demandLogin.PW;
 				nowScene = SceneName::Lobby;
+				playersNumber++;
 			}
 			else if (!isLoginSuccess) {
 				#ifdef DEBUG_MODE
@@ -208,21 +211,6 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 				std::cout << "[ "<< roomIndexBuffer <<" 锅 规积己 己傍 ID : " << ID  << " IP : " << inet_ntoa(clientAddr.sin_addr) << std::endl;
 				#endif
 			}
-		}
-		else if (recvType == DEMAND_EXITROOM) {
-			DemandExitRoomStruct demandExitRoom;
-			retVal = recv(clientSock, (char*)&demandExitRoom, sizeof(demandExitRoom), 0);
-			if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
-
-			EnterCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
-			if (lobbyData.ExitRoom(demandExitRoom.roomIndex)) {
-				PermitExitRoomStruct permitExitRoom;
-				retVal = send(clientSock, (char*)&permitExitRoom, sizeof(permitExitRoom), 0);
-				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
-			}
-			LeaveCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
-
-			nowScene = SceneName::Lobby;
 		}
 		else if (recvType == DEMAND_JOINROOM) {
 			DemandJoinRoomStruct demandJoinRoom;
@@ -319,10 +307,52 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 #pragma endregion
 
 #pragma region [ Room Scene ]
+		if (recvType == DEMAND_EXITROOM) {
+			//DemandExitRoomStruct demandExitRoom;
+			//retVal = recv(clientSock, (char*)&demandExitRoom, sizeof(demandExitRoom), 0);
+			//if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
+		//	std::cout << "1 ";
+			EnterCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
+			//std::cout << "2 ";
+
+			EnterCriticalSection(&IN_OUT_ROOM_SECTION);
+			//std::cout << "3 ";
+
+			//if (lobbyData.ExitRoom(demandExitRoom.roomIndex)) {
+			//	PermitExitRoomStruct permitExitRoom;
+			//	retVal = send(clientSock, (char*)&permitExitRoom, sizeof(permitExitRoom), 0);
+			//	if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
+			//}
+			if (nowScene == SceneName::RoomGuest)
+				lobbyData.ExitRoom(roomIndex);
+			else if (nowScene == SceneName::Room)
+				lobbyData.DestoryRoom(roomIndex);
+
+			LeaveCriticalSection(&IN_OUT_ROOM_SECTION);
+			LeaveCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
+
+			nowScene = SceneName::Lobby;
+		}
 
 #pragma endregion
 
 #pragma region [ inGame Scene ]
+		if (recvType == DEMAND_SENDRESULT) {
+			//DemandExitRoomStruct demandExitRoom;
+			//retVal = recv(clientSock, (char*)&demandExitRoom, sizeof(demandExitRoom), 0);
+			//if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
+			int WinLoseBuf{};
+			retVal = recv(clientSock, (char*)&WinLoseBuf, sizeof(WinLoseBuf), 0);
+			if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
+
+			for (auto &i : userData) {
+				if (!strcmp(ID, i.GetID())) {
+					i.SetWinOrLose(WinLoseBuf);
+					break;
+				}
+			}
+			IsSaveOn = true;
+		}
 
 #pragma endregion
 
@@ -345,6 +375,8 @@ END_CONNECT:
 		lobbyData.ExitRoom(roomIndex);
 	else if (nowScene == SceneName::Room)
 		lobbyData.DestoryRoom(roomIndex);
+
+	playersNumber--;
 
 	closesocket(clientSock);
 	return 0;
@@ -434,6 +466,8 @@ int main(int argc, char *argv[])
 
 	for ( int i = 0 ; i < CHAT_MAX_LINE ; i++)
 		permitChatData.chat[i][0] = '\0';
+
+	playersNumber = 0;
 
 	std::cout << "	- Init Static Structure Complete! " << std::endl;
 

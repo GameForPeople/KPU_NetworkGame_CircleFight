@@ -186,15 +186,18 @@ bool RoomScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPa
 			std::cout << "나가요!! 로비로!!!! " << std::endl;
 			#endif
 
+			m_network->SetSendType(DEMAND_EXITROOM);
+
+
 			for (int i = 1; i < MAX_PLAYER; ++i)
 			{
 				if (roomInfo.m_charInfo[i] == CharacterName::NONE) continue;
 				sendQueue[i].emplace_back(NOTIFY_EXIT);
+				numPlayer--;
 			}
-			numPlayer--;
-			while (numPlayer > 0);
+			while (numPlayer >= 0);
 			closesocket(listen_sock);
-			m_network->ChageSceneName(SceneName::Lobby);
+			//m_network->ChageSceneName(SceneName::Lobby);
 			m_isDestory = true;
 			m_nextScene = SceneName::Lobby;
 		}

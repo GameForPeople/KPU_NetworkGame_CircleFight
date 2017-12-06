@@ -8,6 +8,7 @@
 #include <fstream>
 #include <Windows.h>
 #include <thread>
+#include <atomic>
 
 //#include "GameCommuniCationProtocol.h"
 
@@ -55,6 +56,12 @@ public:
 	int		GetPW() { return m_pw; }
 	int		GetWinCount() { return m_winCount; }
 	int		GetLoseCount() { return m_loseCount; }
+
+	void	SetWinOrLose(int value) {
+		if (value == 1) { m_winCount++; }
+		else if (value == 2) { m_loseCount++; }
+		return;
+			}
 
 	bool	GetIsLogin() { return m_isLogin; }
 	void	SetIsLogin(bool bValue) { m_isLogin = bValue; }
