@@ -359,7 +359,11 @@ DWORD WINAPI SendData(LPVOID arg)
 		{
 			sendOp = sendQueue[sock_info.idx].front();
 			sendQueue[sock_info.idx].pop_front();
-			send(sock_info.sock, (char*)&sendOp.op, sizeof(sendOp.op), 0);
+			if (sendOp.op != SOCKET_ERROR)
+			{
+				retval = send(sock_info.sock, (char*)&sendOp.op, sizeof(sendOp.op), 0);
+				if (retval == SOCKET_ERROR) sendOp.op = SOCKET_ERROR;
+			}
 			switch (sendOp.op)
 			{
 				// InRoom통신
@@ -401,6 +405,18 @@ DWORD WINAPI SendData(LPVOID arg)
 			case CHANGE_EMOTION:
 				send(sock_info.sock, (char*)&ChangeEmotionStruct(emotionNum[sendOp.fromIdx], sendOp.fromIdx), sizeof(ChangeEmotionStruct), 0);
 				break;
+
+				// 예외처리
+			case SOCKET_ERROR:
+				running = false;
+				roomInfo.m_charInfo[sock_info.idx] = CharacterName::NONE;
+				for (int i = 1; i < MAX_PLAYER; ++i)
+				{
+					if (roomInfo.m_charInfo[i] == CharacterName::NONE) continue;
+					sendQueue[i].emplace_back(UPDATE_ROOM);
+				}
+				numPlayer--;
+				break;
 			}
 		}
 	}
@@ -418,59 +434,61 @@ DWORD WINAPI RecvData(LPVOID arg)
 	while (running)
 	{
 		retval = recvn(sock_info.sock, (char*)&op, sizeof(op), 0);
-		if (retval > 0)
+		if (retval == SOCKET_ERROR)
+			op = SOCKET_ERROR;
+		switch (op)
 		{
-			switch (op)
+			// InRoom 통신
+		case REQUEST_CHANGECHAR:
+			retval = recvn(sock_info.sock, (char*)&roomInfo.m_charInfo[sock_info.idx], sizeof(roomInfo.m_charInfo[sock_info.idx]), 0);
+
+			for (int i = 1; i < MAX_PLAYER; ++i)
 			{
-			case -1:	// 타임아웃
-				break;
-				// InRoom 통신
-			case REQUEST_CHANGECHAR:
-				retval = recvn(sock_info.sock, (char*)&roomInfo.m_charInfo[sock_info.idx], sizeof(roomInfo.m_charInfo[sock_info.idx]), 0);
-
-				for (int i = 1; i < MAX_PLAYER; ++i)
-				{
-					if (roomInfo.m_charInfo[i] == CharacterName::NONE) continue;
-					sendQueue[i].emplace_back(PERMIT_CHANGECHAR, sock_info.idx);
-				}
-				break;
-			case REQUEST_EXIT:
-				running = false;
-				closesocket(sock_info.sock);
-				sendQueue[sock_info.idx].emplace_back(PERMIT_EXIT);
-				break;
-			case NOTIFY_EXIT:
-				running = false;
-				closesocket(sock_info.sock);
-				numPlayer--;
-				break;
-			case NOTIFY_START:
-				readyPlayer++;
-
-				break;
-
-				// InGame통신
-			case INPUT_JUMP:
-				charArr[sock_info.idx].InsertKey(VK_SPACE);
-				break;
-			case INPUT_EMOTION:
-				emotionTime[sock_info.idx] = 1;
-				recvn(sock_info.sock, (char*)&emotionNum[sock_info.idx], sizeof(emotionNum[0]), 0);
-				for (int i = 1; i < MAX_PLAYER; ++i)
-				{
-					if (i == sock_info.idx)continue;
-					sendQueue[i].emplace_back(CHANGE_EMOTION, sock_info.idx);
-				}
-				break;
-			case INPUT_KEY_Q:
-				itemQueue.emplace_back(basicInfo.m_itemInfo[sock_info.idx][0], sock_info.idx);
-				basicInfo.m_itemInfo[sock_info.idx][0] = -1;
-				break;
-			case INPUT_KEY_W:
-				itemQueue.emplace_back(basicInfo.m_itemInfo[sock_info.idx][1], sock_info.idx);
-				basicInfo.m_itemInfo[sock_info.idx][1] = -1;
-				break;
+				if (roomInfo.m_charInfo[i] == CharacterName::NONE) continue;
+				sendQueue[i].emplace_back(PERMIT_CHANGECHAR, sock_info.idx);
 			}
+			break;
+		case REQUEST_EXIT:
+			running = false;
+			closesocket(sock_info.sock);
+			sendQueue[sock_info.idx].emplace_back(PERMIT_EXIT);
+			break;
+		case NOTIFY_EXIT:
+			running = false;
+			closesocket(sock_info.sock);
+			numPlayer--;
+			break;
+		case NOTIFY_START:
+			readyPlayer++;
+			break;
+
+			// InGame통신
+		case INPUT_JUMP:
+			charArr[sock_info.idx].InsertKey(VK_SPACE);
+			break;
+		case INPUT_EMOTION:
+			emotionTime[sock_info.idx] = 1;
+			recvn(sock_info.sock, (char*)&emotionNum[sock_info.idx], sizeof(emotionNum[0]), 0);
+			for (int i = 1; i < MAX_PLAYER; ++i)
+			{
+				if (i == sock_info.idx)continue;
+				sendQueue[i].emplace_back(CHANGE_EMOTION, sock_info.idx);
+			}
+			break;
+		case INPUT_KEY_Q:
+			itemQueue.emplace_back(basicInfo.m_itemInfo[sock_info.idx][0], sock_info.idx);
+			basicInfo.m_itemInfo[sock_info.idx][0] = -1;
+			break;
+		case INPUT_KEY_W:
+			itemQueue.emplace_back(basicInfo.m_itemInfo[sock_info.idx][1], sock_info.idx);
+			basicInfo.m_itemInfo[sock_info.idx][1] = -1;
+			break;
+
+			// 예외 처리
+		case SOCKET_ERROR:
+			running = false;
+			sendQueue[sock_info.idx].emplace_back(SOCKET_ERROR);
+			break;
 		}
 	}
 
@@ -522,7 +540,7 @@ DWORD WINAPI ListenThread(LPVOID arg)
 		for (int i = 1; i < MAX_PLAYER; ++i)
 		{
 			if (roomInfo.m_charInfo[i] == CharacterName::NONE) continue;
-			sendQueue[i].emplace_back(UPDATE_ROOM);
+			sendQueue[i].emplace_back(UPDATE_ROOM, 0);
 		}
 	}
 	return 0;
@@ -539,6 +557,8 @@ DWORD WINAPI RecvDataGuest(LPVOID arg)
 	while (running)
 	{
 		retval = recvn(sock_info.sock, (char*)&op, sizeof(op), 0);
+		if (retval == SOCKET_ERROR)
+			op = SOCKET_ERROR;
 		switch (op)
 		{
 			// InRoom 통신
@@ -565,10 +585,7 @@ DWORD WINAPI RecvDataGuest(LPVOID arg)
 			break;
 		case NOTIFY_START:
 			// 게임시작
-			#ifdef DEBUG_MODE
 			std::cout << "게임을 시작합니다" << std::endl;
-			#endif
-
 			gameStart = true;
 			break;
 
@@ -589,9 +606,19 @@ DWORD WINAPI RecvDataGuest(LPVOID arg)
 			// 소리 재생
 			break;
 		case CHANGE_EMOTION:
+		{
 			ChangeEmotionStruct ces;
 			recvn(sock_info.sock, (char*)&ces, sizeof(ces), 0);
 			emotionNum[ces.userIdx] = ces.emotionNum;
+		}
+		break;
+
+		// 예외처리
+		case SOCKET_ERROR:
+			running = false;
+			closesocket(sock_info.sock);
+			sendQueueGuest.emplace_back(SOCKET_ERROR);
+			hThreadGuest[0] = NULL;
 			break;
 		}
 	}
@@ -612,7 +639,11 @@ DWORD WINAPI SendDataGuest(LPVOID arg)
 		{
 			op = sendQueueGuest.front();
 			sendQueueGuest.pop_front();
-			send(sock_info.sock, (char*)&op, sizeof(op), 0);
+			if (op != SOCKET_ERROR)
+			{
+				retval = send(sock_info.sock, (char*)&op, sizeof(op), 0);
+				if (retval == SOCKET_ERROR) op = SOCKET_ERROR;
+			}
 			switch (op)
 			{
 				// InRoom 통신
@@ -632,6 +663,12 @@ DWORD WINAPI SendDataGuest(LPVOID arg)
 				// InGame 통신
 			case INPUT_EMOTION:
 				send(sock_info.sock, (char*)&emotionNum[sock_info.idx], sizeof(emotionNum[0]), 0);
+				break;
+
+				// 예외 처리
+			case SOCKET_ERROR:
+				running = false;
+				closesocket(sock_info.sock);
 				break;
 			}
 		}
