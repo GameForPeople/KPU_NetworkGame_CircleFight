@@ -187,6 +187,10 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 				m_isDestory = true;
 				m_nextScene = SceneName::RoomGuest;
 			}
+			else {
+				m_network->SetRecvType(0);
+				m_network->SetSendType(0);
+			}
 			LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 		}
 		else if (mouseY > 580 && mouseY < 670 && mouseX > 740 && mouseX < 845) {

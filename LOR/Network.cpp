@@ -164,7 +164,7 @@ void Network::NetworkThreadFunction() {
 					}
 					else {
 						m_sendType = 0;
-						m_recvType = 0;
+						m_recvType = FAIL_JOINROOM;
 					}
 				}
 			}
