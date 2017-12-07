@@ -51,7 +51,7 @@ void InGameSceneUI::DrawComboUI(HDC hdc, int combo) {
 
 	int sizeBuffer = 0;
 
-	if (combo % 50 == 0) {
+	if (combo % 50 == 0 && combo > 10) {
 		sizeBuffer = 30;
 		m_headUpUIIndex = 1;
 	}
