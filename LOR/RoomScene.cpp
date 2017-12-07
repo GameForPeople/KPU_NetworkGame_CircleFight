@@ -4,7 +4,7 @@ RoomScene::RoomScene()
 {
 }
 
-RoomScene::RoomScene(HWND hWnd, Network* network) : Scene(hWnd)
+RoomScene::RoomScene(HWND hWnd, Network* network, bool isMake) : Scene(hWnd)
 {
 	m_network = network;
 
@@ -15,7 +15,7 @@ RoomScene::RoomScene(HWND hWnd, Network* network) : Scene(hWnd)
 
 	readyPlayer = 0;
 
-	CreateThread(NULL, 0, ListenThread, NULL, NULL, NULL);
+	if(!isMake) CreateThread(NULL, 0, ListenThread, NULL, NULL, NULL);
 	if (numPlayer == 0)
 	{
 		for (int i = 0; i < 4; ++i)

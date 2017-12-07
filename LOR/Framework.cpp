@@ -250,7 +250,11 @@ void Framework::ChangeScene() {
 			m_nowScene = 2;
 		}
 		else if (SceneName::Room == m_Scene[m_nowScene]->m_nextScene) {
-			m_Scene[3] = new RoomScene(m_hwnd, &m_network);
+			if(m_nowScene == 2)
+				m_Scene[3] = new RoomScene(m_hwnd, &m_network, false);
+			else if (m_nowScene == 4)
+				m_Scene[3] = new RoomScene(m_hwnd, &m_network, true);
+
 			m_Scene[m_nowScene]->~Scene();
 			m_nowScene = 3;
 		}
