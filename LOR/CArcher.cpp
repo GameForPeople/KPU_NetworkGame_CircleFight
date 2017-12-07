@@ -48,7 +48,8 @@ void CArcher::ChangeImage(State state) {
 		}
 	}
 	else if (state == State::JumpLoop || state == State::JumpEnd 
-			|| state == State::DoubleJumpLoop || state == State::DoubleJumpEnd) {
+			|| state == State::DoubleJumpLoop || state == State::DoubleJumpEnd
+		|| state == State::TripleJumpLoop || state == State::TripleJumpEnd) {
 		if (m_imageTimer % 2 == 0) {
 			m_imageTimer = 0;
 

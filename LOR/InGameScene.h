@@ -18,14 +18,18 @@ private:
 
 	CImage*						m_platImg[2];
 	CImage*						m_itemImg;
+	CImage						m_winLoseImg[2];
 
 	InGameSceneUI*				m_inGameUI;
 
-	bool						m_isEatingItam;
+	bool						m_isEatingItam[MAX_PLAYER];
 	list<ItemTimer>				timerList;
 	int							m_stackSheild[2];
 
 	RandClass					m_rand;
+
+	int						m_resultUICount;
+	int						m_gameResult;
 
 public:
 	InGameScene();
@@ -52,6 +56,8 @@ public:
 	void CollideItem(int idx);
 
 	void UpdateItemList(double time);
+
+	void FinishChecker(int idx);
 
 	void SheildCountUp(int team) { m_stackSheild[team]++; }
 	void SheildCountDown(int team) 	{ m_stackSheild[team]--; }

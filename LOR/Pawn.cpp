@@ -7,13 +7,25 @@ Pawn::Pawn()
 Pawn::Pawn(CharacterName inputCharacterName)
 {
 	if (inputCharacterName == CharacterName::Archer)
+	{
 		m_unit = new CArcher;
+		m_charType = CharacterName::Archer;
+	}
 	else if (inputCharacterName == CharacterName::Zombie)
+	{
 		m_unit = new CZombie;
+		m_charType = CharacterName::Zombie;
+	}
 	else if (inputCharacterName == CharacterName::Knight)
+	{
 		m_unit = new CKnight;
+		m_charType = CharacterName::Knight;
+	}
 	else if (inputCharacterName == CharacterName::Wicher)
+	{
 		m_unit = new CWicher;
+		m_charType = CharacterName::Wicher;
+	}
 
 	m_baseSpeed = m_unit->GetBaseSpeed();
 	m_state = State::Fall;
@@ -114,12 +126,22 @@ bool Pawn::InsertKey(WPARAM Key) {
 			m_state = State::DoubleJumpLoop;
 			return true;
 		}		
+		else if (m_state == State::DoubleJumpLoop || m_state == State::DoubleJumpEnd) {
+			if (m_charType == CharacterName::Archer) {
+				ResetJumpSpeed();
+				m_state = State::TripleJumpStart;
+				ResetFallSpeed();
+				m_unit->SetImageCount(m_unit->GetJumpImageCount());
+				m_state = State::TripleJumpLoop;
+				return true;
+			}
+		}
 	}
 	return false;
 }
 
 void Pawn::ProcessGravity() {
-	if (m_state == State::Fall || m_state == State::JumpEnd || m_state == State::DoubleJumpEnd) {
+	if (m_state == State::Fall || m_state == State::JumpEnd || m_state == State::DoubleJumpEnd || m_state == State::TripleJumpEnd) {
 		m_pos.y += m_fallSpeed;
 		//m_fallSpeed *= 1.05;
 		m_fallSpeed *= 1.1;
@@ -130,7 +152,7 @@ void Pawn::ProcessGravity() {
 }
 
 void Pawn::ProcessJump() {
-	if (m_state == State::JumpLoop || m_state == State::DoubleJumpLoop) {
+	if (m_state == State::JumpLoop || m_state == State::DoubleJumpLoop || m_state == State::TripleJumpLoop ) {
 		m_pos.y -= m_jumpSpeed;
 		//m_jumpSpeed -= 0.11f;
 		m_jumpSpeed *= 0.9f;
@@ -141,6 +163,9 @@ void Pawn::ProcessJump() {
 			}
 			else if (m_state == State::DoubleJumpLoop) {
 				m_state = State::DoubleJumpEnd;
+			}
+			else if (m_state == State::TripleJumpLoop) {
+				m_state = State::TripleJumpEnd;
 			}
 
 			ResetFallSpeed();

@@ -70,7 +70,7 @@ void InGameSceneUI::DrawComboUI(HDC hdc, int combo) {
 }
 
 void InGameSceneUI::DrawBarUI(HDC hdc, int idx, float markPosX) {
-	BarUI.TransparentBlt(hdc, 200, 10, BarUI.GetWidth() - 50, BarUI.GetHeight(), RGB(255, 255, 255));
+	BarUI.TransparentBlt(hdc, 200, 10, 950, BarUI.GetHeight(), RGB(255, 255, 255));
 
 	BarMarkUI[idx].TransparentBlt(hdc, markPosX + 200, 20, BarMarkUI[idx].GetWidth() - 20, BarMarkUI[idx].GetHeight() - 20, RGB(255, 255, 255));
 }

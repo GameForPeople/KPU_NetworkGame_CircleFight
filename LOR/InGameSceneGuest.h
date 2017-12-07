@@ -17,8 +17,11 @@ private:
 
 	CImage*						m_platImg[2];
 	CImage*						m_itemImg;
+	CImage						m_winLoseImg[2];
 
 	InGameSceneUI*				m_inGameUI;
+
+	int						m_resultUICount;
 
 public:
 	InGameSceneGuest();

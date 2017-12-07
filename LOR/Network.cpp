@@ -221,6 +221,7 @@ void Network::NetworkThreadFunction() {
 			}
 		}
 		else if (m_sceneName == SceneName::Room) {
+			_sleep(1000);
 			if (m_sendType == DEMAND_EXITROOM) {
 				retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
@@ -383,6 +384,8 @@ bool gameStart;
 HANDLE hThreadGuest[2];
 CharacterName reqChar;
 deque<UseItemInfo> itemQueue;
+
+Network* threadNetwork;
 
 int GetEmptySlot()
 {
@@ -670,6 +673,15 @@ DWORD WINAPI RecvDataGuest(LPVOID arg)
 			emotionNum[ces.userIdx] = ces.emotionNum;
 		}
 		break;
+		case NOTIFY_WIN:
+			threadNetwork->m_gameResult = 1;
+			threadNetwork->m_gameResultBuffer = 1;
+
+			break;
+		case NOTIFY_LOSE:
+			threadNetwork->m_gameResult = 2;
+			threadNetwork->m_gameResultBuffer = 2;
+			break;
 
 		// 예외처리
 		case SOCKET_ERROR:

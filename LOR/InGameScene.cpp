@@ -52,6 +52,9 @@ InGameScene::InGameScene(HWND hwnd, Network* network) : Scene(hwnd)
 
 	m_itemImg->Load("Resource/Image/UI/item_Random_2.png");
 
+	m_winLoseImg[0].Load("Resource/Image/UI/Win.png");
+	m_winLoseImg[1].Load("Resource/Image/UI/Lose.png");
+
 	int numItem = (PLAT_MAX_NUMBER - ITEM_FIRST_IMPACT) / ITEM_INTERVAL + 1;
 
 	m_platArr = new BaseObject[PLAT_MAX_NUMBER];
@@ -65,6 +68,8 @@ InGameScene::InGameScene(HWND hwnd, Network* network) : Scene(hwnd)
 	m_inGameUI = new InGameSceneUI;
 
 	charArr = m_characterArr;
+
+	m_resultUICount = 0;
 }
 
 InGameScene::InGameScene()
@@ -103,23 +108,36 @@ void InGameScene::Draw(HDC hdc) {
 
 	for (int i = 1; i < MAX_PLAYER; ++i)
 	{
-		m_inGameUI->DrawBarUI(hdc, i, m_characterArr[i].GetTotalDistance() / 100);
+		m_inGameUI->DrawBarUI(hdc, i, m_characterArr[i].GetTotalDistance() / 110);
 		m_inGameUI->DrawPlayerMark(hdc, i, basicInfo.m_yPos[i], basicInfo.m_totalDis[0], basicInfo.m_totalDis[i]);
 		if (emotionNum[i])
 			m_inGameUI->DrawEmotionUI(hdc, emotionNum[i], basicInfo.m_totalDis[0], basicInfo.m_totalDis[i], basicInfo.m_yPos[i]);
 		else
 			m_inGameUI->DrawHeadUpUI(hdc, m_characterArr[i].GetPos().y, basicInfo.m_totalDis[0], basicInfo.m_totalDis[i]);
 	}
-	m_inGameUI->DrawBarUI(hdc, 0, m_characterArr[0].GetTotalDistance() / 100);
+	m_inGameUI->DrawBarUI(hdc, 0, m_characterArr[0].GetTotalDistance() / 110);
 	m_inGameUI->DrawPlayerMark(hdc, 0, basicInfo.m_yPos[0]);
 	if (emotionNum[0])
 		m_inGameUI->DrawEmotionUI(hdc, emotionNum[0], 0, 0, basicInfo.m_yPos[0]);
 	else
 		m_inGameUI->DrawHeadUpUI(hdc, m_characterArr[0].GetPos().y, 0, 0);
+
+	if (m_gameResult == 1) m_winLoseImg[0].TransparentBlt(hdc, 200, 200, 880, 320, RGB(255, 0, 255));
+	if (m_gameResult == 2) m_winLoseImg[1].TransparentBlt(hdc, 200, 200, 880, 320, RGB(0, 255, 0));
 }
 
 void InGameScene::Timer(const double time) {
-
+	
+	if (m_resultUICount > 0)
+	{
+		m_resultUICount++;
+		if (m_resultUICount > 300)
+		{
+			m_nextScene = SceneName::Room;
+			m_isDestory = true;
+		}
+	}
+	
 	UpdateItemList(time);
 	
 	while (!itemQueue.empty())
@@ -320,6 +338,7 @@ void InGameScene::ComputePawn(int idx) {
 	if (m_characterArr[idx].GetState() == State::Fall
 		|| m_characterArr[idx].GetState() == State::JumpEnd
 		|| m_characterArr[idx].GetState() == State::DoubleJumpEnd
+		|| m_characterArr[idx].GetState() == State::TripleJumpEnd
 		) {
 		//if (m_platArr[leftPlat].GetPos().y - 5<= pawnPosY
 		//	&& m_platArr[leftPlat].GetPos().y + 5 > pawnPosY) {
@@ -453,33 +472,37 @@ void InGameScene::UseItem(int itemNum, int user)
 	static int b, e;
 	static int itemIdx;
 
-	if (itemNum == 0)		// 번개
+	if (itemNum == LIGHTNING)		// 번개
 	{
 		//send()
 		ItemTimer elem(LIGHTNING_DELAY, LIGHTNING, user);
 		timerList.push_back(elem);
-		b = 2;	e = 4;
+		if (user < 2) { b = 2;	e = 4; }
+		else { b = 0;	e = 2; }
 		itemIdx = NOTIFY_ITEM_THUNDER;
 	}
-	else if (itemNum == 1)	// 숙면
+	else if (itemNum == BED)	// 숙면
 	{
 		ItemTimer elem(BED_DELAY, BED, user);
 		timerList.push_back(elem);
-		b = 2;	e = 4;
+		if (user < 2) { b = 2;	e = 4; }
+		else { b = 0;	e = 2; }
 		itemIdx = NOTIFY_ITEM_BED;
 	}
-	else if (itemNum == 2)	// 날개
+	else if (itemNum == WING)	// 날개
 	{
 		ItemTimer elem(WING_DELAY, WING, user);
 		timerList.push_back(elem);
-		b = 0;	e = 2;
+		if (user < 2) { b = 0;	e = 2; }
+		else { b = 2;	e = 4; }
 		itemIdx = NOTIFY_ITEM_WING;
 	}
-	else if (itemNum == 3)	// 방패
+	else if (itemNum == SHEILD)	// 방패
 	{
 		ItemTimer elem(SHEILD_DELAY, SHEILD, user);
 		timerList.push_back(elem);
-		b = 0;	e = 2;
+		if (user < 2) { b = 0;	e = 2; }
+		else { b = 2;	e = 4; }
 		itemIdx = NOTIFY_ITEM_SHIELD;
 	}
 
@@ -487,13 +510,13 @@ void InGameScene::UseItem(int itemNum, int user)
 	{
 		if (b == 0) { 
 			/*소리 재생*/ 
-			if(itemNum == 0)
+			if(itemNum == LIGHTNING)
 				PlaySound("Resource\\Sound\\ets.wav", NULL, SND_ASYNC);
-			else if (itemNum == 1)
+			else if (itemNum == BED)
 				PlaySound("Resource\\Sound\\sleeping.wav", NULL, SND_ASYNC);
-			else if (itemNum == 2)
+			else if (itemNum == SHEILD)
 				PlaySound("Resource\\Sound\\shield.wav", NULL, SND_ASYNC);
-			else if (itemNum == 3)
+			else if (itemNum == WING)
 				PlaySound("Resource\\Sound\\angle.wav", NULL, SND_ASYNC);
 		}
 		else { sendQueue[b].emplace_back(itemIdx, 0); }
@@ -522,14 +545,14 @@ void InGameScene::CollideItem(int idx)
 
 	if (BoxBoxCol(aMinX, aMinY, aMaxX, aMaxY, bMinX, bMinY, bMaxX, bMaxY))
 	{
-		if (m_isEatingItam) { return; }	//한번만 먹으라
+		if (m_isEatingItam[idx]) { return; }	//한번만 먹으라
 		int emptyIdx = (basicInfo.m_itemInfo[idx][0] == -1) ? 0 : (basicInfo.m_itemInfo[idx][1] == -1) ? 1 : -1;
-		if (emptyIdx != -1) basicInfo.m_itemInfo[idx][emptyIdx] = m_rand.getRandomNumber(0, 3);
-		m_isEatingItam = true;
+		if (emptyIdx != -1) basicInfo.m_itemInfo[idx][emptyIdx] = m_rand.getRandomNumber(1, 4);
+		m_isEatingItam[idx] = true;
 		return;							//하나 이상 충돌할일이 없음
 	}
 
-	m_isEatingItam = false;
+	m_isEatingItam[idx] = false;
 }
 
 void InGameScene::UpdateItemList(double time)
@@ -634,5 +657,25 @@ void InGameScene::UpdateItemList(double time)
 			iter++;
 			break;
 		}
+	}
+}
+
+void InGameScene::FinishChecker(int idx)
+{
+	if (m_characterArr[idx].GetTotalDistance() < 100000) return;
+	if (m_resultUICount == 0) m_resultUICount++;
+	if (idx < 2)
+	{ 
+		m_gameResult = m_network->m_gameResult = 1;
+		sendQueue[1].emplace_back(NOTIFY_WIN);
+		sendQueue[2].emplace_back(NOTIFY_LOSE);
+		sendQueue[3].emplace_back(NOTIFY_LOSE);
+	}
+	else
+	{
+		m_gameResult = m_network->m_gameResult = 2;
+		sendQueue[1].emplace_back(NOTIFY_LOSE);
+		sendQueue[2].emplace_back(NOTIFY_WIN);
+		sendQueue[3].emplace_back(NOTIFY_WIN);
 	}
 }

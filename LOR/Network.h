@@ -83,6 +83,8 @@ enum Protocol {
 	, NOTIFY_ITEM_WING = 408
 	, INPUT_KEY_Q = 409
 	, INPUT_KEY_W = 410
+	, NOTIFY_WIN = 411
+	, NOTIFY_LOSE = 412
 	
 	, DEMAND_SENDRESULT = 498
 	, SUPPLY_GAMEEND = 499	//HOST	-> Server
@@ -357,6 +359,7 @@ public:
 	UserData myData;
 	int      m_roomIndex;
 	int		 m_gameResult;
+	int		m_gameResultBuffer;
 public:
 	CRITICAL_SECTION SEND_SECTION;
 	CRITICAL_SECTION LOBBY_UPDATE_SECTION;
@@ -422,6 +425,8 @@ extern bool gameStart;
 extern HANDLE hThreadGuest[2];
 extern CharacterName reqChar;
 extern deque<UseItemInfo> itemQueue;
+
+extern Network* threadNetwork;
 
 DWORD WINAPI ListenThread(LPVOID arg);
 DWORD WINAPI RecvData(LPVOID arg);

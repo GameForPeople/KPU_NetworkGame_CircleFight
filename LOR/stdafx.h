@@ -97,6 +97,9 @@ enum class State {
 	,	DoubleJumpStart
 	,	DoubleJumpLoop
 	,	DoubleJumpEnd
+	,	TripleJumpStart
+	,	TripleJumpLoop
+	,	TripleJumpEnd
 	,	TripleJump
 	,	Fall
 	,	Collide
@@ -129,7 +132,7 @@ enum class MapName{
 
 enum item			//아이템 이넘
 {
-	LIGHTNING = 10,		//번개
+	LIGHTNING = 1,		//번개
 	BED,			//침대
 	WING,			//날개
 	SHEILD,			//방패
