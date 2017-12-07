@@ -70,7 +70,7 @@ void InGameSceneUI::DrawComboUI(HDC hdc, int combo) {
 }
 
 void InGameSceneUI::DrawBarUI(HDC hdc, int idx, float markPosX) {
-	BarUI.TransparentBlt(hdc, 200, 10, 950, BarUI.GetHeight(), RGB(255, 255, 255));
+	BarUI.TransparentBlt(hdc, 200, 10, 1000, BarUI.GetHeight(), RGB(255, 255, 255));
 
 	BarMarkUI[idx].TransparentBlt(hdc, markPosX + 200, 20, BarMarkUI[idx].GetWidth() - 20, BarMarkUI[idx].GetHeight() - 20, RGB(255, 255, 255));
 }
@@ -79,11 +79,11 @@ void InGameSceneUI::DrawInventoryUI(HDC hdc, int item1Num, int item2Num) {
 	InventoryUI.TransparentBlt(hdc, 10, 550, 220, 120, RGB(255, 255, 255));
 	if (item1Num != -1)
 	{
-		ItemUI[item1Num].TransparentBlt(hdc, 20, 560, 90, 90, RGB(255, 255, 255));
+		ItemUI[item1Num - 1].TransparentBlt(hdc, 20, 560, 90, 90, RGB(255, 255, 255));
 	}
 	if (item2Num != -1)
 	{
-		ItemUI[item2Num].TransparentBlt(hdc, 130, 560, 90, 90, RGB(255, 255, 255));
+		ItemUI[item2Num - 1].TransparentBlt(hdc, 130, 560, 90, 90, RGB(255, 255, 255));
 	}
 }
 

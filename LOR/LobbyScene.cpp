@@ -184,8 +184,8 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 				//	delete (m_network->m_updateLobbyInfo);
 
 				m_network->ChageSceneName(SceneName::RoomGuest);
-				m_isDestory = true;
 				m_nextScene = SceneName::RoomGuest;
+				m_isDestory = true;
 				std::cout << "방에 들어 갔습니다. " << std::endl;
 			}
 			else if (m_network->GetRecvType() == FAIL_JOINROOM){

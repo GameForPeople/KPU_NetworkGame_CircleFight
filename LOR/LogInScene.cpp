@@ -149,10 +149,10 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 					m_network->myData.winCount = m_network->m_permitLogin->winCount;
 					m_network->myData.loseCount = m_network->m_permitLogin->loseCount;
 
-					m_isDestory = true;
-					m_nextScene = SceneName::Lobby;
 					m_network->SetRecvType();
 					m_network->ChageSceneName(SceneName::Lobby);
+					m_nextScene = SceneName::Lobby;
+					m_isDestory = true;
 
 					delete (m_network->m_demandLogin);
 					delete (m_network->m_permitLogin);
@@ -199,10 +199,10 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 					m_network->myData.winCount = m_network->m_permitLogin->winCount;
 					m_network->myData.loseCount = m_network->m_permitLogin->loseCount;
 
-					m_isDestory = true;
-					m_nextScene = SceneName::Lobby;
 					m_network->SetRecvType();
 					m_network->ChageSceneName(SceneName::Lobby);
+					m_nextScene = SceneName::Lobby;
+					m_isDestory = true;
 
 					delete (m_network->m_demandLogin);
 					delete (m_network->m_permitLogin);
@@ -305,10 +305,10 @@ bool LoginScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 						m_network->myData.winCount = m_network->m_permitLogin->winCount;
 						m_network->myData.loseCount = m_network->m_permitLogin->loseCount;
 
-						m_isDestory = true;
-						m_nextScene = SceneName::Lobby;
 						m_network->SetRecvType();
 						m_network->ChageSceneName(SceneName::Lobby);
+						m_nextScene = SceneName::Lobby;
+						m_isDestory = true;
 
 						delete (m_network->m_demandLogin);
 						delete (m_network->m_permitLogin);

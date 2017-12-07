@@ -96,10 +96,10 @@ bool Pawn::InsertKey(WPARAM Key) {
 		if (m_state == State::Run) {
 
 
-			if (m_charType == CharacterName::Archer && m_charType == CharacterName::Wicher) {
+			if (m_charType == CharacterName::Archer || m_charType == CharacterName::Wicher) {
 				PlaySound("Resource\\Sound\\NotmanJump.wav", NULL, SND_ASYNC);
 			}
-			else if (m_charType == CharacterName::Zombie && m_charType == CharacterName::Knight) {
+			else if (m_charType == CharacterName::Zombie || m_charType == CharacterName::Knight) {
 				PlaySound("Resource\\Sound\\manJump.wav", NULL, SND_ASYNC);
 			}
 

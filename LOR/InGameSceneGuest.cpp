@@ -162,7 +162,13 @@ bool InGameSceneGuest::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARA
 			//else if (m_characterArr[m_idx].GetCharType() == CharacterName::Zombie && m_characterArr[m_idx].GetCharType() == CharacterName::Knight) {
 			//		PlaySound("Resource\\Sound\\manJump.wav", NULL, SND_ASYNC);
 			//}
-			
+
+			if (charArr[m_idx].GetCharType() == CharacterName::Archer || charArr[m_idx].GetCharType() == CharacterName::Wicher) {
+				PlaySound("Resource\\Sound\\NotmanJump.wav", NULL, SND_ASYNC);
+			}
+			else if (charArr[m_idx].GetCharType() == CharacterName::Zombie || charArr[m_idx].GetCharType() == CharacterName::Knight) {
+				PlaySound("Resource\\Sound\\manJump.wav", NULL, SND_ASYNC);
+			}
 			break;
 		case 'G':
 

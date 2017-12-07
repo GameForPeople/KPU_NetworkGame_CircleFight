@@ -55,8 +55,8 @@ RoomSceneGuest::RoomSceneGuest(HWND hWnd, Network* network) : Scene(hWnd)
 		cout << "방 입장 불가능" << endl;
 		#endif
 
-		m_isDestory = true;
 		m_nextScene = SceneName::Lobby;
+		m_isDestory = true;
 	}
 
 	LoadCImage();
@@ -164,8 +164,8 @@ bool RoomSceneGuest::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARA
 			m_network->SetSendType(DEMAND_EXITROOM);
 			WaitForMultipleObjects(2, hThreadGuest, TRUE, INFINITE);
 			//m_network->ChageSceneName(SceneName::Lobby);
-			m_isDestory = true;
 			m_nextScene = SceneName::Lobby;
+			m_isDestory = true;
 		}
 
 		return true;
@@ -178,13 +178,14 @@ void RoomSceneGuest::Timer(const double count) {
 		std::cout << "방에 들어가는 것이 2번째 이유로 실패했습니다. " << std::endl;
 
 		m_network->SetSendType(DEMAND_EXITROOM);
-		m_isDestory = true;
 		m_nextScene = SceneName::Lobby;
+		m_isDestory = true;
 	}
 	else if (gameStart)
 	{
-		m_isDestory = true;
+		gameStart = false;
 		m_nextScene = SceneName::InGameGuest;
+		m_isDestory = true;
 	}
 }
 

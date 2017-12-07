@@ -174,8 +174,8 @@ bool RoomScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPa
 				readyPlayer++;
 				while (readyPlayer < MAX_PLAYER);
 
-				m_isDestory = true;
 				m_nextScene = SceneName::InGame;
+				m_isDestory = true;
 			}
 		}
 

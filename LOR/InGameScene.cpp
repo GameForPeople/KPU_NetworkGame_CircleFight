@@ -176,6 +176,7 @@ void InGameScene::Timer(const double time) {
 	{
 		ComputePawn(i);
 		CollideItem(i);
+		FinishChecker(i);
 		basicInfo.m_yPos[i] = m_characterArr[i].GetYPos();
 		basicInfo.m_totalDis[i] = m_characterArr[i].GetTotalDistance();
 		basicInfo.m_speed[i] = m_characterArr[i].GetSpeed();
@@ -204,7 +205,7 @@ bool InGameScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPa
 
 			break;
 		case 'G':
-
+			std::cout << charArr[0].GetTotalDistance() << std::endl;
 			break;
 		case '1':
 			emotionNum[0] = 1;
