@@ -6,7 +6,7 @@ class RoomSceneGuest : public Scene
 {
 public:
 	RoomSceneGuest();
-	RoomSceneGuest(HWND, Network*);
+	RoomSceneGuest(HWND, Network*, bool);
 	~RoomSceneGuest();
 
 public:
