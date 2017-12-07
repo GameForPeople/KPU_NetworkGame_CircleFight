@@ -4,7 +4,7 @@ RoomSceneGuest::RoomSceneGuest()
 {
 }
 
-RoomSceneGuest::RoomSceneGuest(HWND hWnd, Network* network) : Scene(hWnd)
+RoomSceneGuest::RoomSceneGuest(HWND hWnd, Network* network, bool isMake) : Scene(hWnd)
 {
 	m_network = network;
 	m_network->ChageSceneName(SceneName::RoomGuest);
@@ -15,6 +15,8 @@ RoomSceneGuest::RoomSceneGuest(HWND hWnd, Network* network) : Scene(hWnd)
 	}
 
 	sendQueueGuest.clear();
+
+	if (isMake) return;
 
 	SOCKADDR_IN serveraddr;
 	ZeroMemory(&serveraddr, sizeof(serveraddr));
