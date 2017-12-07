@@ -15,7 +15,7 @@ using namespace FMOD;
 #define CHAT_MAX_LINE		5
 #define MAX_ROOM_COUNT		8
 
-#define ACCEPT_DENIED 18446744073709551615
+#define ACCEPT_DENIED 100000
 
 // 사용자 정의 데이터 수신 함수
 int recvn(SOCKET s, char *buf, int len, int flags);
@@ -409,10 +409,14 @@ extern Pawn* charArr;
 extern int	emotionNum[MAX_PLAYER];
 extern int  emotionTime[MAX_PLAYER];
 
-extern int numPlayer;
+extern atomic<int> numPlayer;
 extern UpdateRoomStruct roomInfo;
 extern atomic<int> readyPlayer;
 extern SOCKET listen_sock;
+//extern atomic<bool> listenThreadExit;
+//extern atomic<bool> SendThreadExit;
+//extern atomic<bool> RecvThreadExit;
+
 
 extern bool gameStart;
 extern HANDLE hThreadGuest[2];

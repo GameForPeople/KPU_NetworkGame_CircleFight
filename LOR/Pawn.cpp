@@ -82,13 +82,31 @@ void Pawn::ProcessCombo() {
 bool Pawn::InsertKey(WPARAM Key) {
 	if (Key == VK_SPACE) {
 		if (m_state == State::Run) {
+
+
+			if (m_charType == CharacterName::Archer && m_charType == CharacterName::Wicher) {
+				PlaySound("Resource\\Sound\\NotmanJump.wav", NULL, SND_ASYNC);
+			}
+			else if (m_charType == CharacterName::Zombie && m_charType == CharacterName::Knight) {
+				PlaySound("Resource\\Sound\\manJump.wav", NULL, SND_ASYNC);
+			}
+
 			m_state = State::JumpStart;
 			ResetJumpSpeed();
 			m_unit->SetImageCount(m_unit->GetJumpImageCount());
 			m_state = State::JumpLoop;
+
 			return true;
 		}	
 		else if (m_state == State::JumpLoop || m_state == State::JumpEnd) {
+
+			if (m_charType == CharacterName::Archer && m_charType == CharacterName::Wicher) {
+				PlaySound("Resource\\Sound\\NotmanJump.wav", NULL, SND_ASYNC);
+			}
+			else if (m_charType == CharacterName::Zombie && m_charType == CharacterName::Knight) {
+				PlaySound("Resource\\Sound\\manJump.wav", NULL, SND_ASYNC);
+			}
+
 			ResetJumpSpeed();
 			m_state = State::DoubleJumpStart;
 			ResetFallSpeed();

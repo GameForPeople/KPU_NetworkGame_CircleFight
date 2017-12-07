@@ -485,7 +485,17 @@ void InGameScene::UseItem(int itemNum, int user)
 
 	for (; b < e; ++b)
 	{
-		if (b == 0) { /*家府 犁积*/ }
+		if (b == 0) { 
+			/*家府 犁积*/ 
+			if(itemNum == 0)
+				PlaySound("Resource\\Sound\\ets.wav", NULL, SND_ASYNC);
+			else if (itemNum == 1)
+				PlaySound("Resource\\Sound\\sleeping.wav", NULL, SND_ASYNC);
+			else if (itemNum == 2)
+				PlaySound("Resource\\Sound\\shield.wav", NULL, SND_ASYNC);
+			else if (itemNum == 3)
+				PlaySound("Resource\\Sound\\angle.wav", NULL, SND_ASYNC);
+		}
 		else { sendQueue[b].emplace_back(itemIdx, 0); }
 	}
 }

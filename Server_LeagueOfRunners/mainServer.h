@@ -79,17 +79,19 @@ public:
 
 	void Create(IN_ADDR& inputAddr) { m_hostAddr = inputAddr; m_playersNumber = 1; m_mapNumber = 1; m_isCreate = true; }
 	bool Destory() { if (m_isCreate) { m_isCreate = false; m_playersNumber = 0; return true; } else return false; }
-	bool Exit() { 
+	int Exit() { 
 		if (m_isCreate) {
 			m_playersNumber--; 
 
-			if (m_playersNumber == 0)
+			if (m_playersNumber == 0) {
 				m_isCreate = false;
+				return 2;
+			}
 
-			return true; 
+			return 1; 
 		} 
 		else 
-			return false; 
+			return 0; 
 	}
 
 	bool Join() { if (m_isCreate && m_playersNumber < 4) { m_playersNumber++; return true;  } else return false; }
@@ -134,10 +136,12 @@ public:
 
 	bool ExitRoom(int roomIndex) {
 		//m_roomCount--;
-		return m_roomArr[roomIndex].Exit();
+		if( m_roomArr[roomIndex].Exit() == 2) m_roomCount--;
+		return 1;
 	}
 
 	bool DestoryRoom(int roomIndex) {
+		m_roomCount--;
 		return m_roomArr[roomIndex].Destory();
 	}
 

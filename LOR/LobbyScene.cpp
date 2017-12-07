@@ -186,10 +186,12 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 				m_network->ChageSceneName(SceneName::RoomGuest);
 				m_isDestory = true;
 				m_nextScene = SceneName::RoomGuest;
+				std::cout << "방에 들어 갔습니다. " << std::endl;
 			}
-			else {
+			else if (m_network->GetRecvType() == FAIL_JOINROOM){
 				m_network->SetRecvType(0);
 				m_network->SetSendType(0);
+				std::cout << "방에 들어가는 것이 1번째 이유로 실패했습니다. " << std::endl;
 			}
 			LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 		}

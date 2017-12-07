@@ -162,7 +162,7 @@ void Network::NetworkThreadFunction() {
 
 						m_sendType = 0;
 					}
-					else {
+					else if (m_recvType == FAIL_JOINROOM) {
 						m_sendType = 0;
 						m_recvType = FAIL_JOINROOM;
 					}
@@ -371,10 +371,13 @@ Pawn* charArr;
 int	emotionNum[MAX_PLAYER];
 int  emotionTime[MAX_PLAYER];
 
-int numPlayer = 0;
+atomic<int> numPlayer = 0;
 UpdateRoomStruct roomInfo;
 atomic<int> readyPlayer;
 SOCKET listen_sock = NULL;
+//atomic<bool> listenThreadExit = false;
+//atomic<bool> RecvThreadExit = false;
+//atomic<bool> SendThreadExit = false;
 
 bool gameStart;
 HANDLE hThreadGuest[2];
@@ -462,6 +465,8 @@ DWORD WINAPI SendData(LPVOID arg)
 				numPlayer--;
 				break;
 			}
+			
+			
 		}
 	}
 
@@ -485,7 +490,8 @@ DWORD WINAPI RecvData(LPVOID arg)
 			// InRoom 烹脚
 		case REQUEST_CHANGECHAR:
 			retval = recvn(sock_info.sock, (char*)&roomInfo.m_charInfo[sock_info.idx], sizeof(roomInfo.m_charInfo[sock_info.idx]), 0);
-
+			if (retval == SOCKET_ERROR)
+				op = SOCKET_ERROR;
 			for (int i = 1; i < MAX_PLAYER; ++i)
 			{
 				if (roomInfo.m_charInfo[i] == CharacterName::NONE) continue;
@@ -534,6 +540,8 @@ DWORD WINAPI RecvData(LPVOID arg)
 			sendQueue[sock_info.idx].emplace_back(SOCKET_ERROR);
 			break;
 		}
+
+		
 	}
 
 	return 0;
@@ -559,7 +567,7 @@ DWORD WINAPI ListenThread(LPVOID arg)
 	{
 		// accept()
 		SOCKET newSock = accept(listen_sock, NULL, NULL);
-		if (newSock == ACCEPT_DENIED) break;
+		if (newSock > ACCEPT_DENIED) break;
 		int idx = GetEmptySlot();
 		if (idx == -1)
 		{
@@ -586,7 +594,9 @@ DWORD WINAPI ListenThread(LPVOID arg)
 			if (roomInfo.m_charInfo[i] == CharacterName::NONE) continue;
 			sendQueue[i].emplace_back(UPDATE_ROOM, 0);
 		}
+
 	}
+
 	return 0;
 }
 
@@ -638,16 +648,20 @@ DWORD WINAPI RecvDataGuest(LPVOID arg)
 			recvn(sock_info.sock, (char*)&basicInfo, sizeof(basicInfo), 0);
 			break;
 		case NOTIFY_ITEM_THUNDER:
-			// 家府 犁积
+			// 家府 犁积			if(itemNum == 0)
+			PlaySound("Resource\\Sound\\ets.wav", NULL, SND_ASYNC);
 			break;
 		case NOTIFY_ITEM_BED:
 			// 家府 犁积
+			PlaySound("Resource\\Sound\\sleeping.wav", NULL, SND_ASYNC);
 			break;
 		case NOTIFY_ITEM_SHIELD:
 			// 家府 犁积
+			PlaySound("Resource\\Sound\\shield.wav", NULL, SND_ASYNC);
 			break;
 		case NOTIFY_ITEM_WING:
 			// 家府 犁积
+			PlaySound("Resource\\Sound\\angle.wav", NULL, SND_ASYNC);
 			break;
 		case CHANGE_EMOTION:
 		{

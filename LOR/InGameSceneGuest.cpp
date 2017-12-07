@@ -73,7 +73,7 @@ InGameSceneGuest::~InGameSceneGuest()
 
 void InGameSceneGuest::Draw(HDC hdc) {
 	m_map->Draw(hdc);
-	
+
 	float xPos = basicInfo.m_firstPlat[m_idx].xPos;
 	for (int i = basicInfo.m_firstPlat[m_idx].idx, j=0; j < PLAT_SHOWN_CNT; ++i, ++j) {
 		if (m_platArr[i].GetPos().y != PLAT_LOW_HEIGHT)
@@ -111,6 +111,16 @@ void InGameSceneGuest::Draw(HDC hdc) {
 		m_inGameUI->DrawEmotionUI(hdc, emotionNum[m_idx], 0, 0, basicInfo.m_yPos[m_idx]);
 	else
 		m_inGameUI->DrawHeadUpUI(hdc, basicInfo.m_yPos[m_idx], 0, 0);
+
+
+	//if (itemNum == 0)
+	//	PlaySound("Resource\\Sound\\ets.wav", NULL, SND_ASYNC);
+	//else if (itemNum == 1)
+	//	PlaySound("Resource\\Sound\\sleeping.wav", NULL, SND_ASYNC);
+	//else if (itemNum == 2)
+	//	PlaySound("Resource\\Sound\\shield.wav", NULL, SND_ASYNC);
+	//else if (itemNum == 3)
+	//	PlaySound("Resource\\Sound\\angle.wav", NULL, SND_ASYNC);
 }
 
 void InGameSceneGuest::Timer(const double time) {
@@ -130,6 +140,13 @@ bool InGameSceneGuest::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARA
 		switch (wParam) {
 		case VK_SPACE:
 			sendQueueGuest.emplace_back(INPUT_JUMP);
+			if (m_characterArr[m_idx].GetCharType() == CharacterName::Archer && m_characterArr[m_idx].GetCharType() == CharacterName::Wicher) {
+					PlaySound("Resource\\Sound\\NotmanJump.wav", NULL, SND_ASYNC);
+			}
+			else if (m_characterArr[m_idx].GetCharType() == CharacterName::Zombie && m_characterArr[m_idx].GetCharType() == CharacterName::Knight) {
+					PlaySound("Resource\\Sound\\manJump.wav", NULL, SND_ASYNC);
+			}
+			
 			break;
 		case 'G':
 

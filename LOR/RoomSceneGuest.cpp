@@ -175,6 +175,8 @@ bool RoomSceneGuest::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARA
 void RoomSceneGuest::Timer(const double count) {
 	if (!hThreadGuest[0])
 	{
+		std::cout << "방에 들어가는 것이 2번째 이유로 실패했습니다. " << std::endl;
+
 		m_network->SetSendType(DEMAND_EXITROOM);
 		m_isDestory = true;
 		m_nextScene = SceneName::Lobby;
