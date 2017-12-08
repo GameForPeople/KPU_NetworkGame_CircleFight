@@ -80,11 +80,11 @@ void Pawn::ProcessCombo() {
 
 	//std::cout << m_combo << "   " << m_speed << "   " << m_baseSpeed << std::endl;
 
-	if (m_combo % 50 == 1)
+	if (m_combo % 30 == 1)
 		m_comboEffect = true;
 
 	if (m_comboEffect) {
-		if (m_combo != 0 && m_combo % 50 == 0 && m_bufSpeed != 0) {
+		if (m_combo != 0 && m_combo % 30 == 0 && m_bufSpeed != 0) {
 			m_speed = m_speed + m_baseSpeed / 5;
 			m_comboEffect = false;
 		}
@@ -238,7 +238,7 @@ void Pawn::FaintReset()
 {
 	m_stackFaint = 0;
 	m_bufSpeed = 1.0f;
-	m_state = State::Run;
+	m_state = State::JumpEnd;
 }
 
 void Pawn::SpeedUpCountUp(bool boost)

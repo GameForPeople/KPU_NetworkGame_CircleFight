@@ -306,7 +306,7 @@ bool Framework::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPara
 		switch (wParam)
 		{
 		case VK_ESCAPE:
-			DestroyWindow(hwnd);
+			//DestroyWindow(hwnd);
 			break;
 		}
 		return true;
