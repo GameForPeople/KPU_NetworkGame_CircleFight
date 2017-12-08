@@ -15,6 +15,7 @@ RoomSceneGuest::RoomSceneGuest(HWND hWnd, Network* network, bool isMake) : Scene
 	}
 
 	sendQueueGuest.clear();
+	LoadCImage();
 
 	if (isMake) return;
 
@@ -60,8 +61,6 @@ RoomSceneGuest::RoomSceneGuest(HWND hWnd, Network* network, bool isMake) : Scene
 		m_nextScene = SceneName::Lobby;
 		m_isDestory = true;
 	}
-
-	LoadCImage();
 }
 
 RoomSceneGuest::~RoomSceneGuest()
