@@ -136,7 +136,8 @@ enum item			//아이템 이넘
 	BED,			//침대
 	WING,			//날개
 	SHEILD,			//방패
-	TIMEOUT_FAINT,	//기절 해제
+	TIMEOUT_FAINT,	//번개 해제
+	TIMEOUT_SLEEP,	//잠 해제
 	TIMEOUT_PROTECT,//방어 해제
 	TIMEOUT_SPEEDUP	//속도 상승 해제
 };

@@ -85,6 +85,14 @@ enum Protocol {
 	, INPUT_KEY_W = 410
 	, NOTIFY_WIN = 411
 	, NOTIFY_LOSE = 412
+	, SET_UI_THUNDER = 413
+	, SET_UI_BED = 414
+	, SET_UI_SHEILD = 415
+	, SET_UI_WING = 416
+	, RESET_UI_THUNDER = 417
+	, RESET_UI_BED = 418
+	, RESET_UI_SHEILD = 419
+	, RESET_UI_WING = 420
 	
 	, DEMAND_SENDRESULT = 498
 	, SUPPLY_GAMEEND = 499	//HOST	-> Server
@@ -281,7 +289,7 @@ struct UpdateFrameStruct {
 	float m_speed[MAX_PLAYER];			// 캐릭터 속도
 	State m_state[MAX_PLAYER];			// 캐릭터 현재 상태
 	int m_imgCnt[MAX_PLAYER];			// 애니메이션 이미지 카운트
-	float m_combo[MAX_PLAYER];			// 캐릭터 콤보 상태
+	int m_combo[MAX_PLAYER];			// 캐릭터 콤보 상태
 	FirstPlatInfo m_firstPlat[MAX_PLAYER];					// 첫 발판 정보
 	FirstItemInfo m_firstItem[MAX_PLAYER];	// 화면보다 오른쪽에 있는 첫 아이템
 	int m_itemInfo[MAX_PLAYER][2];		// 보유 아이템 목록
@@ -416,6 +424,9 @@ extern atomic<int> numPlayer;
 extern UpdateRoomStruct roomInfo;
 extern atomic<int> readyPlayer;
 extern SOCKET listen_sock;
+
+extern int setItemKind[MAX_PLAYER];
+extern int resetItemKind[MAX_PLAYER];
 //extern atomic<bool> listenThreadExit;
 //extern atomic<bool> SendThreadExit;
 //extern atomic<bool> RecvThreadExit;

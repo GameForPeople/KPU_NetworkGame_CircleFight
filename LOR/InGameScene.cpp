@@ -42,15 +42,11 @@ InGameScene::InGameScene(HWND hwnd, Network* network) : Scene(hwnd)
 	else if (roomInfo.m_mapInfo == MapName::Forest)
 		m_map = new Map(0, 0, "Resource/Image/Background/Background_2.png");
 
-	m_platImg[0] = new CImage;
-	m_platImg[1] = new CImage;
 
-	m_itemImg = new CImage;
+	m_platImg[0].Load("Resource/Image/Plat/Plat_2.png");
+	m_platImg[1].Load("Resource/Image/Plat/Plat_1.png");
 
-	m_platImg[0]->Load("Resource/Image/Plat/Plat_2.png");
-	m_platImg[1]->Load("Resource/Image/Plat/Plat_1.png");
-
-	m_itemImg->Load("Resource/Image/UI/item_Random_2.png");
+	m_itemImg.Load("Resource/Image/UI/item_Random_2.png");
 
 	m_winLoseImg[0].Load("Resource/Image/UI/Win.png");
 	m_winLoseImg[1].Load("Resource/Image/UI/Lose.png");
@@ -65,8 +61,6 @@ InGameScene::InGameScene(HWND hwnd, Network* network) : Scene(hwnd)
 
 	LoadPlat();
 
-	m_inGameUI = new InGameSceneUI;
-
 	charArr = m_characterArr;
 
 	m_resultUICount = 0;
@@ -78,6 +72,9 @@ InGameScene::InGameScene()
 
 InGameScene::~InGameScene()
 {
+	if (m_map) delete m_map;
+	if (m_platArr) delete[] m_platArr;
+	if (m_itemArr) delete[] m_itemArr;
 }
 
 
@@ -88,12 +85,12 @@ void InGameScene::Draw(HDC hdc) {
 	float firstPos = basicInfo.m_firstPlat[0].xPos;
 	for (int i = basicInfo.m_firstPlat[0].idx, j = 0; j < PLAT_SHOWN_CNT; ++i, ++j) {
 		if (m_platArr[i].GetPos().y != PLAT_LOW_HEIGHT)
-			m_platImg[0]->TransparentBlt(hdc, firstPos + PLAT_WIDTH * j, m_platArr[i].GetPos().y, PLAT_WIDTH, PLAT_HEIGHT, RGB(255, 255, 255));
+			m_platImg[0].TransparentBlt(hdc, firstPos + PLAT_WIDTH * j, m_platArr[i].GetPos().y, PLAT_WIDTH, PLAT_HEIGHT, RGB(255, 255, 255));
 		else
-			m_platImg[1]->TransparentBlt(hdc, firstPos + PLAT_WIDTH * j, m_platArr[i].GetPos().y, PLAT_WIDTH, m_platImg[1]->GetHeight(), RGB(255, 255, 255));
+			m_platImg[1].TransparentBlt(hdc, firstPos + PLAT_WIDTH * j, m_platArr[i].GetPos().y, PLAT_WIDTH, m_platImg[1].GetHeight(), RGB(255, 255, 255));
 	}
 
-	m_itemImg->TransparentBlt(hdc, basicInfo.m_firstItem[0].xPos, m_itemArr[basicInfo.m_firstItem[0].idx].GetPos().y, ITEM_SIZE, ITEM_SIZE, RGB(255, 255, 255));
+	m_itemImg.TransparentBlt(hdc, basicInfo.m_firstItem[0].xPos, m_itemArr[basicInfo.m_firstItem[0].idx].GetPos().y, ITEM_SIZE, ITEM_SIZE, RGB(255, 255, 255));
 
 	for (int i = 1; i < MAX_PLAYER; ++i)
 	{
@@ -103,24 +100,24 @@ void InGameScene::Draw(HDC hdc) {
 	m_characterArr[0].NetworkDrawCharacter(hdc, 0, 0, basicInfo.m_yPos[0],
 		basicInfo.m_imgCnt[0], basicInfo.m_state[0]);
 
-	m_inGameUI->DrawComboUI(hdc, m_characterArr[0].GetCombo());
-	m_inGameUI->DrawInventoryUI(hdc, basicInfo.m_itemInfo[0][0], basicInfo.m_itemInfo[0][1]);
+	m_inGameUI.DrawComboUI(hdc, m_characterArr[0].GetCombo());
+	m_inGameUI.DrawInventoryUI(hdc, basicInfo.m_itemInfo[0][0], basicInfo.m_itemInfo[0][1]);
 
 	for (int i = 1; i < MAX_PLAYER; ++i)
 	{
-		m_inGameUI->DrawBarUI(hdc, i, m_characterArr[i].GetTotalDistance() / 110);
-		m_inGameUI->DrawPlayerMark(hdc, i, basicInfo.m_yPos[i], basicInfo.m_totalDis[0], basicInfo.m_totalDis[i]);
+		m_inGameUI.DrawBarUI(hdc, i, m_characterArr[i].GetTotalDistance() / 110);
+		m_inGameUI.DrawPlayerMark(hdc, i, basicInfo.m_yPos[i], basicInfo.m_totalDis[0], basicInfo.m_totalDis[i]);
 		if (emotionNum[i])
-			m_inGameUI->DrawEmotionUI(hdc, emotionNum[i], basicInfo.m_totalDis[0], basicInfo.m_totalDis[i], basicInfo.m_yPos[i]);
+			m_inGameUI.DrawEmotionUI(hdc, emotionNum[i], basicInfo.m_totalDis[0], basicInfo.m_totalDis[i], basicInfo.m_yPos[i]);
 		else
-			m_inGameUI->DrawHeadUpUI(hdc, m_characterArr[i].GetPos().y, basicInfo.m_totalDis[0], basicInfo.m_totalDis[i]);
+			m_inGameUI.DrawHeadUpUI(hdc, m_characterArr[i].GetPos().y, basicInfo.m_totalDis[0], basicInfo.m_totalDis[i], i);
 	}
-	m_inGameUI->DrawBarUI(hdc, 0, m_characterArr[0].GetTotalDistance() / 110);
-	m_inGameUI->DrawPlayerMark(hdc, 0, basicInfo.m_yPos[0]);
+	m_inGameUI.DrawBarUI(hdc, 0, m_characterArr[0].GetTotalDistance() / 110);
+	m_inGameUI.DrawPlayerMark(hdc, 0, basicInfo.m_yPos[0]);
 	if (emotionNum[0])
-		m_inGameUI->DrawEmotionUI(hdc, emotionNum[0], 0, 0, basicInfo.m_yPos[0]);
+		m_inGameUI.DrawEmotionUI(hdc, emotionNum[0], 0, 0, basicInfo.m_yPos[0]);
 	else
-		m_inGameUI->DrawHeadUpUI(hdc, m_characterArr[0].GetPos().y, 0, 0);
+		m_inGameUI.DrawHeadUpUI(hdc, m_characterArr[0].GetPos().y, 0, 0, 0);
 
 	if (m_gameResult == 1) m_winLoseImg[0].TransparentBlt(hdc, 200, 200, 880, 320, RGB(255, 0, 255));
 	if (m_gameResult == 2) m_winLoseImg[1].TransparentBlt(hdc, 200, 200, 880, 320, RGB(0, 255, 0));
@@ -516,11 +513,30 @@ void InGameScene::UseItem(int itemNum, int user)
 			else if (itemNum == BED)
 				PlaySound("Resource\\Sound\\sleeping.wav", NULL, SND_ASYNC);
 			else if (itemNum == SHEILD)
+			{
 				PlaySound("Resource\\Sound\\shield.wav", NULL, SND_ASYNC);
+				m_inGameUI.SetUI(0, SHEILD);
+			}
 			else if (itemNum == WING)
+			{
 				PlaySound("Resource\\Sound\\angle.wav", NULL, SND_ASYNC);
+				m_inGameUI.SetUI(0, WING);
+			}
 		}
-		else { sendQueue[b].emplace_back(itemIdx, 0); }
+		else 
+		{ 
+			sendQueue[b].emplace_back(itemIdx, user); 
+			if(itemNum == SHEILD) m_inGameUI.SetUI(b, SHEILD);
+			if (itemNum == WING) m_inGameUI.SetUI(b, WING);
+		}
+	}
+
+	if (itemNum != WING && itemNum != SHEILD) return;
+
+	for (int i = 1; i < MAX_PLAYER; ++i)
+	{
+		if (itemNum == WING) sendQueue[i].emplace_back(SET_UI_WING, user);
+		if (itemNum == SHEILD) sendQueue[i].emplace_back(SET_UI_SHEILD, user);
 	}
 }
 
@@ -569,6 +585,7 @@ void InGameScene::UpdateItemList(double time)
 	{
 		ItemTimer* elem;
 		int iterIdx = iter->getUserIdx();
+		int zbRand[MAX_PLAYER]{ -1, -1, -1, -1 };
 		switch (iter->update(time))
 		{
 		case LIGHTNING:																// 번개 - 선딜 1.5초, 기절 2초
@@ -585,7 +602,12 @@ void InGameScene::UpdateItemList(double time)
 			{
 				if (m_characterArr[b].GetCharType() == CharacterName::Zombie && m_rand.getRandomNumber(0, 1) == 0) { continue; }
 				m_characterArr[b].FaintCountUp(true);
+				m_inGameUI.SetUI(b, LIGHTNING);
 				timerList.push_back(ItemTimer(duration, TIMEOUT_FAINT, b));
+				for (int i = 1; i < MAX_PLAYER; ++i)
+				{
+					sendQueue[i].emplace_back(SET_UI_BED, b);
+				}
 			}
 			iter = timerList.erase(iter);
 			break;
@@ -603,7 +625,12 @@ void InGameScene::UpdateItemList(double time)
 			{
 				if (m_characterArr[b].GetCharType() == CharacterName::Zombie && m_rand.getRandomNumber(0, 1) == 0) { continue; }
 				m_characterArr[b].FaintCountUp(false);
-				timerList.push_back(ItemTimer(duration, TIMEOUT_FAINT, b));
+				m_inGameUI.SetUI(b, BED);
+				timerList.push_back(ItemTimer(duration, TIMEOUT_SLEEP, b));
+				for (int i = 1; i < MAX_PLAYER; ++i)
+				{
+					sendQueue[i].emplace_back(SET_UI_BED, b);
+				}
 			}
 			iter = timerList.erase(iter);
 			break;
@@ -614,6 +641,10 @@ void InGameScene::UpdateItemList(double time)
 			if (iterIdx < 2) { m_stackSheild[0]++; }
 			else { m_stackSheild[1]++; }
 
+			for (int i = 1; i < MAX_PLAYER; ++i)
+			{
+				sendQueue[i].emplace_back(SET_UI_SHEILD, iterIdx);
+			}
 
 			timerList.push_back(ItemTimer(duration, TIMEOUT_PROTECT, iterIdx));
 			iter = timerList.erase(iter);
@@ -631,16 +662,31 @@ void InGameScene::UpdateItemList(double time)
 				m_characterArr[b].SpeedUpCountUp(wingBoost);
 			}
 
+			for (int i = 1; i < MAX_PLAYER; ++i)
+			{
+				sendQueue[i].emplace_back(SET_UI_WING, iterIdx);
+			}
+
 			timerList.push_back(ItemTimer(duration, TIMEOUT_SPEEDUP, iterIdx));
 			iter = timerList.erase(iter);
 			break;
 		case TIMEOUT_FAINT:
 			m_characterArr[iterIdx].FaintCountDown();
+			m_inGameUI.ResetUI(iterIdx, LIGHTNING);
+			for (int i = 1; i < MAX_PLAYER; ++i) sendQueue[i].emplace_back(RESET_UI_THUNDER, iterIdx);
+			iter = timerList.erase(iter);
+			break;
+		case TIMEOUT_SLEEP:
+			m_characterArr[iterIdx].FaintCountDown();
+			m_inGameUI.ResetUI(iterIdx, BED);
+			for (int i = 1; i < MAX_PLAYER; ++i) sendQueue[i].emplace_back(RESET_UI_BED, iterIdx);
 			iter = timerList.erase(iter);
 			break;
 		case TIMEOUT_PROTECT:
-			if (iterIdx < 2) { m_stackSheild[0]--; }
-			else { m_stackSheild[1]--; }
+			if (iterIdx < 2) { b = 0;	e = 2;  m_stackSheild[0]--; }
+			else { b = 2;	e = 4; m_stackSheild[1]--; }
+			for (; b < e; ++b) m_inGameUI.ResetUI(b, SHEILD); 
+			for (int i = 1; i < MAX_PLAYER; ++i) sendQueue[i].emplace_back(RESET_UI_SHEILD, iterIdx);
 			iter = timerList.erase(iter);
 			break;
 		case TIMEOUT_SPEEDUP:
@@ -649,9 +695,10 @@ void InGameScene::UpdateItemList(double time)
 
 			for (; b < e; ++b)
 			{
+				m_inGameUI.ResetUI(b, WING);
 				m_characterArr[b].SpeedUpCountDown();
 			}
-
+			for (int i = 1; i < MAX_PLAYER; ++i) sendQueue[i].emplace_back(RESET_UI_WING, iterIdx);
 			iter = timerList.erase(iter);
 			break;
 		default:

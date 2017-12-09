@@ -41,15 +41,10 @@ InGameSceneGuest::InGameSceneGuest(HWND hwnd, Network *network) : Scene(hwnd)
 	else if (roomInfo.m_mapInfo == MapName::Forest)
 		m_map = new Map(0, 0, "Resource/Image/Background/Background_2.png");
 
-	m_platImg[0] = new CImage;
-	m_platImg[1] = new CImage;
+	m_platImg[0].Load("Resource/Image/Plat/Plat_2.png");
+	m_platImg[1].Load("Resource/Image/Plat/Plat_1.png");
 
-	m_itemImg = new CImage;
-
-	m_platImg[0]->Load("Resource/Image/Plat/Plat_2.png");
-	m_platImg[1]->Load("Resource/Image/Plat/Plat_1.png");
-
-	m_itemImg->Load("Resource/Image/UI/item_Random_2.png");
+	m_itemImg.Load("Resource/Image/UI/item_Random_2.png");
 
 	m_winLoseImg[0].Load("Resource/Image/UI/Win.png");
 	m_winLoseImg[1].Load("Resource/Image/UI/Lose.png");
@@ -60,8 +55,6 @@ InGameSceneGuest::InGameSceneGuest(HWND hwnd, Network *network) : Scene(hwnd)
 	m_itemArr = new BaseObject[numItem];
 
 	LoadPlat();
-
-	m_inGameUI = new InGameSceneUI;
 
 	sendQueueGuest.push_back(NOTIFY_START);
 
@@ -74,6 +67,9 @@ InGameSceneGuest::InGameSceneGuest()
 
 InGameSceneGuest::~InGameSceneGuest()
 {
+	if (m_map) delete m_map;
+	if (m_platArr) delete[] m_platArr;
+	if (m_itemArr) delete[] m_itemArr;
 }
 
 
@@ -84,12 +80,12 @@ void InGameSceneGuest::Draw(HDC hdc) {
 	float xPos = basicInfo.m_firstPlat[m_idx].xPos;
 	for (int i = basicInfo.m_firstPlat[m_idx].idx, j=0; j < PLAT_SHOWN_CNT; ++i, ++j) {
 		if (m_platArr[i].GetPos().y != PLAT_LOW_HEIGHT)
-			m_platImg[0]->TransparentBlt(hdc, xPos + PLAT_WIDTH * j, m_platArr[i].GetPos().y, PLAT_WIDTH, PLAT_HEIGHT, RGB(255, 255, 255));
+			m_platImg[0].TransparentBlt(hdc, xPos + PLAT_WIDTH * j, m_platArr[i].GetPos().y, PLAT_WIDTH, PLAT_HEIGHT, RGB(255, 255, 255));
 		else
-			m_platImg[1]->TransparentBlt(hdc, xPos + PLAT_WIDTH * j, m_platArr[i].GetPos().y, PLAT_WIDTH, m_platImg[1]->GetHeight(), RGB(255, 255, 255));
+			m_platImg[1].TransparentBlt(hdc, xPos + PLAT_WIDTH * j, m_platArr[i].GetPos().y, PLAT_WIDTH, m_platImg[1].GetHeight(), RGB(255, 255, 255));
 	}
 
-	m_itemImg->TransparentBlt(hdc, basicInfo.m_firstItem[m_idx].xPos, m_itemArr[basicInfo.m_firstItem[m_idx].idx].GetPos().y, ITEM_SIZE, ITEM_SIZE, RGB(255, 255, 255));
+	m_itemImg.TransparentBlt(hdc, basicInfo.m_firstItem[m_idx].xPos, m_itemArr[basicInfo.m_firstItem[m_idx].idx].GetPos().y, ITEM_SIZE, ITEM_SIZE, RGB(255, 255, 255));
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
 		if (i == m_idx) continue;
@@ -99,25 +95,25 @@ void InGameSceneGuest::Draw(HDC hdc) {
 	m_characterArr[m_idx].NetworkDrawCharacter(hdc, 0, 0, basicInfo.m_yPos[m_idx],
 		basicInfo.m_imgCnt[m_idx], basicInfo.m_state[m_idx]);
 
-	m_inGameUI->DrawComboUI(hdc, basicInfo.m_combo[m_idx]);
-	m_inGameUI->DrawInventoryUI(hdc, basicInfo.m_itemInfo[m_idx][0], basicInfo.m_itemInfo[m_idx][1]);
+	m_inGameUI.DrawComboUI(hdc, basicInfo.m_combo[m_idx]);
+	m_inGameUI.DrawInventoryUI(hdc, basicInfo.m_itemInfo[m_idx][0], basicInfo.m_itemInfo[m_idx][1]);
 
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
 		if (i == m_idx) continue;
-		m_inGameUI->DrawBarUI(hdc, i, basicInfo.m_totalDis[i] / 110);
-		m_inGameUI->DrawPlayerMark(hdc, i, basicInfo.m_yPos[i], basicInfo.m_totalDis[m_idx], basicInfo.m_totalDis[i]);
+		m_inGameUI.DrawBarUI(hdc, i, basicInfo.m_totalDis[i] / 110);
+		m_inGameUI.DrawPlayerMark(hdc, i, basicInfo.m_yPos[i], basicInfo.m_totalDis[m_idx], basicInfo.m_totalDis[i]);
 		if (emotionNum[i])
-			m_inGameUI->DrawEmotionUI(hdc, emotionNum[i], basicInfo.m_totalDis[m_idx], basicInfo.m_totalDis[i], basicInfo.m_yPos[i]);
+			m_inGameUI.DrawEmotionUI(hdc, emotionNum[i], basicInfo.m_totalDis[m_idx], basicInfo.m_totalDis[i], basicInfo.m_yPos[i]);
 		else
-			m_inGameUI->DrawHeadUpUI(hdc, basicInfo.m_yPos[i], basicInfo.m_totalDis[m_idx], basicInfo.m_totalDis[i]);
+			m_inGameUI.DrawHeadUpUI(hdc, basicInfo.m_yPos[i], basicInfo.m_totalDis[m_idx], basicInfo.m_totalDis[i], i);
 	}
-	m_inGameUI->DrawBarUI(hdc, m_idx, basicInfo.m_totalDis[m_idx] / 110);
-	m_inGameUI->DrawPlayerMark(hdc, m_idx, basicInfo.m_yPos[m_idx]);
+	m_inGameUI.DrawBarUI(hdc, m_idx, basicInfo.m_totalDis[m_idx] / 110);
+	m_inGameUI.DrawPlayerMark(hdc, m_idx, basicInfo.m_yPos[m_idx]);
 	if (emotionNum[m_idx])
-		m_inGameUI->DrawEmotionUI(hdc, emotionNum[m_idx], 0, 0, basicInfo.m_yPos[m_idx]);
+		m_inGameUI.DrawEmotionUI(hdc, emotionNum[m_idx], 0, 0, basicInfo.m_yPos[m_idx]);
 	else
-		m_inGameUI->DrawHeadUpUI(hdc, basicInfo.m_yPos[m_idx], 0, 0);
+		m_inGameUI.DrawHeadUpUI(hdc, basicInfo.m_yPos[m_idx], 0, 0, m_idx);
 
 	if (m_network->m_gameResultBuffer == 1) m_winLoseImg[0].TransparentBlt(hdc, 200, 200, 880, 320, RGB(255, 0, 255));
 	if (m_network->m_gameResultBuffer == 2) m_winLoseImg[1].TransparentBlt(hdc, 200, 200, 880, 320, RGB(0, 255, 0));

@@ -376,6 +376,9 @@ atomic<int> numPlayer = 0;
 UpdateRoomStruct roomInfo;
 atomic<int> readyPlayer;
 SOCKET listen_sock = NULL;
+
+int setItemKind[MAX_PLAYER];
+int resetItemKind[MAX_PLAYER];
 //atomic<bool> listenThreadExit = false;
 //atomic<bool> RecvThreadExit = false;
 //atomic<bool> SendThreadExit = false;
@@ -454,6 +457,16 @@ DWORD WINAPI SendData(LPVOID arg)
 				break;
 			case CHANGE_EMOTION:
 				send(sock_info.sock, (char*)&ChangeEmotionStruct(emotionNum[sendOp.fromIdx], sendOp.fromIdx), sizeof(ChangeEmotionStruct), 0);
+				break;
+			case SET_UI_THUNDER:
+			case SET_UI_BED:
+			case SET_UI_SHEILD:
+			case SET_UI_WING:
+			case RESET_UI_THUNDER:
+			case RESET_UI_BED:
+			case RESET_UI_SHEILD:
+			case RESET_UI_WING:
+				send(sock_info.sock, (char*)&sendOp.fromIdx, sizeof(sendOp.fromIdx), 0);
 				break;
 
 				// 抗寇贸府
@@ -609,6 +622,8 @@ DWORD WINAPI RecvDataGuest(LPVOID arg)
 	RoomInfoStruct sock_info = *(RoomInfoStruct*)arg;
 
 	int retval, op;
+	int itemUser;
+	int b, e;
 	bool running = true;
 
 	while (running)
@@ -651,7 +666,7 @@ DWORD WINAPI RecvDataGuest(LPVOID arg)
 			recvn(sock_info.sock, (char*)&basicInfo, sizeof(basicInfo), 0);
 			break;
 		case NOTIFY_ITEM_THUNDER:
-			// 家府 犁积			if(itemNum == 0)
+			// 家府 犁积	
 			PlaySound("Resource\\Sound\\ets.wav", NULL, SND_ASYNC);
 			break;
 		case NOTIFY_ITEM_BED:
@@ -676,11 +691,50 @@ DWORD WINAPI RecvDataGuest(LPVOID arg)
 		case NOTIFY_WIN:
 			threadNetwork->m_gameResult = 1;
 			threadNetwork->m_gameResultBuffer = 1;
-
 			break;
 		case NOTIFY_LOSE:
 			threadNetwork->m_gameResult = 2;
 			threadNetwork->m_gameResultBuffer = 2;
+			break;
+		case SET_UI_THUNDER:
+			recvn(sock_info.sock, (char*)&itemUser, sizeof(itemUser), 0);
+			setItemKind[itemUser] = LIGHTNING;
+			break;
+		case SET_UI_BED:
+			recvn(sock_info.sock, (char*)&itemUser, sizeof(itemUser), 0);
+			setItemKind[itemUser] = BED;
+			break;
+		case SET_UI_SHEILD:
+			recvn(sock_info.sock, (char*)&itemUser, sizeof(itemUser), 0);
+			if (itemUser < 2) { b = 0;	e = 2; }
+			else { b = 2;	e = 4; }
+			for (; b < e; ++b) { setItemKind[b] = SHEILD; }
+			break;
+		case SET_UI_WING:
+			recvn(sock_info.sock, (char*)&itemUser, sizeof(itemUser), 0);
+			if (itemUser < 2) { b = 0;	e = 2; }
+			else { b = 2;	e = 4; }
+			for (; b < e; ++b) { setItemKind[b] = WING; }
+			break;
+		case RESET_UI_THUNDER:
+			recvn(sock_info.sock, (char*)&itemUser, sizeof(itemUser), 0);
+			resetItemKind[itemUser] = LIGHTNING;
+			break;
+		case RESET_UI_BED:
+			recvn(sock_info.sock, (char*)&itemUser, sizeof(itemUser), 0);
+			resetItemKind[itemUser] = BED;
+			break;
+		case RESET_UI_SHEILD:
+			recvn(sock_info.sock, (char*)&itemUser, sizeof(itemUser), 0);
+			if (itemUser < 2) { b = 0;	e = 2; }
+			else { b = 2;	e = 4; }
+			for (; b < e; ++b) { resetItemKind[b] = SHEILD; }
+			break;
+		case RESET_UI_WING:
+			recvn(sock_info.sock, (char*)&itemUser, sizeof(itemUser), 0);
+			if (itemUser < 2) { b = 0;	e = 2; }
+			else { b = 2;	e = 4; }
+			for (; b < e; ++b) { resetItemKind[b] = WING; }
 			break;
 
 		// 抗寇贸府

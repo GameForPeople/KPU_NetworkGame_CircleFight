@@ -46,7 +46,7 @@ RoomSceneGuest::RoomSceneGuest(HWND hWnd, Network* network, bool isMake) : Scene
 	{
 		hThreadGuest[0] = CreateThread(NULL, 0, RecvDataGuest, (LPVOID)&RoomInfoStruct(m_idx, newSock), 0, NULL);
 		//send소켓 연결 시도
-		newSock = socket(AF_INET, SOCK_STREAM, 0);
+		SOCKET newSock = socket(AF_INET, SOCK_STREAM, 0);
 		connect(newSock, (SOCKADDR *)&serveraddr, sizeof(serveraddr));
 		hThreadGuest[1] = CreateThread(NULL, 0, SendDataGuest, (LPVOID)&RoomInfoStruct(m_idx, newSock), 0, NULL);
 	}

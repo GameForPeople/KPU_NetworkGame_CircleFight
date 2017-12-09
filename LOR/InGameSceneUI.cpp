@@ -3,6 +3,11 @@
 InGameSceneUI::InGameSceneUI()
 {
 	LoadUI();
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		setItemKind[i] = -1;
+		resetItemKind[i] = -1;
+	}
 }
 
 InGameSceneUI::~InGameSceneUI()
@@ -40,31 +45,59 @@ void InGameSceneUI::LoadUI() {
 	ItemUI[3].Load("Resource/Image/UI/item_support_2_only.png");
 
 	HeadUpUI[0].Load("Resource/Image/UI/SpeedUpUI.png");
+	HeadUpUI[1].Load("Resource/Image/UI/item_attack_1.png");
+	HeadUpUI[2].Load("Resource/Image/UI/item_attack_2.png");
+	HeadUpUI[3].Load("Resource/Image/UI/item_support_1.png");
+	HeadUpUI[4].Load("Resource/Image/UI/item_support_2.png");
 
 	EmotionUI.Load("Resource/Image/UI/EmotionUI.png");
 }
 
 
+void InGameSceneUI::SetUI(int idx, int item)
+{
+	m_headUpUIIndex[idx] = item;
+	m_headUpUICount[idx] = 0;
+}
+
+void InGameSceneUI::ResetUI(int idx, int item)
+{
+	if (m_headUpUIIndex[idx] != item) return;
+	m_headUpUIIndex[idx] = -1;
+}
 
 
 void InGameSceneUI::DrawComboUI(HDC hdc, int combo) {
 
 	int sizeBuffer = 0;
 
-	if (combo % 30 == 0 && combo > 10) {
-		sizeBuffer = 30;
-		m_headUpUIIndex = 1;
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		if (basicInfo.m_combo[i] % 30 == 0 && basicInfo.m_combo[i] > 10) {
+			sizeBuffer = 30;
+			m_headUpUIIndex[i] = 0;
+		}
+		if (setItemKind[i] != -1)
+		{
+			SetUI(i, setItemKind[i]); 
+			setItemKind[i] = -1;
+		}
+		if (resetItemKind[i] != -1) 
+		{
+			ResetUI(i, resetItemKind[i]);
+			resetItemKind[i] = -1;
+		}
 	}
 
-	if (combo >= 100) {
-		ComboNumUI[combo / 100].TransparentBlt(hdc, 10 - sizeBuffer, 100 - sizeBuffer / 2, 58 + sizeBuffer, 85 + sizeBuffer, RGB(255, 255, 255));
+	if (basicInfo.m_combo[m_idx] >= 100) {
+		ComboNumUI[basicInfo.m_combo[m_idx] / 100].TransparentBlt(hdc, 10 - sizeBuffer, 100 - sizeBuffer / 2, 58 + sizeBuffer, 85 + sizeBuffer, RGB(255, 255, 255));
 	}
 
-	if (combo >= 10) {
-		ComboNumUI[(combo % 100) / 10].TransparentBlt(hdc, 60, 100 - sizeBuffer / 2, 58, 85 + sizeBuffer, RGB(255, 255, 255));
+	if (basicInfo.m_combo[m_idx] >= 10) {
+		ComboNumUI[(basicInfo.m_combo[m_idx] % 100) / 10].TransparentBlt(hdc, 60, 100 - sizeBuffer / 2, 58, 85 + sizeBuffer, RGB(255, 255, 255));
 	}
 
-	ComboNumUI[combo % 10].TransparentBlt(hdc, 110, 100 - sizeBuffer / 2, 58 + sizeBuffer, 85 + sizeBuffer, RGB(255, 255, 255));
+	ComboNumUI[basicInfo.m_combo[m_idx] % 10].TransparentBlt(hdc, 110, 100 - sizeBuffer / 2, 58 + sizeBuffer, 85 + sizeBuffer, RGB(255, 255, 255));
 
 	ComboTextUI.TransparentBlt(hdc, 160 + sizeBuffer, 140 - sizeBuffer / 2, ComboTextUI.GetWidth() + sizeBuffer, ComboTextUI.GetHeight() + sizeBuffer, RGB(255, 255, 255));
 }
@@ -87,20 +120,21 @@ void InGameSceneUI::DrawInventoryUI(HDC hdc, int item1Num, int item2Num) {
 	}
 }
 
-void InGameSceneUI::DrawHeadUpUI(HDC hdc, float posY, float playerDisX, float thisDisX) {
+void InGameSceneUI::DrawHeadUpUI(HDC hdc, float posY, float playerDisX, float thisDisX, int idx) {
 	if (thisDisX - playerDisX > 1100) return;
 	if (playerDisX - thisDisX > 400) return;
 
 	float newPosX = thisDisX - playerDisX;
 
-	if (m_headUpUIIndex) {
-		m_headUpUICount++;
+	if (m_headUpUICount[idx] > 80) {
+		m_headUpUICount[idx] = 0;
+		m_headUpUIIndex[idx] = -1;
+	}
 
-		HeadUpUI[m_headUpUIIndex - 1].TransparentBlt(hdc, newPosX + 310, posY - 70, 120, 70, RGB(255, 255, 255));
-		if (m_headUpUICount == 80) {
-			m_headUpUICount = 0;
-			m_headUpUIIndex = 0;
-		}
+	if (m_headUpUIIndex[idx] != -1)
+	{
+		m_headUpUICount[idx]++;
+		HeadUpUI[m_headUpUIIndex[idx]].TransparentBlt(hdc, newPosX + 345, posY - 70, 70, 70, RGB(255, 255, 255));
 	}
 }
 
