@@ -69,8 +69,8 @@ using namespace FMOD;
 
 #define PLAT_ITEM_HEIGHT		100		//아이템 높이
 #define ITEM_INTERVAL			100		//아이템간 간격
-#define ITEM_FIRST_IMPACT		49		//아이템 처음 나오는 곳 - 1
-#define ITEM_SIZE				100		//아이템 그릴때 크기
+#define ITEM_FIRST_IMPACT		24		//아이템 처음 나오는 곳 - 1
+#define ITEM_SIZE				50		//아이템 그릴때 크기
 #define LIGHTNING_DELAY			1.5f
 #define LIGHTNING_DURATION		2.0F
 #define LIGHTNING_DURATION_B	4.0F
