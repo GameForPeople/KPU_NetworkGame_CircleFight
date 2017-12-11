@@ -221,7 +221,7 @@ void Network::NetworkThreadFunction() {
 			}
 		}
 		else if (m_sceneName == SceneName::Room) {
-			_sleep(1000);
+			//_sleep(1000);
 			if (m_sendType == DEMAND_EXITROOM) {
 				retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
@@ -565,6 +565,8 @@ DWORD WINAPI RecvData(LPVOID arg)
 
 DWORD WINAPI ListenThread(LPVOID arg)
 {
+	RoomInfoStruct recvStruct;
+	RoomInfoStruct sendStruct;
 	// socket()
 	listen_sock = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -598,11 +600,13 @@ DWORD WINAPI ListenThread(LPVOID arg)
 		numPlayer++;
 
 		// Send积己
-		CreateThread(NULL, 0, SendData, (LPVOID)&RoomInfoStruct(idx, newSock), 0, NULL);
+		sendStruct.idx = idx;		sendStruct.sock = newSock;
+		CreateThread(NULL, 0, SendData, (LPVOID)&sendStruct, 0, NULL);
 
 		// Recv积己
 		newSock = accept(listen_sock, NULL, NULL);
-		CreateThread(NULL, 0, RecvData, (LPVOID)&RoomInfoStruct(idx, newSock), 0, NULL);
+		recvStruct.idx = idx;		recvStruct.sock = newSock;
+		CreateThread(NULL, 0, RecvData, (LPVOID)&recvStruct, 0, NULL);
 
 		// 函茄 规 沥焊 傈价
 		for (int i = 1; i < MAX_PLAYER; ++i)

@@ -27,6 +27,8 @@ private:
 
 	CImage		EmotionUI;
 
+	CImage		m_rankUI;
+
 public:
 	void LoadUI();
 	void SetUI(int idx, int item);
@@ -40,5 +42,6 @@ public:
 	void DrawPlayerMark(HDC hdc, int idx, float posY, float playerDisX = 0, float thisDisX = 0);
 	void DrawEmotionUI(HDC hdc, const int keyNumber, float posX, float posY);
 	void DrawEmotionUI(HDC hdc, const int keyNumber, float playerDisX, float thisDisX, float posY);
+	void DrawRankUI(HDC hdc);
 };
 

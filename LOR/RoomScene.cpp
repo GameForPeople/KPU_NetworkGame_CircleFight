@@ -30,6 +30,8 @@ RoomScene::RoomScene(HWND hWnd, Network* network, bool isMake) : Scene(hWnd)
 	}
 
 	LoadCImage();
+
+	m_network->ChageSceneName(SceneName::Room);
 }
 
 RoomScene::~RoomScene()

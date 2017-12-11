@@ -6,6 +6,9 @@ RoomSceneGuest::RoomSceneGuest()
 
 RoomSceneGuest::RoomSceneGuest(HWND hWnd, Network* network, bool isMake) : Scene(hWnd)
 {
+	static RoomInfoStruct recvStruct;
+	static RoomInfoStruct sendStruct;
+
 	m_network = network;
 	m_network->ChageSceneName(SceneName::RoomGuest);
 
@@ -37,18 +40,20 @@ RoomSceneGuest::RoomSceneGuest(HWND hWnd, Network* network, bool isMake) : Scene
 	SOCKET newSock = socket(AF_INET, SOCK_STREAM, 0);
 	connect(newSock, (SOCKADDR *)&serveraddr, sizeof(serveraddr));
 	retval = recvn(newSock, (char*)&m_idx, sizeof(m_idx), 0);
-
 	#ifdef DEBUG_MODE
 	std::cout << "ip : " << inet_ntoa(serveraddr.sin_addr) << std::endl;
 	#endif
 
 	if (retval > 0)
 	{
-		hThreadGuest[0] = CreateThread(NULL, 0, RecvDataGuest, (LPVOID)&RoomInfoStruct(m_idx, newSock), 0, NULL);
+		recvStruct.idx = m_idx;	recvStruct.sock = newSock;
+		hThreadGuest[0] = CreateThread(NULL, 0, RecvDataGuest, (LPVOID)&recvStruct, 0, NULL);
+
 		//send소켓 연결 시도
-		SOCKET newSock = socket(AF_INET, SOCK_STREAM, 0);
+		newSock = socket(AF_INET, SOCK_STREAM, 0);
 		connect(newSock, (SOCKADDR *)&serveraddr, sizeof(serveraddr));
-		hThreadGuest[1] = CreateThread(NULL, 0, SendDataGuest, (LPVOID)&RoomInfoStruct(m_idx, newSock), 0, NULL);
+		sendStruct.idx = m_idx;	sendStruct.sock = newSock;
+		hThreadGuest[1] = CreateThread(NULL, 0, SendDataGuest, (LPVOID)&sendStruct, 0, NULL);
 	}
 
 	if (retval <= 0)

@@ -51,6 +51,8 @@ void InGameSceneUI::LoadUI() {
 	HeadUpUI[4].Load("Resource/Image/UI/item_support_2.png");
 
 	EmotionUI.Load("Resource/Image/UI/EmotionUI.png");
+
+	m_rankUI.Load("Resource/Image/UI/RankUI.png");
 }
 
 
@@ -184,4 +186,17 @@ void InGameSceneUI::DrawEmotionUI(HDC hdc, const int keyNumber, float playerDisX
 		EmotionUI.GetHeight(),
 		RGB(255, 255, 255)
 	);
+}
+
+void InGameSceneUI::DrawRankUI(HDC hdc)
+{
+	int myRanking = 0;
+
+	for (int i = 0; i < MAX_PLAYER; ++i)
+	{
+		if (basicInfo.m_totalDis[i] > basicInfo.m_totalDis[m_idx])
+			myRanking++;
+	}
+
+	m_rankUI.TransparentBlt(hdc, 40, 10, 130, 80, 128 * myRanking, 0, 128, 64, RGB(255, 255, 255));
 }

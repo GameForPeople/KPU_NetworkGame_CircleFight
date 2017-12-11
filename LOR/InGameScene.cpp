@@ -119,6 +119,8 @@ void InGameScene::Draw(HDC hdc) {
 	else
 		m_inGameUI.DrawHeadUpUI(hdc, m_characterArr[0].GetPos().y, 0, 0, 0);
 
+	m_inGameUI.DrawRankUI(hdc);
+
 	if (m_gameResult == 1) m_winLoseImg[0].TransparentBlt(hdc, 200, 200, 880, 320, RGB(255, 0, 255));
 	if (m_gameResult == 2) m_winLoseImg[1].TransparentBlt(hdc, 200, 200, 880, 320, RGB(0, 255, 0));
 }
