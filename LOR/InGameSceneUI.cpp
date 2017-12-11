@@ -75,8 +75,8 @@ void InGameSceneUI::DrawComboUI(HDC hdc, int combo) {
 
 	for (int i = 0; i < MAX_PLAYER; ++i)
 	{
-		if (basicInfo.m_combo[i] % 30 == 0 && basicInfo.m_combo[i] > 10) {
-			sizeBuffer = 30;
+		if (basicInfo.m_combo[i] % 20 == 0 && basicInfo.m_combo[i] > 10) {
+			sizeBuffer = 20;
 			m_headUpUIIndex[i] = 0;
 		}
 		if (setItemKind[i] != -1)
