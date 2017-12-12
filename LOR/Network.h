@@ -364,6 +364,9 @@ public:
 	void err_quit(char *msg);
 
 public:
+	HANDLE m_networkThread = NULL;
+
+public:
 	UserData myData;
 	int      m_roomIndex;
 	int		 m_gameResult;

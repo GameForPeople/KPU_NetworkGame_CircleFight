@@ -159,7 +159,10 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 				_sleep(100);
 				std::cout << ".";
 				if (m_network->GetRecvType() && m_network->GetSendType() == 0)
+				{
+					_sleep(100);
 					break;
+				}
 			}
 			if (m_network->GetRecvType() == PERMIT_JOINROOM) {
 				//m_network->m_permitJoinRoom->hostAddr
@@ -236,8 +239,10 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 			while (7) {
 				std::cout << ".";
 				_sleep(100);
-				if (m_network->GetRecvType())
+				if (m_network->GetRecvType()) {
+					_sleep(100);
 					break;
+				}
 			}
 
 			if (m_network->GetRecvType() == PERMIT_CREATEROOM) {
@@ -288,7 +293,7 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 					m_Len = 0;
 					m_chat[0] = '\0';
 					m_network->SetRecvType(0);
-
+					_sleep(50);
 					break;
 				}
 			}

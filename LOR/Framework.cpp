@@ -33,10 +33,10 @@ Framework::Framework()
 
 
 
-	HANDLE hThread = CreateThread(NULL, 0, ThreadFunction, &m_network, 0, NULL);
-
-	if (hThread == NULL) { closesocket(m_network.GetSocket()); }
-	else { CloseHandle(hThread); }
+	//HANDLE hThread = CreateThread(NULL, 0, ThreadFunction, &m_network, 0, NULL);
+	m_network.m_networkThread = CreateThread(NULL, 0, ThreadFunction, &m_network, 0, NULL);
+	if (m_network.m_networkThread == NULL) { closesocket(m_network.GetSocket()); }
+	//else { CloseHandle(hThread); }
 }
 
 Framework::~Framework()

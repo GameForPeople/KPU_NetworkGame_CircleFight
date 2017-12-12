@@ -12,6 +12,7 @@
 InGameSceneGuest::InGameSceneGuest(HWND hwnd, Network *network) : Scene(hwnd)
 {
 	threadNetwork = m_network = network;
+	SuspendThread(m_network->m_networkThread);
 
 	//BGMÀç»ý
 	m_network->m_nowBgmNumber = 1;
@@ -67,6 +68,7 @@ InGameSceneGuest::InGameSceneGuest()
 
 InGameSceneGuest::~InGameSceneGuest()
 {
+	ResumeThread(m_network->m_networkThread);
 	if (m_map) delete m_map;
 	if (m_platArr) delete[] m_platArr;
 	if (m_itemArr) delete[] m_itemArr;

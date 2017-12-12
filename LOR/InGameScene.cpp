@@ -12,7 +12,7 @@
 InGameScene::InGameScene(HWND hwnd, Network* network) : Scene(hwnd)
 {
 	m_network = network;
-
+	SuspendThread(m_network->m_networkThread);
 	//BGMÀç»ý
 	m_network->m_nowBgmNumber = 1;
 	m_network->m_system->playSound(FMOD_CHANNEL_REUSE, m_network->m_sound[1], false, &(m_network->m_channel[0]));
@@ -72,6 +72,7 @@ InGameScene::InGameScene()
 
 InGameScene::~InGameScene()
 {
+	ResumeThread(m_network->m_networkThread);
 	if (m_map) delete m_map;
 	if (m_platArr) delete[] m_platArr;
 	if (m_itemArr) delete[] m_itemArr;
