@@ -365,6 +365,7 @@ public:
 
 public:
 	HANDLE m_networkThread = NULL;
+	void CustomSleep(int milliSecond);
 
 public:
 	UserData myData;

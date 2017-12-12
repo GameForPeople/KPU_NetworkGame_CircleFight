@@ -363,6 +363,16 @@ void Network::err_display(char *msg)
 	LocalFree(lpMsgBuf);
 }
 
+void Network::CustomSleep(int milliSecond) {
+	clock_t start_clk = clock();  // 시작 시간을 구한다.
+
+	milliSecond--;
+
+	while (1) {
+		// 지속적으로 clock 함수를 호출하여 흘러간 시간을 계산한다.
+		if ((clock() - start_clk) > milliSecond) break;
+	}
+}
 
 deque<QueueData> sendQueue[MAX_PLAYER];
 deque<int> sendQueueGuest;

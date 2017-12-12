@@ -136,9 +136,12 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 
 				while (7) {
 					std::cout << ".";
-					_sleep(100);
-					if (m_network->GetRecvType())
+					//_sleep(100);
+					m_network->CustomSleep(100);
+					if (m_network->GetRecvType()) {
+						m_network->CustomSleep(10);
 						break;
+					}
 				}
 
 				if (m_network->GetRecvType() == FAIL_LOGIN)
@@ -184,9 +187,14 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 
 				while (7) {
 					std::cout << ".";
-					_sleep(100);
-					if (m_network->GetRecvType())
+					//_sleep(100);
+					m_network->CustomSleep(100);
+
+
+					if (m_network->GetRecvType()) {
+						m_network->CustomSleep(10);
 						break;
+					}
 				}
 
 				//std::cout << "받은 번호는 " << m_network->GetRecvType() << std::endl;
@@ -290,9 +298,13 @@ bool LoginScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 
 					while (7) {
 						std::cout << ".";
-						_sleep(100);
-						if (m_network->GetRecvType())
+						//_sleep(100);
+						m_network->CustomSleep(100);
+
+						if (m_network->GetRecvType()) {
+							m_network->CustomSleep(10);
 							break;
+						}
 					}
 
 					//std::cout << "받은 번호는 " << m_network->GetRecvType() << std::endl;
