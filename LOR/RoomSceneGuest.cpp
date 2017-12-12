@@ -1,13 +1,14 @@
 #include "RoomSceneGuest.h"
 
+RoomInfoStruct recvStruct;
+RoomInfoStruct sendStruct;
+
 RoomSceneGuest::RoomSceneGuest()
 {
 }
 
 RoomSceneGuest::RoomSceneGuest(HWND hWnd, Network* network, bool isMake) : Scene(hWnd)
 {
-	static RoomInfoStruct recvStruct;
-	static RoomInfoStruct sendStruct;
 
 	m_network = network;
 	m_network->ChageSceneName(SceneName::RoomGuest);
