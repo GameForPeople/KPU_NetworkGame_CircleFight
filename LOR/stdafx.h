@@ -48,10 +48,10 @@ using namespace FMOD;
 #define SERVERPORT 9000
 #define HOSTPORT 9001
 
-#define ARCHER_BASE_SPEED 6.0f
-#define ZOMBIE_BASE_SPEED 5.98f
-#define KNIGHT_BASE_SPEED 5.96f
-#define WICHER_BASE_SPEED 5.96f
+#define ARCHER_BASE_SPEED 5.95f
+#define ZOMBIE_BASE_SPEED 6.00f
+#define KNIGHT_BASE_SPEED 5.85f
+#define WICHER_BASE_SPEED 5.90f
 
 #define MAX_PLAYER 4
 
@@ -71,18 +71,18 @@ using namespace FMOD;
 #define ITEM_INTERVAL			50		//아이템간 간격
 #define ITEM_FIRST_IMPACT		24		//아이템 처음 나오는 곳 - 1
 #define ITEM_SIZE				100		//아이템 그릴때 크기
-#define LIGHTNING_DELAY			1.5f
+#define LIGHTNING_DELAY			2.0f
 #define LIGHTNING_DURATION		2.0F
 #define LIGHTNING_DURATION_B	4.0F
-#define BED_DELAY				1.0f
+#define BED_DELAY				1.5f
 #define BED_DURATION			3.0F
-#define BED_DURATION_B			5.0F
+#define BED_DURATION_B			9.0F
 #define SHEILD_DELAY			0.0f
 #define SHEILD_DURATION			3.0F
 #define SHEILD_DURATION_B		6.0F
 #define WING_DELAY				0.0f
 #define WING_DURATION			3.0F
-#define WING_DURATION_B			5.0F
+#define WING_DURATION_B			6.0F
 
 
 enum class State {

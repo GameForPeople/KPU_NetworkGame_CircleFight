@@ -156,11 +156,13 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 			m_network->SetSendType(DEMAND_JOINROOM);
 
 			while (7) {
-				_sleep(100);
+				m_network->CustomSleep(100);
+				//_sleep(100);
 				std::cout << ".";
 				if (m_network->GetRecvType() && m_network->GetSendType() == 0)
 				{
-					_sleep(100);
+					m_network->CustomSleep(100);
+					//_sleep(100);
 					break;
 				}
 			}
@@ -238,9 +240,13 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 			
 			while (7) {
 				std::cout << ".";
-				_sleep(100);
+				m_network->CustomSleep(100);
+
+				//_sleep(100);
 				if (m_network->GetRecvType()) {
-					_sleep(100);
+					//_sleep(100);
+					m_network->CustomSleep(100);
+
 					break;
 				}
 			}
@@ -288,12 +294,16 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 
 			while (7) {
 				std::cout << ".";
-				_sleep(100);
+				//_sleep(100);
+				m_network->CustomSleep(100);
+
 				if (m_network->GetRecvType()) {
 					m_Len = 0;
 					m_chat[0] = '\0';
 					m_network->SetRecvType(0);
-					_sleep(50);
+					m_network->CustomSleep(50);
+					//_sleep(50);
+
 					break;
 				}
 			}
@@ -351,12 +361,13 @@ bool LobbyScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 				//std::cout << "4" << std::endl;
 				while (7) {
 					std::cout << ".";
-					_sleep(100);
+					//_sleep(100);
+					m_network->CustomSleep(100);
 					if (m_network->GetRecvType()) {
 						m_Len = 0;
 						m_chat[0] = '\0';
 						m_network->SetRecvType(0);
-
+						m_network->CustomSleep(50);
 						break;
 					}
 				}

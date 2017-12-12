@@ -93,8 +93,8 @@ void Network::NetworkThreadFunction() {
 		else if (m_sceneName == SceneName::Lobby) {
 			//EnterCriticalSection(&SEND_SECTION);
 			//std::cout << "server : "<< m_sendType << " ";
-			_sleep(100);
-
+			//_sleep(100);
+			CustomSleep(100);
 			if (m_sendType > 0) {
 				//LeaveCriticalSection(&SEND_SECTION);
 
@@ -243,7 +243,7 @@ void Network::NetworkThreadFunction() {
 			}
 		}
 		else {
-			_sleep(1000);
+			CustomSleep(1000);
 		}
 	}
 

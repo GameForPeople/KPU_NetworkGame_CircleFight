@@ -9,8 +9,8 @@
 
 
 #define			INIT_PAWN_POS_X			200
-#define			SPEED_BUFF_VAL			1.2f
-#define			SPEED_BUFF_VAL_B		1.4f
+#define			SPEED_BUFF_VAL			1.1f
+#define			SPEED_BUFF_VAL_B		1.2f
 
 
 struct BoundingBox {
