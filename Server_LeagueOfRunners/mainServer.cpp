@@ -82,6 +82,8 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 		recvType = ReturnTypeNumber(clientSock);	// 클라이언트로부터 타입값을 받습니다.
 		if (!recvType) goto END_CONNECT;
 
+		std::cout << "받은 번호는 : " << recvType << std::endl;
+
 #pragma region [ LoginScene ]
 		if (recvType == DEMAND_LOGIN) {
 			DemandLoginStruct demandLogin{};
@@ -255,7 +257,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 
 			char buf[CHAT_BUF_SIZE]{};
 			
-			//std::cout << "받은 채팅 내용은 : " << demandChat.chat << std::endl;
+			std::cout << "받은 채팅 내용은 : " << demandChat.chat << std::endl;
 			memcpy(buf, ID, sizeof(ID));
 			strcat(buf, " : ");
 			strcat(buf, demandChat.chat);

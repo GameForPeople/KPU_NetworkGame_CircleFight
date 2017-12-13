@@ -28,6 +28,7 @@ Network::Network()
 
 	//InitializeCriticalSection(&SEND_SECTION);
 	InitializeCriticalSection(&LOBBY_UPDATE_SECTION);
+	InitializeCriticalSection(&LOBBY_NETWORK_SECTION);
 
 }
 
@@ -35,6 +36,7 @@ Network::~Network()
 {
 	//DeleteCriticalSection(&SEND_SECTION);
 	DeleteCriticalSection(&LOBBY_UPDATE_SECTION);
+	InitializeCriticalSection(&LOBBY_NETWORK_SECTION);
 }
 
 
@@ -97,7 +99,7 @@ void Network::NetworkThreadFunction() {
 			CustomSleep(100);
 			if (m_sendType > 0) {
 				//LeaveCriticalSection(&SEND_SECTION);
-
+				EnterCriticalSection(&LOBBY_NETWORK_SECTION);
 				#ifdef DEBUG_MODE
 				std::cout << "로비입니다. 요구할게요 서버님!" << std::endl;
 				#endif
@@ -167,10 +169,13 @@ void Network::NetworkThreadFunction() {
 						m_recvType = FAIL_JOINROOM;
 					}
 				}
+				LeaveCriticalSection(&LOBBY_NETWORK_SECTION);
 			}
 			else if(m_sendType == 0){
 				//_sleep(100);
 				EnterCriticalSection(&LOBBY_UPDATE_SECTION);
+				EnterCriticalSection(&LOBBY_NETWORK_SECTION);
+
 					m_sendType = UPDATE_LOBBY;
 
 					retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
@@ -198,6 +203,7 @@ void Network::NetworkThreadFunction() {
 					m_recvType = 2;
 
 				LeaveCriticalSection(&LOBBY_UPDATE_SECTION);
+				LeaveCriticalSection(&LOBBY_NETWORK_SECTION);
 			}
 		}
 		else if (m_sceneName == SceneName::RoomGuest) {
