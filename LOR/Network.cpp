@@ -204,6 +204,7 @@ void Network::NetworkThreadFunction() {
 
 				LeaveCriticalSection(&LOBBY_UPDATE_SECTION);
 				LeaveCriticalSection(&LOBBY_NETWORK_SECTION);
+				CustomSleep(50);
 			}
 		}
 		else if (m_sceneName == SceneName::RoomGuest) {
