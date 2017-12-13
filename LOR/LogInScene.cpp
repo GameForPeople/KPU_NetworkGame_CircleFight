@@ -139,7 +139,6 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 					//_sleep(100);
 					m_network->CustomSleep(100);
 					if (m_network->GetRecvType()) {
-						m_network->CustomSleep(10);
 						break;
 					}
 				}
@@ -192,7 +191,6 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 
 
 					if (m_network->GetRecvType()) {
-						m_network->CustomSleep(10);
 						break;
 					}
 				}
@@ -302,7 +300,6 @@ bool LoginScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 						m_network->CustomSleep(100);
 
 						if (m_network->GetRecvType()) {
-							m_network->CustomSleep(10);
 							break;
 						}
 					}

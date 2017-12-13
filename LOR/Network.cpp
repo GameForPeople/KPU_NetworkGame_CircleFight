@@ -28,13 +28,14 @@ Network::Network()
 
 	//InitializeCriticalSection(&SEND_SECTION);
 	InitializeCriticalSection(&LOBBY_UPDATE_SECTION);
-
+	InitializeCriticalSection(&CHANGE_FLAG_SECTION);
 }
 
 Network::~Network()
 {
 	//DeleteCriticalSection(&SEND_SECTION);
 	DeleteCriticalSection(&LOBBY_UPDATE_SECTION);
+	DeleteCriticalSection(&CHANGE_FLAG_SECTION);
 }
 
 
@@ -133,30 +134,38 @@ void Network::NetworkThreadFunction() {
 					m_recvType = 1;
 				}
 				else if (m_sendType == DEMAND_CREATEROOM) {
-					retVal = recv(m_sock, (char*)&m_recvType, sizeof(m_recvType), 0);
+					int m_recvTypeBuffer{};
+
+					retVal = recv(m_sock, (char*)&m_recvTypeBuffer, sizeof(m_recvTypeBuffer), 0);
 					if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
-					if (m_recvType == PERMIT_CREATEROOM) {
+					if (m_recvTypeBuffer == PERMIT_CREATEROOM) {
 
-						if(m_permitCreateRoom == NULL)
+						if (m_permitCreateRoom == NULL)
 							m_permitCreateRoom = new PermitCreateRoomStruct;
 
 						retVal = recv(m_sock, (char*)m_permitCreateRoom, sizeof(*m_permitCreateRoom), 0);
 						if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
 						m_sendType = 0;
+						m_recvType = m_recvTypeBuffer;
+					}
+					else if (m_recvTypeBuffer == FAIL_CREATEROOM) {
+						m_sendType = 0;
+						m_recvType = m_recvTypeBuffer;
 					}
 				}
 				else if (m_sendType == DEMAND_JOINROOM) {
 					retVal = send(m_sock, (char*)m_demandJoinRoom, sizeof(m_demandJoinRoom), 0);
 					if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 
-					retVal = recv(m_sock, (char*)&m_recvType, sizeof(m_recvType), 0);
+					int m_recvTypeBuffer{};
+					retVal = recv(m_sock, (char*)&m_recvTypeBuffer, sizeof(m_recvTypeBuffer), 0);
 					if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
 					//std::cout << "전달받은 타입은 " << m_recvType << std::endl;
 
-					if (m_recvType == PERMIT_JOINROOM) {
+					if (m_recvTypeBuffer == PERMIT_JOINROOM) {
 						if(m_permitJoinRoom == NULL)
 							m_permitJoinRoom = new PermitJoinRoomStruct;
 
@@ -164,8 +173,9 @@ void Network::NetworkThreadFunction() {
 						if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
 						m_sendType = 0;
+						m_recvType = m_recvTypeBuffer;
 					}
-					else if (m_recvType == FAIL_JOINROOM) {
+					else if (m_recvTypeBuffer == FAIL_JOINROOM) {
 						m_sendType = 0;
 						m_recvType = FAIL_JOINROOM;
 					}
@@ -173,6 +183,18 @@ void Network::NetworkThreadFunction() {
 			}
 			else if(m_sendType == 0){
 				//_sleep(100);
+
+				while (7) {
+					EnterCriticalSection(&CHANGE_FLAG_SECTION);
+					if (m_flag == 0) {
+						m_flag = 1;
+						LeaveCriticalSection(&CHANGE_FLAG_SECTION);
+						break;
+					}
+					LeaveCriticalSection(&CHANGE_FLAG_SECTION);
+					CustomSleep(15);
+				}
+
 				EnterCriticalSection(&LOBBY_UPDATE_SECTION);
 					m_sendType = UPDATE_LOBBY;
 
@@ -197,8 +219,9 @@ void Network::NetworkThreadFunction() {
 					retVal = recv(m_sock, (char*)m_updateLobbyInfo, sizeof(*m_updateLobbyInfo), 0);
 					if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 
-					m_sendType = -1;
-					m_recvType = 2;
+					m_sendType = 0;
+					m_recvType = 0;
+					m_flag = 0;
 
 				LeaveCriticalSection(&LOBBY_UPDATE_SECTION);
 			}

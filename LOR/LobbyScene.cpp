@@ -26,10 +26,19 @@ LobbyScene::LobbyScene(HWND hWnd, Network* network) : Scene(hWnd)
 	LoadCImage();
 	m_network = network;
 	m_network->ChageSceneName(SceneName::Lobby);
+	m_network->m_flag = 0;
+
+	if (m_network->m_permitChat == NULL)
+		m_network->m_permitChat = new PermitChatStruct;
+
+	if (m_network->m_updateLobbyInfo == NULL)
+		m_network->m_updateLobbyInfo = new UpdateLobbyInfoStruct;
 }
 
 LobbyScene::~LobbyScene()
 {
+	//delete(m_network->m_permitChat);
+	//delete(m_network->m_updateLobbyInfo);
 }
 
 
@@ -46,7 +55,7 @@ void LobbyScene::Draw(HDC hdc) {
 
 	int xPosBuffer = 45, yPosBuffer = 100;
 	for (int i = 0; i < MAX_ROOM_COUNT; i++) {
-		
+
 		if (m_roomData[i].playersNumber) {
 			if (m_roomData[i].mapNumber == 1) {
 				m_roomImg[0].TransparentBlt(hdc, xPosBuffer, yPosBuffer, 270, 170, RGB(255, 255, 255));
@@ -103,8 +112,8 @@ void LobbyScene::Draw(HDC hdc) {
 void LobbyScene::Timer(const double count) {
 	//_sleep(100);
 
-	if (m_network->GetRecvType() == 2) {
-		EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
+	//if (m_network->GetRecvType() == 2 && m_network->m_flag == 1) {
+		///EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 
 		::memcpy(m_chatBuf[0], m_network->m_permitChat->chat[0], sizeof(m_network->m_permitChat->chat[0]));
 		::memcpy(m_chatBuf[1], m_network->m_permitChat->chat[1], sizeof(m_network->m_permitChat->chat[1]));
@@ -117,11 +126,12 @@ void LobbyScene::Timer(const double count) {
 			m_roomData[i].playersNumber = m_network->m_updateLobbyInfo->m_playersNumber[i];
 		}
 
-		m_network->SetRecvType(0);
-		m_network->SetSendType(0);
+		//m_network->SetRecvType(0);
+		//m_network->SetSendType(0);
 
-	LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
-	}
+		//m_network->m_flag = 0;
+	///LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
+	//}
 }
 
 bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
@@ -135,8 +145,19 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 		std::cout << mouseX << "  " << mouseY << std::endl;
 		#endif
 
+		while (7) {
+			EnterCriticalSection(&(m_network->CHANGE_FLAG_SECTION));
+			if (m_network->m_flag == 0) {
+				m_network->m_flag = 2;
+				LeaveCriticalSection(&(m_network->CHANGE_FLAG_SECTION));
+				break;
+			}
+			LeaveCriticalSection(&(m_network->CHANGE_FLAG_SECTION));
+			m_network->CustomSleep(10);
+		}
+
 		if (mouseX > 45 && mouseX < 1225 && mouseY > 100 && mouseY < 460) {
-			EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
+			//EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 
 			int roomIndexBuf{};
 
@@ -157,15 +178,15 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 
 			while (7) {
 				m_network->CustomSleep(100);
-				//_sleep(100);
 				std::cout << ".";
 				if (m_network->GetRecvType() && m_network->GetSendType() == 0)
 				{
-					m_network->CustomSleep(100);
+					//m_network->CustomSleep(100);
 					//_sleep(100);
 					break;
 				}
 			}
+
 			if (m_network->GetRecvType() == PERMIT_JOINROOM) {
 				//m_network->m_permitJoinRoom->hostAddr
 
@@ -192,20 +213,21 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 				m_nextScene = SceneName::RoomGuest;
 				m_isDestory = true;
 				std::cout << "방에 들어 갔습니다. " << std::endl;
+
 			}
 			else if (m_network->GetRecvType() == FAIL_JOINROOM){
 				m_network->SetRecvType(0);
 				m_network->SetSendType(0);
 				std::cout << "방에 들어가는 것이 1번째 이유로 실패했습니다. " << std::endl;
 			}
-			LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
+			//LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 		}
 		else if (mouseY > 580 && mouseY < 670 && mouseX > 740 && mouseX < 845) {
-			EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
+			//EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 
 			m_network->SetRecvType(0);
 			m_network->SetSendType(0);
-			LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
+			//LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 			
 			//if (m_network->m_demandChat != NULL)
 			//	delete (m_network->m_demandChat);
@@ -228,9 +250,10 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 			#endif
 			m_nextScene = SceneName::Login;
 			m_isDestory = true;
+
 		}
 		else if (mouseY > 465 && mouseY < 560 && mouseX > 740 && mouseX < 845) {
-			EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
+			///EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 			// 방생성
 			#ifdef DEBUG_MODE
 			std::cout << "방생성합니다!! " << std::endl;
@@ -245,7 +268,7 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 				//_sleep(100);
 				if (m_network->GetRecvType()) {
 					//_sleep(100);
-					m_network->CustomSleep(100);
+					//m_network->CustomSleep(100);
 
 					break;
 				}
@@ -275,10 +298,10 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 				m_nextScene = SceneName::Room;
 				m_isDestory = true;
 			}
-			LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
+			///LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 		}
 		else if (mouseY > 630 && mouseY < 670 && mouseX > 640 && mouseX < 725) {
-			EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
+			///EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 
 			if(m_network->m_demandChat == NULL)
 				m_network->m_demandChat = new DemandChatStruct;
@@ -297,13 +320,12 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 				//_sleep(100);
 				m_network->CustomSleep(100);
 
-				if (m_network->GetRecvType()) {
+				if (m_network->GetRecvType() == 1) {
 					m_Len = 0;
 					m_chat[0] = '\0';
 					m_network->SetRecvType(0);
-					m_network->CustomSleep(50);
+					//m_network->CustomSleep(50);
 					//_sleep(50);
-
 					break;
 				}
 			}
@@ -312,7 +334,7 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 			//::memcpy(m_chatBuf[2], m_network->m_permitChat->chat[2], sizeof(m_network->m_permitChat->chat[2]));
 			//::memcpy(m_chatBuf[3], m_network->m_permitChat->chat[3], sizeof(m_network->m_permitChat->chat[3]));
 			//::memcpy(m_chatBuf[4], m_network->m_permitChat->chat[4], sizeof(m_network->m_permitChat->chat[4]));
-			LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
+		///	LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 			//memcpy(m_chatBuf[0], m_chatBuf[1], sizeof(m_chatBuf[1]));
 			//memcpy(m_chatBuf[1], m_chatBuf[2], sizeof(m_chatBuf[2]));
 			//memcpy(m_chatBuf[2], m_chatBuf[3], sizeof(m_chatBuf[3]));
@@ -322,6 +344,8 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 			//m_Len = 0;
 			//m_chat[0] = '\0';
 		}
+		
+		m_network->m_flag = 0;
 		return true;
 	}
 }
@@ -348,13 +372,24 @@ bool LobbyScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 				}
 			}
 			else if (wParam == VK_RETURN) {
-				EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
+
+				while (7) {
+					EnterCriticalSection(&(m_network->CHANGE_FLAG_SECTION));
+					if (m_network->m_flag == 0) {
+						m_network->m_flag = 2;
+						LeaveCriticalSection(&(m_network->CHANGE_FLAG_SECTION));
+						break;
+					}
+					LeaveCriticalSection(&(m_network->CHANGE_FLAG_SECTION));
+					m_network->CustomSleep(10);
+				}
 
 				if(m_network->m_demandChat == NULL)
 					m_network->m_demandChat = new DemandChatStruct;
 
 				::memcpy(m_network->m_demandChat->chat, m_chat, sizeof(m_chat));
 
+		
 				//EnterCriticalSection(&m_network->SEND_SECTION);
 				m_network->SetSendType(DEMAND_CHAT);
 				//LeaveCriticalSection(&m_network->SEND_SECTION);
@@ -363,23 +398,21 @@ bool LobbyScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 					std::cout << ".";
 					//_sleep(100);
 					m_network->CustomSleep(100);
-					if (m_network->GetRecvType()) {
+					if (m_network->GetRecvType() == 1) {
 						m_Len = 0;
 						m_chat[0] = '\0';
 						m_network->SetRecvType(0);
-						m_network->CustomSleep(50);
 						break;
 					}
 				}
-				LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 				//::memcpy(m_chatBuf[0], m_network->m_permitChat->chat[0], sizeof(m_network->m_permitChat->chat[0]));
 				//::memcpy(m_chatBuf[1], m_network->m_permitChat->chat[1], sizeof(m_network->m_permitChat->chat[1]));
 				//::memcpy(m_chatBuf[2], m_network->m_permitChat->chat[2], sizeof(m_network->m_permitChat->chat[2]));
 				//::memcpy(m_chatBuf[3], m_network->m_permitChat->chat[3], sizeof(m_network->m_permitChat->chat[3]));
 				//::memcpy(m_chatBuf[4], m_network->m_permitChat->chat[4], sizeof(m_network->m_permitChat->chat[4]));
+				m_network->m_flag = 0;
 			}
 		}
-
 	return true;
 }
 

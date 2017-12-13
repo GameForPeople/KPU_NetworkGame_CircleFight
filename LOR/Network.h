@@ -175,6 +175,12 @@ struct DemandChatStruct {
 // type 209
 struct PermitChatStruct {
 	char chat[CHAT_MAX_LINE][CHAT_BUF_SIZE];
+
+	PermitChatStruct() {
+		for (int i = 0; i < CHAT_MAX_LINE; ++i) {
+			chat[i][0] = '\0';
+		}
+	}
 };
 
 
@@ -195,6 +201,13 @@ struct SupplyRoomInfoStruct {
 struct UpdateLobbyInfoStruct {
 	int m_playersNumber[MAX_ROOM_COUNT]{};
 	int m_mapNumber[MAX_ROOM_COUNT]{}; // ¸Ê³Ñ¹ö 1 - ¹Ù´Ù, 2 - ½£
+
+	UpdateLobbyInfoStruct() {
+		for (int i = 0; i < MAX_ROOM_COUNT; i++) {
+			m_playersNumber[i] = 0;
+			m_mapNumber[i] = 0;
+		}
+	}
 };
 
 #pragma endregion
@@ -336,8 +349,8 @@ private:
 	
 	SceneName m_sceneName;
 
-	int m_sendType{};
-	int m_recvType{};
+	atomic<int> m_sendType{};
+	atomic<int> m_recvType{};
 	
 	int retVal{};
 
@@ -366,15 +379,17 @@ public:
 public:
 	HANDLE m_networkThread = NULL;
 	void CustomSleep(int milliSecond);
+	atomic<int> m_flag{};
 
 public:
 	UserData myData;
-	int      m_roomIndex;
+	int         m_roomIndex;
 	int		 m_gameResult;
 	int		m_gameResultBuffer;
 public:
 	CRITICAL_SECTION SEND_SECTION;
 	CRITICAL_SECTION LOBBY_UPDATE_SECTION;
+	CRITICAL_SECTION CHANGE_FLAG_SECTION;
 
 public:
 	//Login Scene	
