@@ -138,8 +138,14 @@
     <ClCompile Include="CZombie.cpp">
       <Filter>소스 파일\CharacterClass\Zombie</Filter>
     </ClCompile>
+    <ClCompile Include="LobbyScene.cpp">
+      <Filter>소스 파일\Scene\LobbyScene</Filter>
+    </ClCompile>
     <ClCompile Include="RoomScene.cpp">
       <Filter>소스 파일\Scene\RoomScene</Filter>
+    </ClCompile>
+    <ClCompile Include="Network.cpp">
+      <Filter>소스 파일\Network</Filter>
     </ClCompile>
     <ClCompile Include="NewMain.cpp">
       <Filter>헤더 파일</Filter>
@@ -155,12 +161,6 @@
     </ClCompile>
     <ClCompile Include="ItemTimer.cpp">
       <Filter>소스 파일\Function</Filter>
-    </ClCompile>
-    <ClCompile Include="LobbyScene.cpp">
-      <Filter>소스 파일\Scene\LobbyScene</Filter>
-    </ClCompile>
-    <ClCompile Include="Network.cpp">
-      <Filter>소스 파일\Network</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

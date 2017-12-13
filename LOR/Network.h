@@ -336,8 +336,8 @@ private:
 	
 	SceneName m_sceneName;
 
-	atomic<int> m_sendType{};
-	atomic<int> m_recvType{};
+	int m_sendType{};
+	int m_recvType{};
 	
 	int retVal{};
 
@@ -371,11 +371,10 @@ public:
 	UserData myData;
 	int      m_roomIndex;
 	int		 m_gameResult;
-	int		 m_gameResultBuffer;
+	int		m_gameResultBuffer;
 public:
 	CRITICAL_SECTION SEND_SECTION;
 	CRITICAL_SECTION LOBBY_UPDATE_SECTION;
-	CRITICAL_SECTION LOBBY_NETWORK_SECTION;
 
 public:
 	//Login Scene	

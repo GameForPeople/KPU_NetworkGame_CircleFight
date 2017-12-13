@@ -28,7 +28,6 @@ Network::Network()
 
 	//InitializeCriticalSection(&SEND_SECTION);
 	InitializeCriticalSection(&LOBBY_UPDATE_SECTION);
-	InitializeCriticalSection(&LOBBY_NETWORK_SECTION);
 
 }
 
@@ -36,7 +35,6 @@ Network::~Network()
 {
 	//DeleteCriticalSection(&SEND_SECTION);
 	DeleteCriticalSection(&LOBBY_UPDATE_SECTION);
-	InitializeCriticalSection(&LOBBY_NETWORK_SECTION);
 }
 
 
@@ -71,23 +69,26 @@ void Network::NetworkThreadFunction() {
 				#ifdef DEBUG_MODE
 				std::cout << "로그인 실패 또는 성공 보냈어요!" << std::endl;
 				#endif
-				retVal = recv(m_sock, (char*)&m_recvType, sizeof(m_recvType), 0);
+				int m_recvTypeBuffer{};
+				retVal = recv(m_sock, (char*)&m_recvTypeBuffer, sizeof(m_recvType), 0);
 				if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
 				m_sendType = 0;
 
-				if (m_recvType == PERMIT_LOGIN) {
+				if (m_recvTypeBuffer == PERMIT_LOGIN) {
 					if(m_permitLogin == NULL)
 						m_permitLogin = new PermitLoginStruct;
 
 					retVal = recv(m_sock, (char*)m_permitLogin, sizeof(*m_permitLogin), 0);
 					if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
-					#ifdef DEBUG_MODE
 					std::cout << "받은 승리 횟수는 " << m_permitLogin->winCount << std::endl;
 					std::cout << "받은 패배 횟수는 " << m_permitLogin->loseCount << std::endl;
+					#ifdef DEBUG_MODE
 					std::cout << "받은 사이즈의 크기는 " << sizeof(*m_permitLogin) << std::endl;
 					#endif
+
+					m_recvType = m_recvTypeBuffer;
 				}
 			}
 			}
@@ -97,9 +98,9 @@ void Network::NetworkThreadFunction() {
 			//std::cout << "server : "<< m_sendType << " ";
 			//_sleep(100);
 			CustomSleep(100);
-				EnterCriticalSection(&LOBBY_NETWORK_SECTION);
 			if (m_sendType > 0) {
 				//LeaveCriticalSection(&SEND_SECTION);
+
 				#ifdef DEBUG_MODE
 				std::cout << "로비입니다. 요구할게요 서버님!" << std::endl;
 				#endif
@@ -128,7 +129,7 @@ void Network::NetworkThreadFunction() {
 					//std::cout << m_permitChat->chat[3] << std::endl;
 					//std::cout << m_permitChat->chat[4] << std::endl;
 
-					m_sendType = 1000;
+					m_sendType = 0;
 					m_recvType = 1;
 				}
 				else if (m_sendType == DEMAND_CREATEROOM) {
@@ -143,7 +144,7 @@ void Network::NetworkThreadFunction() {
 						retVal = recv(m_sock, (char*)m_permitCreateRoom, sizeof(*m_permitCreateRoom), 0);
 						if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
-						//m_sendType = 0;
+						m_sendType = 0;
 					}
 				}
 				else if (m_sendType == DEMAND_JOINROOM) {
@@ -162,20 +163,17 @@ void Network::NetworkThreadFunction() {
 						retVal = recv(m_sock, (char*)m_permitJoinRoom, sizeof(m_permitJoinRoom), 0);
 						if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
-						//m_sendType = 0;
+						m_sendType = 0;
 					}
-					//else if (m_recvType == FAIL_JOINROOM) {
-						//m_sendType = 0;
-						//m_recvType = FAIL_JOINROOM;
-					//}
+					else if (m_recvType == FAIL_JOINROOM) {
+						m_sendType = 0;
+						m_recvType = FAIL_JOINROOM;
+					}
 				}
 			}
-				LeaveCriticalSection(&LOBBY_NETWORK_SECTION);
-			
-				EnterCriticalSection(&LOBBY_UPDATE_SECTION);
-				EnterCriticalSection(&LOBBY_NETWORK_SECTION);
-			if(m_sendType == 0){
+			else if(m_sendType == 0){
 				//_sleep(100);
+				EnterCriticalSection(&LOBBY_UPDATE_SECTION);
 					m_sendType = UPDATE_LOBBY;
 
 					retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
@@ -202,21 +200,10 @@ void Network::NetworkThreadFunction() {
 					m_sendType = -1;
 					m_recvType = 2;
 
-			}
 				LeaveCriticalSection(&LOBBY_UPDATE_SECTION);
-				LeaveCriticalSection(&LOBBY_NETWORK_SECTION);
+			}
 		}
 		else if (m_sceneName == SceneName::RoomGuest) {
-			if (m_gameResult) {
-				int sendTypeBuffer = DEMAND_SENDRESULT;
-				retVal = send(m_sock, (char*)&sendTypeBuffer, sizeof(sendTypeBuffer), 0);
-				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
-
-				retVal = send(m_sock, (char*)&m_gameResult, sizeof(m_gameResult), 0);
-				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
-
-				m_gameResult = 0;
-			}
 			if (m_sendType == DEMAND_EXITROOM) {
 				retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
@@ -225,9 +212,6 @@ void Network::NetworkThreadFunction() {
 				m_sceneName = SceneName::Lobby;
 				m_sendType = 0;
 			}
-		}
-		else if (m_sceneName == SceneName::Room) {
-			//_sleep(1000);
 			if (m_gameResult) {
 				int sendTypeBuffer = DEMAND_SENDRESULT;
 				retVal = send(m_sock, (char*)&sendTypeBuffer, sizeof(sendTypeBuffer), 0);
@@ -238,7 +222,10 @@ void Network::NetworkThreadFunction() {
 
 				m_gameResult = 0;
 			}
-			else if (m_sendType == DEMAND_EXITROOM) {
+		}
+		else if (m_sceneName == SceneName::Room) {
+			//_sleep(1000);
+			if (m_sendType == DEMAND_EXITROOM) {
 				retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 				//std::cout << " R ";
@@ -246,6 +233,16 @@ void Network::NetworkThreadFunction() {
 
 				m_sceneName = SceneName::Lobby;
 				m_sendType = 0;
+			}
+			if (m_gameResult) {
+				int sendTypeBuffer = DEMAND_SENDRESULT;
+				retVal = send(m_sock, (char*)&sendTypeBuffer, sizeof(sendTypeBuffer), 0);
+				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
+
+				retVal = send(m_sock, (char*)&m_gameResult, sizeof(m_gameResult), 0);
+				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
+
+				m_gameResult = 0;
 			}
 		}
 		else {
@@ -711,10 +708,12 @@ DWORD WINAPI RecvDataGuest(LPVOID arg)
 		case NOTIFY_WIN:
 			threadNetwork->m_gameResult = 1;
 			threadNetwork->m_gameResultBuffer = 1;
+			ResumeThread(threadNetwork->m_networkThread);
 			break;
 		case NOTIFY_LOSE:
 			threadNetwork->m_gameResult = 2;
 			threadNetwork->m_gameResultBuffer = 2;
+			ResumeThread(threadNetwork->m_networkThread);
 			break;
 		case SET_UI_THUNDER:
 			recvn(sock_info.sock, (char*)&itemUser, sizeof(itemUser), 0);

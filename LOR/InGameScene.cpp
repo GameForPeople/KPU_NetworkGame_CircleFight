@@ -64,6 +64,7 @@ InGameScene::InGameScene(HWND hwnd, Network* network) : Scene(hwnd)
 	charArr = m_characterArr;
 
 	m_resultUICount = 0;
+	m_isGameEnd = false;
 }
 
 InGameScene::InGameScene()
@@ -72,7 +73,7 @@ InGameScene::InGameScene()
 
 InGameScene::~InGameScene()
 {
-	ResumeThread(m_network->m_networkThread);
+	//ResumeThread(m_network->m_networkThread);
 	if (m_map) delete m_map;
 	if (m_platArr) delete[] m_platArr;
 	if (m_itemArr) delete[] m_itemArr;
@@ -609,7 +610,7 @@ void InGameScene::UpdateItemList(double time)
 				timerList.push_back(ItemTimer(duration, TIMEOUT_FAINT, b));
 				for (int i = 1; i < MAX_PLAYER; ++i)
 				{
-					sendQueue[i].emplace_back(SET_UI_BED, b);
+					sendQueue[i].emplace_back(SET_UI_THUNDER, b);
 				}
 			}
 			iter = timerList.erase(iter);
@@ -713,20 +714,25 @@ void InGameScene::UpdateItemList(double time)
 
 void InGameScene::FinishChecker(int idx)
 {
-	if (m_characterArr[idx].GetTotalDistance() < 100000) return;
-	if (m_resultUICount == 0) m_resultUICount++;
-	if (idx < 2)
-	{ 
-		m_gameResult = m_network->m_gameResult = 1;
-		sendQueue[1].emplace_back(NOTIFY_WIN);
-		sendQueue[2].emplace_back(NOTIFY_LOSE);
-		sendQueue[3].emplace_back(NOTIFY_LOSE);
-	}
-	else
-	{
-		m_gameResult = m_network->m_gameResult = 2;
-		sendQueue[1].emplace_back(NOTIFY_LOSE);
-		sendQueue[2].emplace_back(NOTIFY_WIN);
-		sendQueue[3].emplace_back(NOTIFY_WIN);
+	if (m_isGameEnd == false) {
+		if (m_characterArr[idx].GetTotalDistance() < 100000) return;
+		if (m_resultUICount == 0) m_resultUICount++;
+		if (idx < 2)
+		{
+			m_gameResult = m_network->m_gameResult = 1;
+			sendQueue[1].emplace_back(NOTIFY_WIN);
+			sendQueue[2].emplace_back(NOTIFY_LOSE);
+			sendQueue[3].emplace_back(NOTIFY_LOSE);
+		}
+		else
+		{
+			m_gameResult = m_network->m_gameResult = 2;
+			sendQueue[1].emplace_back(NOTIFY_LOSE);
+			sendQueue[2].emplace_back(NOTIFY_WIN);
+			sendQueue[3].emplace_back(NOTIFY_WIN);
+		}
+
+		ResumeThread(m_network->m_networkThread); //--> ¼Ò¸êÀÚ·Î ´Ù½Ãº¸³¿!
+		m_isGameEnd = true;
 	}
 }

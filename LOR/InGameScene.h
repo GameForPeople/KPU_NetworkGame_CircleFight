@@ -31,6 +31,7 @@ private:
 	int						m_resultUICount;
 	int						m_gameResult;
 
+	bool					m_isGameEnd;
 public:
 	InGameScene();
 	InGameScene(HWND, Network *network);

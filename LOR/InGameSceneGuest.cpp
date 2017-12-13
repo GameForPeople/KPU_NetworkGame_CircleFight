@@ -68,12 +68,11 @@ InGameSceneGuest::InGameSceneGuest()
 
 InGameSceneGuest::~InGameSceneGuest()
 {
-	ResumeThread(m_network->m_networkThread);
+	//ResumeThread(m_network->m_networkThread);
 	if (m_map) delete m_map;
 	if (m_platArr) delete[] m_platArr;
 	if (m_itemArr) delete[] m_itemArr;
 }
-
 
 
 void InGameSceneGuest::Draw(HDC hdc) {

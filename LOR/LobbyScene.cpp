@@ -103,8 +103,8 @@ void LobbyScene::Draw(HDC hdc) {
 void LobbyScene::Timer(const double count) {
 	//_sleep(100);
 
-		EnterCriticalSection(&(m_network->LOBBY_UPDATE_SECTION));
 	if (m_network->GetRecvType() == 2) {
+		EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 
 		::memcpy(m_chatBuf[0], m_network->m_permitChat->chat[0], sizeof(m_network->m_permitChat->chat[0]));
 		::memcpy(m_chatBuf[1], m_network->m_permitChat->chat[1], sizeof(m_network->m_permitChat->chat[1]));
@@ -120,8 +120,8 @@ void LobbyScene::Timer(const double count) {
 		m_network->SetRecvType(0);
 		m_network->SetSendType(0);
 
+	LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 	}
-		LeaveCriticalSection(&(m_network->LOBBY_UPDATE_SECTION));
 }
 
 bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
@@ -275,11 +275,6 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 				m_nextScene = SceneName::Room;
 				m_isDestory = true;
 			}
-			else {
-				m_network->SetRecvType(0);
-				m_network->SetSendType(0);
-			}
-
 			LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 		}
 		else if (mouseY > 630 && mouseY < 670 && mouseX > 640 && mouseX < 725) {
@@ -302,11 +297,10 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 				//_sleep(100);
 				m_network->CustomSleep(100);
 
-				if (m_network->GetRecvType() ) {
+				if (m_network->GetRecvType()) {
 					m_Len = 0;
 					m_chat[0] = '\0';
 					m_network->SetRecvType(0);
-					m_network->SetSendType(0);
 					m_network->CustomSleep(50);
 					//_sleep(50);
 
@@ -354,7 +348,7 @@ bool LobbyScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 				}
 			}
 			else if (wParam == VK_RETURN) {
-				EnterCriticalSection(&(m_network->LOBBY_UPDATE_SECTION));
+				EnterCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 
 				if(m_network->m_demandChat == NULL)
 					m_network->m_demandChat = new DemandChatStruct;
@@ -373,12 +367,11 @@ bool LobbyScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 						m_Len = 0;
 						m_chat[0] = '\0';
 						m_network->SetRecvType(0);
-						m_network->SetSendType(0);
 						m_network->CustomSleep(50);
 						break;
 					}
 				}
-				LeaveCriticalSection(&(m_network->LOBBY_UPDATE_SECTION));
+				LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 				//::memcpy(m_chatBuf[0], m_network->m_permitChat->chat[0], sizeof(m_network->m_permitChat->chat[0]));
 				//::memcpy(m_chatBuf[1], m_network->m_permitChat->chat[1], sizeof(m_network->m_permitChat->chat[1]));
 				//::memcpy(m_chatBuf[2], m_network->m_permitChat->chat[2], sizeof(m_network->m_permitChat->chat[2]));
