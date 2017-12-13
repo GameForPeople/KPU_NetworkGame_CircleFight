@@ -609,7 +609,7 @@ void InGameScene::UpdateItemList(double time)
 				timerList.push_back(ItemTimer(duration, TIMEOUT_FAINT, b));
 				for (int i = 1; i < MAX_PLAYER; ++i)
 				{
-					sendQueue[i].emplace_back(SET_UI_THUNDER, b);
+					sendQueue[i].emplace_back(SET_UI_BED, b);
 				}
 			}
 			iter = timerList.erase(iter);
