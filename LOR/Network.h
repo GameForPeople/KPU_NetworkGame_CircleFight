@@ -371,7 +371,7 @@ public:
 	UserData myData;
 	int      m_roomIndex;
 	int		 m_gameResult;
-	int		m_gameResultBuffer;
+	int		 m_gameResultBuffer;
 public:
 	CRITICAL_SECTION SEND_SECTION;
 	CRITICAL_SECTION LOBBY_UPDATE_SECTION;

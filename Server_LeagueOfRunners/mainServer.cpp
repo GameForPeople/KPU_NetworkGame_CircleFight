@@ -30,10 +30,10 @@ static std::atomic<int> playersNumber;
 
 DWORD WINAPI SaveUserDate(LPVOID arg) {
 	while (7) {
-		_sleep(10000);
+		Sleep(1000);
 
 		if (IsSaveOn) {
-			_sleep(1000);
+			Sleep(1000);
 			std::ofstream outFile("UserData.txt", std::ios::out);
 			char ID[5];
 			int PW, winCount, loseCount;
@@ -49,6 +49,7 @@ DWORD WINAPI SaveUserDate(LPVOID arg) {
 				//outFile << ID << PW << winCount << loseCount;
 			}
 			outFile.close();
+			std::cout << "[ System - UserDataSave ]" << std::endl;
 
 			IsSaveOn = false;
 		}
@@ -348,6 +349,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			for (auto &i : userData) {
 				if (!strcmp(ID, i.GetID())) {
 					i.SetWinOrLose(WinLoseBuf);
+					std::cout << "승리 혹은 패배 적용 완료" << std::endl;
 					break;
 				}
 			}

@@ -126,7 +126,7 @@ void Network::NetworkThreadFunction() {
 					//std::cout << m_permitChat->chat[3] << std::endl;
 					//std::cout << m_permitChat->chat[4] << std::endl;
 
-					m_sendType = 0;
+					m_sendType = 1000;
 					m_recvType = 1;
 				}
 				else if (m_sendType == DEMAND_CREATEROOM) {
@@ -201,6 +201,16 @@ void Network::NetworkThreadFunction() {
 			}
 		}
 		else if (m_sceneName == SceneName::RoomGuest) {
+			if (m_gameResult) {
+				int sendTypeBuffer = DEMAND_SENDRESULT;
+				retVal = send(m_sock, (char*)&sendTypeBuffer, sizeof(sendTypeBuffer), 0);
+				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
+
+				retVal = send(m_sock, (char*)&m_gameResult, sizeof(m_gameResult), 0);
+				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
+
+				m_gameResult = 0;
+			}
 			if (m_sendType == DEMAND_EXITROOM) {
 				retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
@@ -209,6 +219,9 @@ void Network::NetworkThreadFunction() {
 				m_sceneName = SceneName::Lobby;
 				m_sendType = 0;
 			}
+		}
+		else if (m_sceneName == SceneName::Room) {
+			//_sleep(1000);
 			if (m_gameResult) {
 				int sendTypeBuffer = DEMAND_SENDRESULT;
 				retVal = send(m_sock, (char*)&sendTypeBuffer, sizeof(sendTypeBuffer), 0);
@@ -219,10 +232,7 @@ void Network::NetworkThreadFunction() {
 
 				m_gameResult = 0;
 			}
-		}
-		else if (m_sceneName == SceneName::Room) {
-			//_sleep(1000);
-			if (m_sendType == DEMAND_EXITROOM) {
+			else if (m_sendType == DEMAND_EXITROOM) {
 				retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 				//std::cout << " R ";
@@ -230,16 +240,6 @@ void Network::NetworkThreadFunction() {
 
 				m_sceneName = SceneName::Lobby;
 				m_sendType = 0;
-			}
-			if (m_gameResult) {
-				int sendTypeBuffer = DEMAND_SENDRESULT;
-				retVal = send(m_sock, (char*)&sendTypeBuffer, sizeof(sendTypeBuffer), 0);
-				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
-
-				retVal = send(m_sock, (char*)&m_gameResult, sizeof(m_gameResult), 0);
-				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
-
-				m_gameResult = 0;
 			}
 		}
 		else {
