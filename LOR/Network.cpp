@@ -176,7 +176,6 @@ void Network::NetworkThreadFunction() {
 				EnterCriticalSection(&LOBBY_NETWORK_SECTION);
 			if(m_sendType == 0){
 				//_sleep(100);
-
 					m_sendType = UPDATE_LOBBY;
 
 					retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
