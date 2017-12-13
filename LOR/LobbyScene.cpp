@@ -103,8 +103,8 @@ void LobbyScene::Draw(HDC hdc) {
 void LobbyScene::Timer(const double count) {
 	//_sleep(100);
 
-	if (m_network->GetRecvType() == 2) {
 		EnterCriticalSection(&(m_network->LOBBY_UPDATE_SECTION));
+	if (m_network->GetRecvType() == 2) {
 
 		::memcpy(m_chatBuf[0], m_network->m_permitChat->chat[0], sizeof(m_network->m_permitChat->chat[0]));
 		::memcpy(m_chatBuf[1], m_network->m_permitChat->chat[1], sizeof(m_network->m_permitChat->chat[1]));
@@ -120,9 +120,8 @@ void LobbyScene::Timer(const double count) {
 		m_network->SetRecvType(0);
 		m_network->SetSendType(0);
 
-		LeaveCriticalSection(&(m_network->LOBBY_UPDATE_SECTION));
-		m_network->CustomSleep(10);
 	}
+		LeaveCriticalSection(&(m_network->LOBBY_UPDATE_SECTION));
 }
 
 bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
@@ -276,6 +275,11 @@ bool LobbyScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 				m_nextScene = SceneName::Room;
 				m_isDestory = true;
 			}
+			else {
+				m_network->SetRecvType(0);
+				m_network->SetSendType(0);
+			}
+
 			LeaveCriticalSection(&m_network->LOBBY_UPDATE_SECTION);
 		}
 		else if (mouseY > 630 && mouseY < 670 && mouseX > 640 && mouseX < 725) {
