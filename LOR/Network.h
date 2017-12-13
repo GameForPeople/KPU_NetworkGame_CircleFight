@@ -336,8 +336,8 @@ private:
 	
 	SceneName m_sceneName;
 
-	int m_sendType{};
-	int m_recvType{};
+	atomic<int> m_sendType{};
+	atomic<int> m_recvType{};
 	
 	int retVal{};
 
