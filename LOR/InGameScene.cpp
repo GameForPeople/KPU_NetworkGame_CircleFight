@@ -65,6 +65,8 @@ InGameScene::InGameScene(HWND hwnd, Network* network) : Scene(hwnd)
 
 	m_resultUICount = 0;
 	m_isGameEnd = false;
+	m_network->m_gameResult = 0;
+	m_network->m_gameResultBuffer = 0;
 }
 
 InGameScene::InGameScene()
@@ -607,6 +609,7 @@ void InGameScene::UpdateItemList(double time)
 				if (m_characterArr[b].GetCharType() == CharacterName::Zombie && m_rand.getRandomNumber(0, 1) == 0) { continue; }
 				m_characterArr[b].FaintCountUp(true);
 				m_inGameUI.SetUI(b, LIGHTNING);
+
 				timerList.push_back(ItemTimer(duration, TIMEOUT_FAINT, b));
 				for (int i = 1; i < MAX_PLAYER; ++i)
 				{

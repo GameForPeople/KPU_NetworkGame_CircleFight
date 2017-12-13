@@ -219,9 +219,11 @@ void Pawn::FaintCountUp(bool init)
 	{
 		ResetCombo();
 	}
+	SpeedUpCountDown();
 	m_state = State::Stun;
 	m_bufSpeed = 0.0f;
-	m_stackFaint++;
+	if (m_stackFaint < 0) m_stackFaint = 1;
+	else m_stackFaint++;
 }
 
 void Pawn::FaintCountDown()
@@ -243,7 +245,8 @@ void Pawn::FaintReset()
 
 void Pawn::SpeedUpCountUp(bool boost)
 {
-	m_stackSpeedUp++;
+	if (m_stackSpeedUp < 0) m_stackSpeedUp = 1;
+	else m_stackSpeedUp++;
 	if (boost)
 	{
 		m_bufSpeed = SPEED_BUFF_VAL_B;
@@ -258,5 +261,8 @@ void Pawn::SpeedUpCountDown()
 {
 	m_stackSpeedUp--;
 	if (m_stackSpeedUp <= 0)
+	{
 		m_bufSpeed = 1.0f;
+		m_state = State::JumpEnd;
+	}
 }
