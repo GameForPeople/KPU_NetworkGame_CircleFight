@@ -30,15 +30,20 @@ private:
 	CImage m_logoImg;
 	CImage m_pawnImg;
 	CImage m_uiImg[2];
+	CImage m_failImg;
 
 	bool m_isDrawLogo{ true };
 	bool m_isDrawPawn{ false };
 	bool m_isDrawUI{ false };
+	bool m_isDrawFailUI{ false };
+
 
 	int m_logoTimer{ 0 };
 	int m_pawnTimer{ 0 };
 	int m_uiTimer{ 0 };
 	int m_uiOnoff{ 0 };
+
+	int m_failTimer{ 0 };
 
 	TCHAR	m_id[5] = { NULL };
 	TCHAR	m_pw[5] = { NULL };

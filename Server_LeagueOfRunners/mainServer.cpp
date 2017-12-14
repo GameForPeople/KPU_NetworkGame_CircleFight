@@ -164,11 +164,13 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 				#ifdef DEBUG_MODE
 				std::cout << "[ 클라이언트 로그인 실패  받은 ID는  " << demandLogin.ID << " 받은 PW는  " << demandLogin.PW << " IP : " << inet_ntoa(clientAddr.sin_addr) << "  PORT : " << ntohs(clientAddr.sin_port) << "  ] " << std::endl;
 				#endif
-
 				sendType = FAIL_LOGIN;
+				//std::cout << sendType;
 			}
 
+
 			retVal = send(clientSock, (char*)&sendType, sizeof(sendType), 0); // 로그인 성공 or 실패, 성공일 경우 대기하는 것 필요!
+			std::cout << " a " << sendType;
 			
 			if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 

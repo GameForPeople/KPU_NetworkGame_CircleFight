@@ -62,8 +62,11 @@ void LoginScene::Draw(HDC hdc) {
 	TextOut(hdc, 466, 440, m_id, lstrlen(m_id));
 	TextOut(hdc, 466, 520, m_pw, lstrlen(m_pw));
 
+	if (m_isDrawFailUI)
+		m_failImg.BitBlt(hdc, 415, 100, SRCCOPY);
+
 	SelectObject(hdc, OldFont);
-	DeleteObject(hFont);
+	DeleteObject(hFont); 
 }
 
 void LoginScene::Timer(const double count) {
@@ -96,6 +99,15 @@ void LoginScene::Timer(const double count) {
 		}
 		else m_isDrawUI = true;
 	}
+
+	if (m_isDrawFailUI) {
+		m_failTimer++;
+
+		if (m_failTimer >= 120) {
+			m_failTimer = 0;
+			m_isDrawFailUI = false;
+		}
+	}
 }
 
 bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lParam) {
@@ -118,6 +130,7 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 				m_network->m_demandLogin->PW = ChangeNumberCharToInt(m_pw);
 
 				m_network->SetSendType(DEMAND_LOGIN);
+				std::cout << m_network->GetSendType();
 
 				while (7) {
 					std::cout << ".";
@@ -127,8 +140,11 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 					}
 				}
 
-				if (m_network->GetRecvType() == FAIL_LOGIN)
+				if (m_network->GetRecvType() == FAIL_LOGIN) {
+					m_network->SetRecvType();
+					m_isDrawFailUI = true;
 					return true;
+				}
 				else if (m_network->GetRecvType() == PERMIT_LOGIN) {
 					memcpy(m_network->myData.id, m_network->m_demandLogin->ID, sizeof(5));
 					m_network->myData.pw = m_network->m_demandLogin->PW;
@@ -146,6 +162,7 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 					return true;
 				}
 			}
+			else m_isDrawFailUI = true;
 		}
 		else if (mouseY > 600 && mouseX > 550 && mouseX < 750) {
 			if (m_idLen == 4 && m_pwLen == 4) {
@@ -169,15 +186,16 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 				while (7) {
 					std::cout << ".";
 					m_network->CustomSleep(100);
-
-
 					if (m_network->GetRecvType()) {
 						break;
 					}
 				}
 
-				if (m_network->GetRecvType() == FAIL_LOGIN)
+				if (m_network->GetRecvType() == FAIL_LOGIN) {
+					m_network->SetRecvType(0);
+					m_isDrawFailUI = true;
 					return true;
+				}
 				else if (m_network->GetRecvType() == PERMIT_LOGIN) {
 					memcpy(m_network->myData.id, m_network->m_demandLogin->ID, sizeof(5));
 					m_network->myData.pw = m_network->m_demandLogin->PW;
@@ -194,6 +212,9 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 
 					return true;
 				}
+			}
+			else {
+				m_isDrawFailUI = true;
 			}
 		}
 		else if (mouseY > 430 && mouseY < 500 && mouseX > 450 && mouseX < 825) {
@@ -333,4 +354,6 @@ void LoginScene::LoadCImage() {
 	m_pawnImg.Load("Resource/Image/Login/PawnImg.png");
 	m_uiImg[0].Load("Resource/Image/Login/UIImg.png");
 	m_uiImg[1].Load("Resource/Image/Login/UIImg_2.png");
+
+	m_failImg.Load("Resource/Image/UI/FailUI.png");
 }

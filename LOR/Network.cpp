@@ -92,8 +92,9 @@ void Network::NetworkThreadFunction() {
 					std::cout << "받은 사이즈의 크기는 " << sizeof(*m_permitLogin) << std::endl;
 					#endif
 
-					m_recvType = m_recvTypeBuffer;
 					}
+				
+				m_recvType = m_recvTypeBuffer;
 				}
 			}
 		}
