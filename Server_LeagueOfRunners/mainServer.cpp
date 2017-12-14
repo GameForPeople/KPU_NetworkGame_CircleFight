@@ -3,19 +3,21 @@
 #include "mainServer.h"
 #include "GameCommuniCationProtocol.h"
 
-CRITICAL_SECTION ACCEPT_SECTION, 
-SIGNUP_SECTION, 
-SIGNIN_SECTION, 
-CREATE_DESTROY_ROOM_SECTION, 
-IN_OUT_ROOM_SECTION,
-UserDataAccess_SECTION, 
-CHAT_SECTION;
-//---------- 동기화에 관해서
-// ACCEPT_SECTION :
-// SIGNUP_SECTION : 회원가입부분에서, 동시에 회원가입을 하는 경우를 제한
-// SIGNIN_SECTION : 로그인 부분에서, 동시에 하나의 계정에 로그인할 경우를 막기 위해 생성
-// UserDataAccess_Section : 로그인, 회원가입, 로그 아웃등 유저데이터에 접근하는 모든 경우에 제한을 두자!
+CRITICAL_SECTION 
+		//ACCEPT_SECTION, 
+		//SIGNUP_SECTION, 
+		//SIGNIN_SECTION, 
+		CREATE_DESTROY_ROOM_SECTION, 
+		IN_OUT_ROOM_SECTION,
+		UserDataAccess_SECTION, 
+		CHAT_SECTION;
 
+//---------- 동기화에 관해서
+// ACCEPT_SECTION : 액셒 받을때!! --> 사요나라
+// SIGNUP_SECTION : 회원가입부분에서, 동시에 회원가입을 하는 경우를 제한 --> 바이
+// SIGNIN_SECTION : 로그인 부분에서, 동시에 하나의 계정에 로그인할 경우를 막기 위해 생성 -->바이
+// UserDataAccess_Section : 로그인, 회원가입, 로그 아웃등 유저데이터에 접근하는 모든 경우에 제한을 두자!
+// CHAT_SECTION : 채팅에 한번에 여러가지가 못들어가게하자!
 // 생길 수 있는 문제점 : SignUp중인 상황에서, SignIn이 요구될 경우, 문제가 없을 것인가? --> 이터레이터 사이즈 문제
 //--------------------------
 
@@ -35,7 +37,7 @@ DWORD WINAPI SaveUserDate(LPVOID arg) {
 		if (IsSaveOn) {
 			Sleep(2000);
 			std::ofstream outFile("UserData.txt", std::ios::out);
-			char ID[5];
+			char ID[MAX_ID_LEN];
 			int PW, winCount, loseCount;
 
 			outFile << userData.size() << std::endl;
@@ -68,7 +70,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 	addrlen = sizeof(clientAddr);
 	getpeername(clientSock, (SOCKADDR *)&clientAddr, &addrlen);
 
-	char ID[5];
+	char ID[MAX_ID_LEN];
 	int PW;
 
 	int recvType{};
@@ -227,6 +229,8 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 
 			IN_ADDR hostAddrBuffer{};
 			EnterCriticalSection(&IN_OUT_ROOM_SECTION);
+			//EnterCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
+
 			if(lobbyData.JoinRoom(demandJoinRoom.roomIndex, hostAddrBuffer)){
 				sendType = PERMIT_JOINROOM;
 				roomIndex = demandJoinRoom.roomIndex;
@@ -235,6 +239,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 				sendType = FAIL_JOINROOM;
 			}
 			LeaveCriticalSection(&IN_OUT_ROOM_SECTION);
+			//LeaveCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
 
 			retVal = send(clientSock, (char*)&sendType, sizeof(sendType), 0);
 			if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
@@ -258,6 +263,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			retVal = recv(clientSock, (char*)&demandChat, sizeof(demandChat), 0);
 			if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 			
+			EnterCriticalSection(&CHAT_SECTION);
 			lobbyData.PushChat();
 
 			char buf[CHAT_BUF_SIZE]{};
@@ -281,6 +287,8 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			#ifdef DEBUG_MODE
 			std::cout << "[ 채팅이 입력되었습니다.  : " << lobbyData.m_chatBuf[4] << " ] "<< std::endl;
 			#endif
+
+			LeaveCriticalSection(&CHAT_SECTION);
 
 			// 채팅 보내는 로직으로 다시 바꿀경우 아래 모두 복귀!!
 
@@ -321,7 +329,6 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 		//	std::cout << "1 ";
 			EnterCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
 			//std::cout << "2 ";
-
 			EnterCriticalSection(&IN_OUT_ROOM_SECTION);
 			//std::cout << "3 ";
 
@@ -384,7 +391,6 @@ END_CONNECT:
 }
 #pragma endregion
 
-
 int main(int argc, char *argv[])
 {
 	int retVal;
@@ -435,7 +441,6 @@ int main(int argc, char *argv[])
 
 #pragma region [Load UserData]
 
-
 	std::ifstream inFile("UserData.txt", std::ios::in);
 	char ID[5];
 	int PW, winCount, loseCount;
@@ -454,12 +459,17 @@ int main(int argc, char *argv[])
 
 	std::cout << "	- UserData Load Complete! " << std::endl;
 
-	InitializeCriticalSection(&ACCEPT_SECTION);
-	InitializeCriticalSection(&SIGNUP_SECTION);
-	InitializeCriticalSection(&SIGNIN_SECTION);
+#pragma endregion
+
+#pragma region [ Init Part ]
+
+	//InitializeCriticalSection(&ACCEPT_SECTION);
+	//InitializeCriticalSection(&SIGNUP_SECTION);
+	//InitializeCriticalSection(&SIGNIN_SECTION);
 	InitializeCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
 	InitializeCriticalSection(&IN_OUT_ROOM_SECTION);
 	InitializeCriticalSection(&UserDataAccess_SECTION);
+	InitializeCriticalSection(&CHAT_SECTION);
 
 	std::cout << "	- Init Critical Section Complete! " << std::endl;
 
@@ -483,16 +493,15 @@ int main(int argc, char *argv[])
 
 #pragma endregion
 
-#pragma region [Thread Acept]
+#pragma region [ Thread Acept ]
 
 	SOCKET clientSock;
 	SOCKADDR_IN clientAddr;
 	int addrLen;
 	HANDLE hThread, hThreadSaveData;
 
-	hThread = CreateThread(NULL, 0, SaveUserDate, NULL , 0, NULL);
+	hThreadSaveData = CreateThread(NULL, 0, SaveUserDate, NULL , 0, NULL);
 	
-
 	while (7) {
 		//accept
 		addrLen = sizeof(clientAddr);
@@ -517,12 +526,13 @@ int main(int argc, char *argv[])
 	char buf{};
 	std::cin >> buf;
 
-	DeleteCriticalSection(&ACCEPT_SECTION);
-	DeleteCriticalSection(&SIGNUP_SECTION);
-	DeleteCriticalSection(&SIGNIN_SECTION);
+	//DeleteCriticalSection(&ACCEPT_SECTION);
+	//DeleteCriticalSection(&SIGNUP_SECTION);
+	//DeleteCriticalSection(&SIGNIN_SECTION);
 	DeleteCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
 	DeleteCriticalSection(&IN_OUT_ROOM_SECTION);
 	DeleteCriticalSection(&UserDataAccess_SECTION);
+	DeleteCriticalSection(&CHAT_SECTION);
 
 	// closesocket()
 	closesocket(listenSock);

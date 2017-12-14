@@ -130,7 +130,7 @@ enum class SceneName {
 struct DemandLoginStruct {
 	int type{};	// 1일때는 로그인, 2일때는 회원가입
 	int PW{};
-	char ID[5];
+	char ID[MAX_ID_LEN];
 };
 
 // type 101 Server -> Client 로그인 실패, 회원가입 실패

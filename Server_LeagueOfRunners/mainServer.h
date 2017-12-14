@@ -22,6 +22,10 @@
 #define CHAT_MAX_LINE		5
 
 #define MAX_ROOM_COUNT		8
+#define MAX_PLAYER_COUNT	4
+
+
+#define MAX_ID_LEN			5
 
 
 struct ThreadStruct {
@@ -35,7 +39,7 @@ struct FixDataStruct {
 
 class UserData {
 	//basic Data
-	char m_id[5]{};
+	char m_id[MAX_ID_LEN]{};
 	int m_pw{};
 	int m_winCount{};
 	int m_loseCount{};
@@ -46,8 +50,8 @@ class UserData {
 
 public:
 	UserData() {};
-	UserData(char ID[5], int PW) { memcpy(m_id, ID, sizeof(ID)); m_pw = PW; m_winCount = 0; m_loseCount = 0; };
-	UserData(char ID[5], int PW, int winCount, int loseCount) { memcpy(m_id, ID, sizeof(ID)); m_pw = PW; m_winCount = winCount; m_loseCount = loseCount; };
+	UserData(char ID[MAX_ID_LEN], int PW) { memcpy(m_id, ID, sizeof(ID)); m_pw = PW; m_winCount = 0; m_loseCount = 0; };
+	UserData(char ID[MAX_ID_LEN], int PW, int winCount, int loseCount) { memcpy(m_id, ID, sizeof(ID)); m_pw = PW; m_winCount = winCount; m_loseCount = loseCount; };
 	~UserData() {};
 	
 	void	SetIPAddress(IN_ADDR& inputAddress) { m_userAddr = inputAddress; m_isLogin = true; }
@@ -94,7 +98,7 @@ public:
 			return 0; 
 	}
 
-	bool Join() { if (m_isCreate && m_playersNumber < 4) { m_playersNumber++; return true;  } else return false; }
+	bool Join() { if (m_isCreate && m_playersNumber < MAX_PLAYER_COUNT) { m_playersNumber++; return true;  } else return false; }
 
 	void AddPlayer() { m_playersNumber++; }
 	void SetRoomState(int inputPlayerNumber, int inputMapNumber) { m_playersNumber = inputPlayerNumber; m_mapNumber = inputMapNumber; }
@@ -114,14 +118,14 @@ private:
 	int							m_roomCount{};
 
 public:
-	TCHAR	m_chatBuf[5][CHAT_BUF_SIZE] = { NULL };
+	TCHAR	m_chatBuf[CHAT_MAX_LINE][CHAT_BUF_SIZE] = { NULL };
 	TCHAR	m_chat[CHAT_BUF_SIZE] = { NULL };
 
 	LobbyInfo() = default;
 	~LobbyInfo() = default;
 
 	int CreateRoom(IN_ADDR& hostAddr){
-		if (m_roomCount < 8) {
+		if (m_roomCount < MAX_ROOM_COUNT) {
 			for (int i = 0; i < MAX_ROOM_COUNT; i++) {
 				if (!m_roomArr[i].GetIsCreate()) {
 					m_roomArr[i].Create(hostAddr);
@@ -131,7 +135,7 @@ public:
 				}
 			}
 		}
-		else if (m_roomCount >= 8) return -1;
+		else if (m_roomCount >= MAX_ROOM_COUNT) return -1;
 	}
 
 	bool ExitRoom(int roomIndex) {
