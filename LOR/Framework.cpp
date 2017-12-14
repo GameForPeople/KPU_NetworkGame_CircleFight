@@ -17,10 +17,16 @@ T GetUserDataPtr(HWND hWnd)
 DWORD WINAPI ThreadFunction(LPVOID arg) {
 	//ThreadStruct *threadStruct = (ThreadStruct *)arg;
 	Network* threadNetwork = (Network*)arg;
+	
+
+	#ifdef DEBUG_MODE
 	//printf("    %p    ", a);
 	//	printf("    %p    ", threadStruct->network);
-	threadNetwork->NetworkThreadFunction();
+	#endif
+
+
 	//	threadStruct->network.NetworkThreadFunction();
+	threadNetwork->NetworkThreadFunction();
 	return 0;
 }
 
@@ -31,12 +37,9 @@ Framework::Framework()
 	m_network.Connect();
 	m_network.InitSound();
 
-
-
-	//HANDLE hThread = CreateThread(NULL, 0, ThreadFunction, &m_network, 0, NULL);
-	m_network.m_networkThread = CreateThread(NULL, 0, ThreadFunction, &m_network, 0, NULL);
-	if (m_network.m_networkThread == NULL) { closesocket(m_network.GetSocket()); }
-	//else { CloseHandle(hThread); }
+	m_network.m_networkThread = CreateThread(NULL, 0, ThreadFunction, &m_network, 0, NULL); // 핸들값 멤버변수로 소유
+	if (m_network.m_networkThread == NULL) { closesocket(m_network.GetSocket()); }			// 안 만들어졌으면 그냥 닫아!
+	//else { CloseHandle(hThread); } // -->  핸들값 필요!
 }
 
 Framework::~Framework()
@@ -68,13 +71,11 @@ bool Framework::Create(HWND hwnd, RECT rect) {
 	m_current_time = chrono::system_clock::now();
 	m_fps = 0;
 
-
-	//m_Scene[0] = new TitleScene(m_hwnd);
 	m_Scene[0] = nullptr;	//LoginScene
 	m_Scene[1] = nullptr;	//LoginScene
 	m_Scene[2] = nullptr;	//Lobby
-	m_Scene[3] = nullptr;	//Room
-	m_Scene[4] = nullptr;	//inGame
+	m_Scene[3] = nullptr;	//Room & RoomGuest
+	m_Scene[4] = nullptr;	//inGame & InGameGuest
 
 #ifdef TO_DEBUG_TITLE_SCENE
 	m_Scene[0] = new TitleScene(m_hwnd);
@@ -142,8 +143,6 @@ LRESULT Framework::MessageProc(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM l
 		SetStretchBltMode(hdc, COLORONCOLOR);
 
 		Draw(hdc);  
-		//map.Draw(hdc);
-		//myPawn.Draw(hdc);
 
 		m_grid->Draw(hdc, TRUE, m_isGrid);
 		
@@ -181,7 +180,6 @@ LRESULT Framework::MessageProc(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM l
 
 	default:
 		return self->OnProcessingWindowMessage(hwnd, iMessage, wParam, lParam);
-
 	}
 }
 

@@ -14,17 +14,6 @@ LoginScene::LoginScene(HWND hWnd) : Scene(hWnd)
 	m_network = new Network;
 	m_network->ChageSceneName(SceneName::Login);
 
-	//ThreadStruct threadArgument;
-	//printf("  %p  \n", m_network);
-	//threadArgument.network = m_network;
-	//printf("  %p  \n", threadArgument.network);
-	//HANDLE hThread = CreateThread(NULL, 0, ThreadFunction, &threadArgument, 0, NULL);
-	//printf("  %p  \n", m_network);
-	
-	//HANDLE hThread = CreateThread(NULL, 0, ThreadFunction, &m_network, 0, NULL);
-	//
-	//if (hThread == NULL) { closesocket(m_network->GetSocket()); }
-	//else { CloseHandle(hThread); }
 }
 
 LoginScene::LoginScene(HWND hWnd, Network* network) : Scene(hWnd)
@@ -35,18 +24,16 @@ LoginScene::LoginScene(HWND hWnd, Network* network) : Scene(hWnd)
 	m_network->m_nowBgmNumber = 0;
 	m_network->m_system->playSound(FMOD_CHANNEL_REUSE, m_network->m_sound[0], false, &(m_network->m_channel[0]));
 
-	//효과음 재생
-	//PlaySound("Resource\\sound\\디딩.wav", NULL, SND_ASYNC);
+	// 로그인 시가 아닌, 타이틀에서 커넥트
 	//m_network.Connect(m_network);
 	//m_network->Connect();
+
 	m_network->ChageSceneName(SceneName::Login);
-	//m_network.ChageSceneName(SceneName::Login);
 	LoadCImage();
 }
 
 LoginScene::~LoginScene()
 {
-	//delete m_network;
 }
 
 void LoginScene::Draw(HDC hdc) {
@@ -64,7 +51,6 @@ void LoginScene::Draw(HDC hdc) {
 			m_uiImg[0].TransparentBlt(hdc, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT, RGB(255, 255, 255));
 	}
 
-
 	HFONT hFont = CreateFont(50, 0, 0, 0, 0, 0, 0, 0, HANGEUL_CHARSET, 0, 0, 0,
 	                          VARIABLE_PITCH | FF_ROMAN, TEXT("궁서"));
 	
@@ -75,7 +61,6 @@ void LoginScene::Draw(HDC hdc) {
 
 	TextOut(hdc, 466, 440, m_id, lstrlen(m_id));
 	TextOut(hdc, 466, 520, m_pw, lstrlen(m_pw));
-
 
 	SelectObject(hdc, OldFont);
 	DeleteObject(hFont);
@@ -136,7 +121,6 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 
 				while (7) {
 					std::cout << ".";
-					//_sleep(100);
 					m_network->CustomSleep(100);
 					if (m_network->GetRecvType()) {
 						break;
@@ -175,8 +159,6 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 				memcpy(m_network->m_demandLogin->ID, m_id, sizeof(m_id));
 				m_network->m_demandLogin->PW = ChangeNumberCharToInt(m_pw);
 
-				//std::cout << "1.로그인 또는  회원가입 정보 보내요!" << std::endl;
-				//std::cout << "1.보내는 타입은  " << m_network->m_demandLogin->type << std::endl;
 				#ifdef DEBUG_MODE
 				std::cout << "	1.입력된 ID는  " << m_network->m_demandLogin->ID << std::endl;
 				std::cout << "	2.입력된 PW는  " << m_network->m_demandLogin->PW << std::endl;
@@ -186,7 +168,6 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 
 				while (7) {
 					std::cout << ".";
-					//_sleep(100);
 					m_network->CustomSleep(100);
 
 
@@ -194,8 +175,6 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 						break;
 					}
 				}
-
-				//std::cout << "받은 번호는 " << m_network->GetRecvType() << std::endl;
 
 				if (m_network->GetRecvType() == FAIL_LOGIN)
 					return true;
@@ -218,7 +197,6 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 			}
 		}
 		else if (mouseY > 430 && mouseY < 500 && mouseX > 450 && mouseX < 825) {
-			//550 750 630
 			#ifdef DEBUG_MODE
 			std::cout << "	아이디를 입력합니다!! " << std::endl;
 			#endif
@@ -226,7 +204,6 @@ bool LoginScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lP
 
 		}
 		else if (mouseY > 505 && mouseY < 580 && mouseX > 450 && mouseX < 825) {
-			//550 750 630
 			#ifdef DEBUG_MODE
 			std::cout << "	비밀번호를 입력합니다!! " << std::endl;
 			#endif
@@ -245,7 +222,6 @@ bool LoginScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 			if ('A' <= wParam && wParam <= 'z') {
 				if (m_idLen < 4) {
 					m_id[m_idLen++] = (TCHAR)wParam;
-					//std::cout << m_id << std::endl;
 					m_id[m_idLen] = '\0';
 				}
 			}
@@ -263,7 +239,6 @@ bool LoginScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 			if ('0' <= wParam && wParam <= '9') {
 				if (m_pwLen < 4) {
 					m_pw[m_pwLen++] = (TCHAR)wParam;
-					//std::cout << m_pw << std::endl;
 					m_pw[m_pwLen] = '\0';
 				}
 			}
@@ -285,8 +260,6 @@ bool LoginScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 					memcpy(m_network->m_demandLogin->ID, m_id, sizeof(m_id));
 					m_network->m_demandLogin->PW = ChangeNumberCharToInt(m_pw);
 
-					//std::cout << "1.로그인 또는  회원가입 정보 보내요!" << std::endl;
-					//std::cout << "1.보내는 타입은  " << m_network->m_demandLogin->type << std::endl;
 					#ifdef DEBUG_MODE
 					std::cout << "	1.입력된 ID는  " << m_network->m_demandLogin->ID << std::endl;
 					std::cout << "	2.입력된 PW는  " << m_network->m_demandLogin->PW << std::endl;
@@ -296,15 +269,12 @@ bool LoginScene::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPar
 
 					while (7) {
 						std::cout << ".";
-						//_sleep(100);
 						m_network->CustomSleep(100);
 
 						if (m_network->GetRecvType()) {
 							break;
 						}
 					}
-
-					//std::cout << "받은 번호는 " << m_network->GetRecvType() << std::endl;
 
 					if (m_network->GetRecvType() == FAIL_LOGIN)
 						return true;

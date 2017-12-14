@@ -19,9 +19,6 @@ CWicher::~CWicher()
 }
 
 
-
-
-
 void CWicher::Update(State state, double time) {
 	ChangeImage(state);
 }
@@ -33,11 +30,6 @@ void CWicher::Draw(HDC hdc, float x, float y, float sizeX, float sizeY, State st
 	else if (m_imageCount < WICHER_MAX_IMAGE_NUM)
 		m_imgArr[m_imageCount].TransparentBlt(hdc, x - 10, y, 270, 246, RGB(255, 255, 255));
 }
-
-
-
-
-
 
 void CWicher::ChangeImage(State state) {
 	m_imageTimer++;

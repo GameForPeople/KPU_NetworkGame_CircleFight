@@ -17,7 +17,6 @@ CZombie::~CZombie()
 
 
 
-
 void CZombie::Update(State state, double time) {
 	ChangeImage(state);
 }
@@ -30,7 +29,6 @@ void CZombie::Draw(HDC hdc, float x, float y, float sizeX, float sizeY, State st
 		m_imgArr[m_imageCount].TransparentBlt(hdc, x, y, 270, 236, RGB(255, 255, 255));
 
 }
-
 
 
 
@@ -60,9 +58,6 @@ void CZombie::ChangeImage(State state) {
 			if (m_imageCount >= 48)
 				m_imageCount = 48;
 
-			//if (m_imageCount >= 31)
-			//	m_imageCount = 29;
-			//else 
 				if (m_imageCount >= ZOMBIE_MAX_IMAGE_NUM)
 				m_imageCount = ZOMBIE_MAX_IMAGE_NUM - 1;
 		}

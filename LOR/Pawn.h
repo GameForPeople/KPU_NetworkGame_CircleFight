@@ -12,6 +12,8 @@
 #define			SPEED_BUFF_VAL			1.1f
 #define			SPEED_BUFF_VAL_B		1.2f
 
+#define			COMBO_COUNT_MAX			20
+#define			SPEEDUP_DENOMINATOR 	8
 
 struct BoundingBox {
 	

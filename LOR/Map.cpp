@@ -17,7 +17,7 @@ Map::Map(float x, float y, char* imgLink) : StaticActor(x, y, imgLink) {
 
 void Map::Draw(HDC hdc) {
 	m_staticImg->TransparentBlt(hdc, m_pos.x, m_pos.y, m_staticImg->GetWidth(), m_staticImg->GetHeight() - 40, RGB(255, 255, 255));
-	//1280 / 2는 맵 크기가 1 + 1/2이기 때문!! 이거 매직ㄴㅁ버말고 바꿀때 문제없는지 체크하기!!
+	//1280 / 2는 맵 크기가 1 + 1/2이기 때문!! 이거 매직넘버말고 바꿀때 문제없는지 체크하기!!
 	m_staticImg->TransparentBlt(hdc, m_2ndImgPos.x, m_pos.y, m_staticImg->GetWidth(), m_staticImg->GetHeight() - 40, RGB(255, 255, 255));
 }
 
@@ -26,7 +26,6 @@ void Map::Update(float speed, double time) {
 
 		Update2ndImgPos(speed, time);
 }
-
 
 
 

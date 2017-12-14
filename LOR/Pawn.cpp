@@ -73,19 +73,15 @@ void Pawn::ComputeTotalDistance() {
 }
 
 void Pawn::ProcessCombo() {
-	//if (m_state != State::Stun && m_state != State::Collide && m_state != State::Death) {
-	//if ((int)m_totalDistance % 100 == 1) {	//ÀÌ·¯¸é ¾ÈµÊ... 1¶Ù¾î³ÑÀ»‹š°¡ ¸¹À½.
-	//m_combo = curFlatNum - m_comboStandard;	//±»ÀÌ??
+
 	m_combo = (m_totalDistance - m_comboStandard) / 100;
 
-	//std::cout << m_combo << "   " << m_speed << "   " << m_baseSpeed << std::endl;
-
-	if (m_combo % 20 == 1)
+	if (m_combo % COMBO_COUNT_MAX == 1)
 		m_comboEffect = true;
 
 	if (m_comboEffect) {
-		if (m_combo != 0 && m_combo % 20 == 0 && m_bufSpeed != 0) {
-			m_speed = m_speed + m_baseSpeed / 8;
+		if (m_combo != 0 && m_combo % COMBO_COUNT_MAX == 0 && m_bufSpeed != 0) {
+			m_speed = m_speed + m_baseSpeed / SPEEDUP_DENOMINATOR;
 			m_comboEffect = false;
 		}
 	}

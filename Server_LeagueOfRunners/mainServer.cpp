@@ -17,12 +17,12 @@ CHAT_SECTION;
 // UserDataAccess_Section : 로그인, 회원가입, 로그 아웃등 유저데이터에 접근하는 모든 경우에 제한을 두자!
 
 // 생길 수 있는 문제점 : SignUp중인 상황에서, SignIn이 요구될 경우, 문제가 없을 것인가? --> 이터레이터 사이즈 문제
-// 
+//--------------------------
+
 static std::vector<UserData> userData;	//쓰레드에서도 사용해di하는데 메모리가 크기 떄문에, 쓰레드 인자로 넘기기보다 전역으로 선언하는게 더 올바른 방법으로 보임.
 static LobbyInfo lobbyData;// 전체 로비 데이타.
 static PermitChatStruct permitChatData;
 
-//static bool ChatFlag{ false };
 static bool IsSaveOn{ false };
 static std::atomic<int> playersNumber;
 
@@ -33,7 +33,7 @@ DWORD WINAPI SaveUserDate(LPVOID arg) {
 		Sleep(1000);
 
 		if (IsSaveOn) {
-			Sleep(1000);
+			Sleep(2000);
 			std::ofstream outFile("UserData.txt", std::ios::out);
 			char ID[5];
 			int PW, winCount, loseCount;
@@ -46,7 +46,6 @@ DWORD WINAPI SaveUserDate(LPVOID arg) {
 					<< " " << i.GetWinCount()
 					<< " " << i.GetLoseCount()
 					<< std::endl;
-				//outFile << ID << PW << winCount << loseCount;
 			}
 			outFile.close();
 			std::cout << "[ System - UserDataSave ]" << std::endl;
@@ -91,11 +90,13 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			retVal = recv(clientSock, (char*)&demandLogin, sizeof(demandLogin), 0);
 			if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
+		#ifdef DEBUG_MODE
 			//std::cout << "로그인 또는  회원가입 정보 받았어요!" << std::endl;
 			//std::cout << "받은 타입은  " << demandLogin.type << std::endl;
 			//std::cout << "받은 ID는  " << demandLogin.ID << std::endl;
 			//std::cout << "받은 PW는  " << demandLogin.PW << std::endl;
 			//std::cout << "받은 사이즈는  " << sizeof(demandLogin) << std::endl;
+		#endif
 
 			bool isLoginSuccess{ false };
 			int winBuffer, loseBuffer{};
@@ -138,6 +139,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 					memcpy(ID, demandLogin.ID, sizeof(demandLogin.ID));
 					PW = demandLogin.PW;
 				}
+
 					LeaveCriticalSection(&UserDataAccess_SECTION);
 					winBuffer = 0;
 					loseBuffer = 0;
@@ -145,9 +147,11 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			}
 
 			if (isLoginSuccess) {
+
 				#ifdef DEBUG_MODE
 				std::cout << "[ 클라이언트 로그인 성공  받은 ID는  " << demandLogin.ID << " 받은 PW는  " << demandLogin.PW <<" IP : " << inet_ntoa(clientAddr.sin_addr) << "  PORT : " << ntohs(clientAddr.sin_port) << "  ] " << std::endl;
-				#endif			
+				#endif		
+
 				sendType = PERMIT_LOGIN;
 				memcpy(ID, demandLogin.ID, sizeof(demandLogin.ID));
 				PW = demandLogin.PW;
@@ -158,6 +162,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 				#ifdef DEBUG_MODE
 				std::cout << "[ 클라이언트 로그인 실패  받은 ID는  " << demandLogin.ID << " 받은 PW는  " << demandLogin.PW << " IP : " << inet_ntoa(clientAddr.sin_addr) << "  PORT : " << ntohs(clientAddr.sin_port) << "  ] " << std::endl;
 				#endif
+
 				sendType = FAIL_LOGIN;
 			}
 
@@ -257,11 +262,17 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 
 			char buf[CHAT_BUF_SIZE]{};
 			
-			std::cout << "받은 채팅 내용은 : " << demandChat.chat << std::endl;
+			#ifdef DEBUG_MODE
+			//std::cout << "받은 채팅 내용은 : " << demandChat.chat << std::endl;
+			#endif
+
 			memcpy(buf, ID, sizeof(ID));
 			strcat(buf, " : ");
 			strcat(buf, demandChat.chat);
+
+			#ifdef DEBUG_MODE
 			//std::cout << "변환된 채팅 내용은 : " << buf << std::endl;
+			#endif
 
 			//strncpy(lobbyData.m_chatBuf[4], buf, sizeof(CHAT_BUF_SIZE));
 			for (int i = 0; i < CHAT_BUF_SIZE; i++)
@@ -270,6 +281,9 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			#ifdef DEBUG_MODE
 			std::cout << "[ 채팅이 입력되었습니다.  : " << lobbyData.m_chatBuf[4] << " ] "<< std::endl;
 			#endif
+
+			// 채팅 보내는 로직으로 다시 바꿀경우 아래 모두 복귀!!
+
 			//for (int i = 0; i < CHAT_MAX_LINE; i++) {
 			//	for (int j = 0; j < CHAT_BUF_SIZE; j++) {
 			//		permitChatData.chat[i][j] = lobbyData.m_chatBuf[i][j];
@@ -282,16 +296,9 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			//retVal = send(clientSock, (char*)&lobbyData.m_chatBuf, sizeof(permitChatData), 0);
 			////retVal = send(clientSock, (char*)&permitChatData, sizeof(permitChatData), 0);
 			//if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
+
 		}
 		else if (recvType == UPDATE_LOBBY) {
-
-			//for (int i = 0; i < CHAT_MAX_LINE; i++) {
-			//	for (int j = 0; j < CHAT_BUF_SIZE; j++) {
-			//		permitChatData.chat[i][j] = lobbyData.m_chatBuf[i][j];
-			//	}
-			//	//strncpy(permitChatData.chat[i], (lobbyData.m_chatBuf[i]), sizeof(CHAT_BUF_SIZE));
-			//	//std::cout << permitChatData.chat[i] << std::endl;
-			//}
 
 			retVal = send(clientSock, (char*)&lobbyData.m_chatBuf, sizeof(permitChatData), 0);
 			if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
@@ -305,15 +312,12 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 
 			retVal = send(clientSock, (char*)&lobbyRoomBuffer, sizeof(lobbyRoomBuffer), 0);
 			if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
-
 		}
 #pragma endregion
 
 #pragma region [ Room Scene ]
 		if (recvType == DEMAND_EXITROOM) {
-			//DemandExitRoomStruct demandExitRoom;
-			//retVal = recv(clientSock, (char*)&demandExitRoom, sizeof(demandExitRoom), 0);
-			//if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
+
 		//	std::cout << "1 ";
 			EnterCriticalSection(&CREATE_DESTROY_ROOM_SECTION);
 			//std::cout << "2 ";
@@ -321,11 +325,6 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			EnterCriticalSection(&IN_OUT_ROOM_SECTION);
 			//std::cout << "3 ";
 
-			//if (lobbyData.ExitRoom(demandExitRoom.roomIndex)) {
-			//	PermitExitRoomStruct permitExitRoom;
-			//	retVal = send(clientSock, (char*)&permitExitRoom, sizeof(permitExitRoom), 0);
-			//	if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
-			//}
 			if (nowScene == SceneName::RoomGuest)
 				lobbyData.ExitRoom(roomIndex);
 			else if (nowScene == SceneName::Room)
@@ -341,9 +340,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 
 #pragma region [ inGame Scene ]
 		if (recvType == DEMAND_SENDRESULT) {
-			//DemandExitRoomStruct demandExitRoom;
-			//retVal = recv(clientSock, (char*)&demandExitRoom, sizeof(demandExitRoom), 0);
-			//if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
+
 			int WinLoseBuf{};
 			retVal = recv(clientSock, (char*)&WinLoseBuf, sizeof(WinLoseBuf), 0);
 			if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
@@ -351,7 +348,7 @@ DWORD WINAPI ProcessClient(LPVOID arg) {
 			for (auto &i : userData) {
 				if (!strcmp(ID, i.GetID())) {
 					i.SetWinOrLose(WinLoseBuf);
-					std::cout << "승리 혹은 패배 적용 완료" << std::endl;
+					//std::cout << "[승리 혹은 패배 적용 완료]" << std::endl;
 					break;
 				}
 			}

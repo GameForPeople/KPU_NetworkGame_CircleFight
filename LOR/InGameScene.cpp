@@ -9,6 +9,8 @@
 //#define TO_DEBUG_MAP_SEA
 #define TO_DEBUG_MAP_FOREST
 
+#define GAMEEND_TIME_COUNT 300
+
 InGameScene::InGameScene(HWND hwnd, Network* network) : Scene(hwnd)
 {
 	m_network = network;
@@ -75,7 +77,8 @@ InGameScene::InGameScene()
 
 InGameScene::~InGameScene()
 {
-	//ResumeThread(m_network->m_networkThread);
+	//ResumeThread(m_network->m_networkThread); // 게임 끝나면 쓰레드 오픈
+
 	if (m_map) delete m_map;
 	if (m_platArr) delete[] m_platArr;
 	if (m_itemArr) delete[] m_itemArr;
@@ -134,7 +137,7 @@ void InGameScene::Timer(const double time) {
 	if (m_resultUICount > 0)
 	{
 		m_resultUICount++;
-		if (m_resultUICount > 300)
+		if (m_resultUICount > GAMEEND_TIME_COUNT)
 		{
 			m_nextScene = SceneName::Room;
 			m_isDestory = true;
@@ -277,8 +280,7 @@ void InGameScene::Destory() {
 void InGameScene::LoadPlat() {
 	//ifstream inFile("Resource/Data/platData.txt", ios::in);
 	ifstream inFile("Resource/Data/NewPlatData.txt", ios::in);
-	//to debug
-	//ifstream inFile("platData.txt", ios::in);	
+	//to debug 	//ifstream inFile("platData.txt", ios::in);	
 
 	int posX = 1;
 	int posY = 0;
@@ -293,8 +295,10 @@ void InGameScene::LoadPlat() {
 			m_itemArr[j].SetPos(3000, (posY * (-100)) + PLAT_LOW_HEIGHT - PLAT_ITEM_HEIGHT);
 			j++;
 		}
+		#ifdef DEBUG_CODE
 		//to debug
-		//std::cout << i << "번째  " << posY << "   " << m_platArr[i].GetPos().x << "   " << m_platArr[i].GetPos().y << std::endl;
+		std::cout << i << "번째  " << posY << "   " << m_platArr[i].GetPos().x << "   " << m_platArr[i].GetPos().y << std::endl;
+		#endif
 	}
 	inFile.close();
 
@@ -308,32 +312,13 @@ void InGameScene::LoadPlat() {
 
 		basicInfo.m_itemInfo[i][0] = basicInfo.m_itemInfo[i][1] = -1;
 	}
-
-
-
-	/*
-	FILE *fp;
-
-	fp = fopen("Resource/Data/platData.txt", "r");
-
-	int posX = 1;
-	int posY = 0;
-
-	for(int i = 0; i < m_numPlat; i++){
-	fscanf(fp, "%d", &posY);
-	m_platArr[i].SetPos(posX * i * 100, (posY * (-100)) + 600);
-	std::cout << posY << std::endl;
-	}
-
-	std::fclose(fp);
-	*/
 }
 
 void InGameScene::ComputePawn(int idx) {
 	//std::cout << m_characterArr->GetTotalDistance() / 100 + 2 << std::endl;
 #pragma region [캐릭터의 Y값을 계산합니다.]
 
-	//	int leftPlat = (int)(m_characterArr[idx].GetTotalDistance() / PLAT_WIDTH + 2);
+	//int leftPlat = (int)(m_characterArr[idx].GetTotalDistance() / PLAT_WIDTH + 2);
 	//int rightPlat = (int)(m_characterArr[idx].GetTotalDistance() / PLAT_WIDTH + 3);
 	int rightPlat = basicInfo.m_firstPlat[idx].idx + 3;
 
@@ -381,8 +366,7 @@ void InGameScene::ComputePawn(int idx) {
 			m_characterArr[idx].SetState(State::Fall);
 		}
 	}
-	//else m_characterArr->SetState(State::Fall);
-	//to debug
+
 #pragma endregion
 
 }
@@ -735,7 +719,7 @@ void InGameScene::FinishChecker(int idx)
 			sendQueue[3].emplace_back(NOTIFY_WIN);
 		}
 
-		ResumeThread(m_network->m_networkThread); //--> 소멸자로 다시보냄!
+		ResumeThread(m_network->m_networkThread); //--> 소멸자로 다시보냄! //--> 다시 여기로 짜잔!!!
 		m_isGameEnd = true;
 	}
 }

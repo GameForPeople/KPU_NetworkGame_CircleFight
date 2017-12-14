@@ -121,6 +121,7 @@ void InGameSceneGuest::Draw(HDC hdc) {
 	if (m_network->m_gameResultBuffer == 1) m_winLoseImg[0].TransparentBlt(hdc, 200, 200, 880, 320, RGB(255, 0, 255));
 	if (m_network->m_gameResultBuffer == 2) m_winLoseImg[1].TransparentBlt(hdc, 200, 200, 880, 320, RGB(0, 255, 0));
 
+	// 이 바보야 여기있으면 어떻게
 	//if (itemNum == 0)
 	//	PlaySound("Resource\\Sound\\ets.wav", NULL, SND_ASYNC);
 	//else if (itemNum == 1)
@@ -150,17 +151,9 @@ bool InGameSceneGuest::KeyProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARA
 	{
 	case WM_KEYDOWN:
 	{
-		//if (m_characterArr[0].InsertKey(wParam))return true;
-
 		switch (wParam) {
 		case VK_SPACE:
 			sendQueueGuest.emplace_back(INPUT_JUMP);
-			//if (m_characterArr[m_idx].GetCharType() == CharacterName::Archer && m_characterArr[m_idx].GetCharType() == CharacterName::Wicher) {
-			//		PlaySound("Resource\\Sound\\NotmanJump.wav", NULL, SND_ASYNC);
-			//}
-			//else if (m_characterArr[m_idx].GetCharType() == CharacterName::Zombie && m_characterArr[m_idx].GetCharType() == CharacterName::Knight) {
-			//		PlaySound("Resource\\Sound\\manJump.wav", NULL, SND_ASYNC);
-			//}
 
 			if (m_characterArr[m_idx].GetCharType() == CharacterName::Archer || m_characterArr[m_idx].GetCharType() == CharacterName::Wicher) {
 				PlaySound("Resource\\Sound\\NotmanJump.wav", NULL, SND_ASYNC);
@@ -230,7 +223,6 @@ void InGameSceneGuest::Destory() {
 
 
 void InGameSceneGuest::LoadPlat() {
-	//ifstream inFile("Resource/Data/platData.txt", ios::in);
 	ifstream inFile("Resource/Data/NewPlatData.txt", ios::in);
 	//to debug
 	//ifstream inFile("platData.txt", ios::in);	
@@ -248,29 +240,15 @@ void InGameSceneGuest::LoadPlat() {
 			m_itemArr[j].SetPos(3000, (posY * (-100)) + PLAT_LOW_HEIGHT - PLAT_ITEM_HEIGHT);
 			j++;
 		}
-		//to debug
-		//std::cout << i << "번째  " << posY << "   " << m_platArr[i].GetPos().x << "   " << m_platArr[i].GetPos().y << std::endl;
+		#ifdef DEBUG_MODE
+				//to debug
+				std::cout << i << "번째  " << posY << "   " << m_platArr[i].GetPos().x << "   " << m_platArr[i].GetPos().y << std::endl;
+		#endif
 	}
 	inFile.close();
 
 	basicInfo.m_firstItem[m_idx].xPos = 3000;
 	basicInfo.m_itemInfo[m_idx][0] = basicInfo.m_itemInfo[m_idx][1] = -1;
-	/*
-	FILE *fp;
-
-	fp = fopen("Resource/Data/platData.txt", "r");
-
-	int posX = 1;
-	int posY = 0;
-
-	for(int i = 0; i < m_numPlat; i++){
-	fscanf(fp, "%d", &posY);
-	m_platArr[i].SetPos(posX * i * 100, (posY * (-100)) + 600);
-	std::cout << posY << std::endl;
-	}
-
-	std::fclose(fp);
-	*/
 }
 
 void InGameSceneGuest::ShowPawnState() {

@@ -184,39 +184,8 @@ bool RoomScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPa
 		else if (mouseY > 610 && mouseY < 650 && mouseX > 1135 && mouseX < 1246) {
 			// 나가기
 			#ifdef DEBUG_MODE
-
 			std::cout << "나가요!! 로비로!!!! " << std::endl;
 			#endif
-
-			//m_network->SetSendType(DEMAND_EXITROOM);
-
-			//std::cout << "Totla : "  << numPlayer << std::endl;
-			//
-			//for (int i = 1; i < MAX_PLAYER; ++i)
-			//{
-			//	if (roomInfo.m_charInfo[i] == CharacterName::NONE) continue;
-			//	sendQueue[i].emplace_back(NOTIFY_EXIT);
-			//	numPlayer--;
-			//}
-			//
-			//std::cout << "Now  :    " << numPlayer << std::endl;
-			//m_network->SetSendType(DEMAND_EXITROOM);
-
-			//while (numPlayer > 0);
-			//while (777) {
-			//	//_sleep(100);
-			//	//std::cout << "1";
-			//	if (numPlayer == 1) {
-			//		std::cout << "22222222";
-			//		//_sleep(500);
-			//		break;
-			//	}
-			//}
-
-			//bool ExitFlag;
-			//if (numPlayer > 1) {
-			//	ExitFlag = true;
-			//}
 
 			for (int i = 1; i < MAX_PLAYER; ++i)
 			{
@@ -225,28 +194,15 @@ bool RoomScene::MouseProcess(HWND hwnd, UINT iMessage, WPARAM wParam, LPARAM lPa
 			}
 				numPlayer--;
 			
-			//_sleep(1000);
 			while (numPlayer > 0);
 
-			//if (ExitFlag) {
-			//	RecvThreadExit = true;
-			//	SendThreadExit = true;
-			//}
 			closesocket(listen_sock);
 
 			m_network->SetSendType(DEMAND_EXITROOM);
 
-			//_sleep(500);
-			//m_network->ChageSceneName(SceneName::Lobby);
 			m_nextScene = SceneName::Lobby;
 			m_isDestory = true;
-
-			//_sleep(100);
-
-			//RecvThreadExit = false;
-			//SendThreadExit = false;
 		}
-
 		return true;
 	}
 }

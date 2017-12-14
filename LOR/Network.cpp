@@ -45,12 +45,13 @@ void Network::NetworkThreadFunction() {
 		if (m_sceneName == SceneName::Login) {
 			if (m_sendType) {
 				#ifdef DEBUG_MODE
-				std::cout << "타입 100번 보내요" << std::endl;
+				std::cout << " DEMAND_LOGIN을 전송합니다." << std::endl;
 				#endif
 				retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 
 				if (m_sendType == DEMAND_LOGIN) {
+
 				#ifdef DEBUG_MODE
 				std::cout << "로그인 또는  회원가입 정보 보내요!" << std::endl;
 				std::cout << "보내는 타입은  " << m_demandLogin->type << std::endl;
@@ -62,14 +63,16 @@ void Network::NetworkThreadFunction() {
 
 				std::cout << "로그인 실패 또는 성공보냅니다.!" << std::endl;
 				#endif
-				retVal = send(m_sock, (char*)m_demandLogin, sizeof(*m_demandLogin), 0);
 
 				//retVal = send(m_sock, (char*)&m_demandLogin, sizeof(m_demandLogin), 0);
+				retVal = send(m_sock, (char*)m_demandLogin, sizeof(*m_demandLogin), 0);
+
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 
 				#ifdef DEBUG_MODE
 				std::cout << "로그인 실패 또는 성공 보냈어요!" << std::endl;
 				#endif
+
 				int m_recvTypeBuffer{};
 				retVal = recv(m_sock, (char*)&m_recvTypeBuffer, sizeof(m_recvType), 0);
 				if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
@@ -77,47 +80,46 @@ void Network::NetworkThreadFunction() {
 				m_sendType = 0;
 
 				if (m_recvTypeBuffer == PERMIT_LOGIN) {
-					if(m_permitLogin == NULL)
-						m_permitLogin = new PermitLoginStruct;
+					
+					if(m_permitLogin == NULL) m_permitLogin = new PermitLoginStruct;
 
 					retVal = recv(m_sock, (char*)m_permitLogin, sizeof(*m_permitLogin), 0);
 					if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
+					#ifdef DEBUG_MODE
 					std::cout << "받은 승리 횟수는 " << m_permitLogin->winCount << std::endl;
 					std::cout << "받은 패배 횟수는 " << m_permitLogin->loseCount << std::endl;
-					#ifdef DEBUG_MODE
 					std::cout << "받은 사이즈의 크기는 " << sizeof(*m_permitLogin) << std::endl;
 					#endif
 
 					m_recvType = m_recvTypeBuffer;
+					}
 				}
-			}
 			}
 		}
 		else if (m_sceneName == SceneName::Lobby) {
-			//EnterCriticalSection(&SEND_SECTION);
-			//std::cout << "server : "<< m_sendType << " ";
 			//_sleep(100);
 			CustomSleep(100);
-			if (m_sendType > 0) {
-				//LeaveCriticalSection(&SEND_SECTION);
 
+			#ifdef DEBUG_MODE
+						std::cout << "server에 전달되는 값은 : "<< m_sendType << " ";
+			#endif
+
+			if (m_sendType > 0) {
 				#ifdef DEBUG_MODE
 				std::cout << "로비입니다. 요구할게요 서버님!" << std::endl;
 				#endif
+
 				retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 				
-				#ifdef DEBUG_MODE
-				std::cout << " " << m_sendType << std::endl;
-				#endif
 
 				if (m_sendType == DEMAND_CHAT) {
 
 					retVal = send(m_sock, (char*)m_demandChat, sizeof(*m_demandChat), 0);
 					if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 
-					// 채팅 로직 수정 -> 보내기만 함!
+					// 채팅 로직 수정 -> 재 수정 필요 시 , 현코드 부활!!!!!!!!!!!
 					//if(m_permitChat == NULL)
 					//	m_permitChat = new PermitChatStruct;
 					//
@@ -140,11 +142,11 @@ void Network::NetworkThreadFunction() {
 					if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
 					if (m_recvTypeBuffer == PERMIT_CREATEROOM) {
-
 						if (m_permitCreateRoom == NULL)
 							m_permitCreateRoom = new PermitCreateRoomStruct;
 
 						retVal = recv(m_sock, (char*)m_permitCreateRoom, sizeof(*m_permitCreateRoom), 0);
+					
 						if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
 						m_sendType = 0;
@@ -163,11 +165,8 @@ void Network::NetworkThreadFunction() {
 					retVal = recv(m_sock, (char*)&m_recvTypeBuffer, sizeof(m_recvTypeBuffer), 0);
 					if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
 
-					//std::cout << "전달받은 타입은 " << m_recvType << std::endl;
-
 					if (m_recvTypeBuffer == PERMIT_JOINROOM) {
-						if(m_permitJoinRoom == NULL)
-							m_permitJoinRoom = new PermitJoinRoomStruct;
+						if(m_permitJoinRoom == NULL) m_permitJoinRoom = new PermitJoinRoomStruct;
 
 						retVal = recv(m_sock, (char*)m_permitJoinRoom, sizeof(m_permitJoinRoom), 0);
 						if (!ErrorFunction(retVal, 0)) goto END_CONNECT;
@@ -182,7 +181,6 @@ void Network::NetworkThreadFunction() {
 				}
 			}
 			else if(m_sendType == 0){
-				//_sleep(100);
 
 				while (7) {
 					EnterCriticalSection(&CHANGE_FLAG_SECTION);
@@ -195,7 +193,7 @@ void Network::NetworkThreadFunction() {
 					CustomSleep(15);
 				}
 
-				EnterCriticalSection(&LOBBY_UPDATE_SECTION);
+				//EnterCriticalSection(&LOBBY_UPDATE_SECTION);
 					m_sendType = UPDATE_LOBBY;
 
 					retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
@@ -207,11 +205,13 @@ void Network::NetworkThreadFunction() {
 					retVal = recv(m_sock, (char*)m_permitChat, sizeof(*m_permitChat), 0);
 					if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 
-					//std::cout << m_permitChat->chat[0] << std::endl;
-					//std::cout << m_permitChat->chat[1] << std::endl;
-					//std::cout << m_permitChat->chat[2] << std::endl;
-					//std::cout << m_permitChat->chat[3] << std::endl;
-					//std::cout << m_permitChat->chat[4] << std::endl;
+					#ifdef DEBUG_MODE
+					//std::cout << "m_permitChat->chat[0] : " << m_permitChat->chat[0] << std::endl;
+					//std::cout << "m_permitChat->chat[1] : " << m_permitChat->chat[1] << std::endl;
+					//std::cout << "m_permitChat->chat[2] : " << m_permitChat->chat[2] << std::endl;
+					//std::cout << "m_permitChat->chat[3] : " << m_permitChat->chat[3] << std::endl;
+					//std::cout << "m_permitChat->chat[4] : " << m_permitChat->chat[4] << std::endl;
+					#endif
 
 					if (m_updateLobbyInfo == NULL)
 						m_updateLobbyInfo = new UpdateLobbyInfoStruct;
@@ -223,7 +223,7 @@ void Network::NetworkThreadFunction() {
 					m_recvType = 0;
 					m_flag = 0;
 
-				LeaveCriticalSection(&LOBBY_UPDATE_SECTION);
+				//LeaveCriticalSection(&LOBBY_UPDATE_SECTION);
 			}
 		}
 		else if (m_sceneName == SceneName::RoomGuest) {
@@ -231,7 +231,6 @@ void Network::NetworkThreadFunction() {
 				retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
 
-				//std::cout << " RG ";
 				m_sceneName = SceneName::Lobby;
 				m_sendType = 0;
 			}
@@ -247,12 +246,9 @@ void Network::NetworkThreadFunction() {
 			}
 		}
 		else if (m_sceneName == SceneName::Room) {
-			//_sleep(1000);
 			if (m_sendType == DEMAND_EXITROOM) {
 				retVal = send(m_sock, (char*)&m_sendType, sizeof(m_sendType), 0);
 				if (!ErrorFunction(retVal, 1)) goto END_CONNECT;
-				//std::cout << " R ";
-
 
 				m_sceneName = SceneName::Lobby;
 				m_sendType = 0;
@@ -289,6 +285,7 @@ bool Network::Connect() {
 	m_sock = socket(AF_INET, SOCK_STREAM, 0);
 	if (m_sock == INVALID_SOCKET) err_quit("socket()");
 #pragma endregion
+
 	std::cout << " League Of Runners 서버에 접속합니다. " << std::endl;
 	std::cout << " 서버의 IP를 입력해주세요 : ";
 	char ipBuffer[20]{};
@@ -324,7 +321,7 @@ int  Network::ReturnTypeNumber() {
 	int type, retVal;
 
 #ifdef DEBUG_MODE
-	std::cout << "   ToDebug : 데이터를 받으려고합니다." << std::endl;
+	std::cout << "   ToDebug :  Return Value를 받으려고합니다." << std::endl;
 #endif
 
 	retVal = recv(m_sock, (char*)&type, sizeof(type), 0);
@@ -332,7 +329,7 @@ int  Network::ReturnTypeNumber() {
 		return 0;
 
 #ifdef DEBUG_MODE
-	std::cout << "   ToDebug : 데이터를 전송받았습니다.." << std::endl;
+	std::cout << "   ToDebug :  Return Value를 받았습니다. 그 값은 : " << type << std::endl;
 #endif
 
 	return type;
@@ -360,7 +357,7 @@ void Network::InitSound() {
 	//pSystem->playSound(FMOD_CHANNEL_REUSE, pSound[1], false, &pChannel[0]);
 
 	//효과음 재생
-	//PlaySound("Resource\\sound\\디딩.wav", NULL, SND_ASYNC);
+	//PlaySound("Resource\\sound\\디딩~.wav", NULL, SND_ASYNC);
 }
 // 소켓 함수 오류 출력 후 종료
 void Network::err_quit(char *msg)
@@ -395,7 +392,7 @@ void Network::CustomSleep(int milliSecond) {
 	milliSecond--;
 
 	while (1) {
-		// 지속적으로 clock 함수를 호출하여 흘러간 시간을 계산한다.
+		// 지속적으로 clock 함수를 호출하여 흘러간 시간을 계산할꺼얔ㅋㅋㅋㅋㅋㅋ!!!
 		if ((clock() - start_clk) > milliSecond) break;
 	}
 }
@@ -697,7 +694,7 @@ DWORD WINAPI RecvDataGuest(LPVOID arg)
 			break;
 		case NOTIFY_START:
 			// 게임시작
-			std::cout << "게임을 시작합니다" << std::endl;
+			std::cout << "게임이 시작됩니다" << std::endl;
 			gameStart = true;
 			break;
 

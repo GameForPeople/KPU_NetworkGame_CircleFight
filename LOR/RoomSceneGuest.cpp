@@ -27,7 +27,6 @@ RoomSceneGuest::RoomSceneGuest(HWND hWnd, Network* network, bool isMake) : Scene
 	ZeroMemory(&serveraddr, sizeof(serveraddr));
 	
 	serveraddr.sin_family = AF_INET;
-	//inet_pton(AF_INET, "127.0.0.1", (PVOID *)(&serveraddr.sin_addr.s_addr));
 	serveraddr.sin_port = htons(HOSTPORT);
 	
 	serveraddr.sin_addr = m_network->m_permitJoinRoom->hostAddr;
